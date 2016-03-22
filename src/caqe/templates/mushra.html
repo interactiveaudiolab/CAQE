@@ -1,0 +1,211 @@
+{% extends "evaluation_base.html" %}
+
+{% block training_view_examples %}
+    {{ super() }}
+    <hr />
+    <div class="row">
+        <div class="col-md-10 col-md-offset-2"><b>Sounds you will rating be in the evaluation phase</b></div>
+    </div>
+    {# for now limit to the first condition #}
+    {% for ref, path in conditions[0].reference_files%}
+        <div class="row">
+            <div class="col-md-5 col-md-offset-4 text-right">{{ ref }}</div>
+            <div class="col-md-1">
+                <button class="btn btn-default play-btn" id="play{{ ref }}Btn" onclick="evaluationTask.playAudio('{{ ref }}');">
+                    <span class="glyphicon glyphicon-play"></span>
+                </button>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% for ref, path in conditions[0].stimulus_files%}
+        <div class="row">
+            <div class="col-md-5 col-md-offset-4 text-right">Sound {{ loop.index }}</div>
+            <div class="col-md-1">
+                <button class="btn btn-default play-btn" id="play{{ ref }}Btn" onclick="evaluationTask.playAudio('{{ ref }}');">
+                    <span class="glyphicon glyphicon-play"></span>
+                </button>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+
+{% block evaluation_view %}
+    <!-- evaluation view -->
+    <div class="container hidden" id="evaluation">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h1 class="text-center">{{ test.test_title | safe }}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">﻿
+                {{ test.evaluation_instructions_html | safe }}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="well" id="mushra-well">
+                    {% for reference in test.references %}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <button type="button"
+                                        class="btn btn-default btn-block play-btn"
+                                        id="playReference{{ reference[0] }}Btn"
+                                        onclick="evaluationTask.playReference('{{ reference[0] }}');">
+                                    <span class="glyphicon glyphicon-play"></span> {{ reference[0] }}
+                                </button>
+                            </div>
+                            <div class="col-md-9">{{ reference[1] }}</div>
+                        </div>
+                    {% endfor %}
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-2">
+                            <div class="row">
+                                {# for now limit to the first condition #}
+                                {% for i in range(conditions[0]['stimulus_files']|count) %}
+                                    <div class="col-md-1"><input type="text"
+                                                                 class="rating"
+                                                                 id="slider{{ i }}Value"
+                                                                 value="{{ test.default_rating_value }}"
+                                                                 min="{{ test.min_rating_value }}"
+                                                                 max="{{ test.max_rating_value }}"
+                                                                 maxlength="3"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2"><img src="{{ url_for('static', filename='img/mushra_labels.png') }}"
+                                                   height="252" id="mushra-label"/></div>
+                        <div class="col-md-10">
+                            <div class="row">
+                                {# for now limit to the first condition #}
+                                {% for i in range(conditions[0]['stimulus_files']|count) %}
+                                    <div class="col-md-1">
+                                        <input type="range"
+                                               orient="vertical"
+                                               value="{{ test.default_rating_value }}"
+                                               min="{{ test.min_rating_value }}"
+                                               max="{{ test.max_rating_value }}"
+                                               class="mushra-slider"
+                                               id="slider{{ i }}"/>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-2">
+                            <div class="row">
+                                {# for now limit to the first condition #}
+                                {% for i in range(conditions[0]['stimulus_files']|count) %}
+                                    <div class="col-md-1">
+                                        <button type="button"
+                                                class="btn btn-default play-btn"
+                                                id="playStimulus{{ i }}Btn"
+                                                onclick="evaluationTask.playStimulus({{ i }});"><span
+                                                class="glyphicon glyphicon-play"></span></button>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-2">
+                            <div class="row text-center">
+                                {% for i in range(conditions[0]['stimulus_files']|count) %}
+                                    <div class="col-md-1">{{ i + 1 }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <progress id="playback-position" value="0" max="100"></progress>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <ul class="pager">
+                    <li class="next">
+                        <a href="#" id="evaluationNextBtn" onclick="evaluationTask.nextTrial();">Next trial &rarr;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock evaluation_view %}
+
+{% block scripts %}
+    <!-- test config variables -->
+    <script type="text/javascript">
+        // configure the test here
+        var TEST_COMPLETE_REDIRECT_URL = '{{ test_complete_redirect_url }}';
+        var SUBMISSION_URL = '{{ submission_url }}';
+        var PARTICIPANT_ID = '{{ participant_id }}';
+
+        var config = {
+            "minRatingValue": {{ test.min_rating_value }},
+            "maxRatingValue": {{ test.max_rating_value }},
+            "defaultRatingValue": {{ test.default_rating_value }},
+            "testTimeoutSec": {{ test.test_timeout_sec }},
+            "references": {
+                {% for reference in test.references %}
+                    "{{ reference[0] }}": "{{ reference[1] }}",
+                {% endfor %}
+            },
+            "requireListeningToAllTrainingSounds": {{ ['false','true'][test.require_listening_to_all_training_sounds] }},
+            "referenceExampleDict": {
+                {% for key, value in test.reference_example_dict.iteritems() %}
+                    "{{ key }}": "{{ value }}",
+                {% endfor %}
+            },
+            "qualityExampleDict": {
+                {% for key, value in test.quality_example_dict.iteritems() %}
+                    "{{ key }}":
+                            [
+                                {% for v in value %}
+                                    "{{ v }}",
+                                {% endfor %}
+                            ],
+                {% endfor %}
+            },
+            "conditions": [
+                {% for condition in conditions %}
+                    {
+                        "conditionID": "{{ condition.id }}",
+                        "referenceFiles": {
+                            {% for key, value in condition.reference_files %}
+                                "{{ key }}": "{{ value }}",
+                            {% endfor %}
+                        },
+                        "stimulusFiles": {
+                            {% for key, value in condition.stimulus_files %}
+                                "{{ key }}": "{{ value }}",
+                            {% endfor %}
+                        }
+
+                    },
+                {% endfor %}
+            ]
+        }
+
+    </script>
+    <!---->
+    {{ super() }}
+    <script type="text/javascript">
+        /* <![CDATA[ */
+        var evaluationTask;
+        window.onload = function () {
+            evaluationTask = new MushraTask(config);
+        };
+        /* ]]> */
+    </script>
+{% endblock %}

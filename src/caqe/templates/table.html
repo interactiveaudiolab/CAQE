@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - CAQE{% endblock %}
+
+{% block body_content %}
+    <div class="container">
+        <table class="table">
+            <tr>
+                {% for field in fieldnames %}
+                <th>{{ field }}</th>
+                {% endfor %}
+            </tr>
+            {% for row in rows %}
+            <tr>
+                {% for field in fieldnames %}
+                <td>{{ row[field] }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock body_content %}
