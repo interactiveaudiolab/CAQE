@@ -1,5 +1,3 @@
-__author__ = 'Mark Cartwright'
-
 """
 tuyrk_admin.py
 
@@ -278,6 +276,10 @@ class TurkAdmin(object):
         """
         Approve all 'Submitted' assignments
 
+        Parameters
+        ----------
+        hit_types: list of str, optional
+
         Returns
         -------
         list of ?
@@ -294,10 +296,6 @@ class TurkAdmin(object):
     def force_approve_all(self):
         """
         Approve all 'Submitted' assignments
-
-        Parameters
-        ----------
-        hit_types: list of str, optional
 
         Returns
         -------

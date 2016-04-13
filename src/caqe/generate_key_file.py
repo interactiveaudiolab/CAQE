@@ -1,5 +1,3 @@
-__author__ = 'Mark Cartwright'
-
 """
 generate_key_file.py
 

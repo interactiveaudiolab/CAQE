@@ -1,5 +1,3 @@
-__author__ = 'Mark Cartwright'
-
 """
 models.py
 
@@ -13,6 +11,7 @@ from caqe import db
 from caqe.settings import HEARING_TEST_EXPIRATION_HOURS, IP_COLLECTION_ENABLED, HEARING_TEST_REJECTION_ENABLED
 
 logger = logging.getLogger(__name__)
+
 
 class Participant(db.Model):
     """

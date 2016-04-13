@@ -1,5 +1,3 @@
-__author__ = 'Mark Cartwright'
-
 """
 views.py
 
@@ -15,7 +13,6 @@ import functools
 
 from flask import request, render_template, flash, url_for, redirect, session, make_response, send_from_directory, safe_join
 
-
 import experiment
 
 from caqe import app
@@ -24,7 +21,6 @@ from models import Participant, Trial, Condition
 from constants import *
 from settings import *
 from caqe import utilities
-
 
 logger = logging.getLogger(__name__)
 

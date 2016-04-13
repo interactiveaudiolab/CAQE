@@ -1,5 +1,3 @@
-__author__ = 'Mark Cartwright'
-
 import logging
 from flask import Flask
 import os

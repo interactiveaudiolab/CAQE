@@ -1,5 +1,3 @@
-__author__ = 'Mark Cartwright'
-
 """
 flask_configurations.py
 

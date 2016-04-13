@@ -1,5 +1,3 @@
-__author__ = 'Mark Cartwright'
-
 """
 create_db.py
 
