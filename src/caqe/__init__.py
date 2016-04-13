@@ -8,17 +8,17 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug.contrib.fixers import ProxyFix
 
 from settings import SQLALCHEMY_DATABASE_URI
-import ceaq.flask_configurations
+import caqe.flask_configurations
 
-app = Flask('ceaq')
+app = Flask('caqe')
 
 if os.getenv('FLASK_CONF') == 'DEV':
     print 'DEV'
-    app.config.from_object('ceaq.flask_configurations.Development')
+    app.config.from_object('caqe.flask_configurations.Development')
 elif os.getenv('FLASK_CONF') == 'TESTING':
-    app.config.from_object('ceaq.flask_configurations.Testing')
+    app.config.from_object('caqe.flask_configurations.Testing')
 else:
-    app.config.from_object('ceaq.flask_configurations.Production')
+    app.config.from_object('caqe.flask_configurations.Production')
     # On heroku, we must do a proxy fix, this enables to get the correct IP address from REMOTE_ADDR
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
@@ -59,4 +59,4 @@ def setup_logging():
         app.logger.addHandler(streamHandler)
         app.logger.setLevel(logging.INFO)
 
-import ceaq.views
+import caqe.views

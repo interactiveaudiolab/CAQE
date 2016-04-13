@@ -10,7 +10,7 @@ import json
 from itsdangerous import URLSafeSerializer
 from Crypto.Cipher import AES
 
-from ceaq import app
+from caqe import app
 
 
 def sign_data(data):

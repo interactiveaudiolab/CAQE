@@ -1,5 +1,5 @@
 __author__ = 'Mark Cartwright'
 
-from ceaq import app
+from caqe import app
 
 app.run(debug=True)

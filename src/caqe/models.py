@@ -9,8 +9,8 @@ import datetime
 import uuid
 import logging
 
-from ceaq import db
-from ceaq.settings import HEARING_TEST_EXPIRATION_HOURS, IP_COLLECTION_ENABLED, HEARING_TEST_REJECTION_ENABLED
+from caqe import db
+from caqe.settings import HEARING_TEST_EXPIRATION_HOURS, IP_COLLECTION_ENABLED, HEARING_TEST_REJECTION_ENABLED
 
 logger = logging.getLogger(__name__)
 

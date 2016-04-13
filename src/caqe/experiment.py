@@ -18,7 +18,7 @@ from settings import *
 import utilities
 
 from models import Condition, Participant, Trial, Test
-from ceaq import db
+from caqe import db
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ def assign_conditions(participant, limit_to_condition_ids=None):
 
     Parameters
     ----------
-    participant : ceaq.models.Participant
+    participant : caqe.models.Participant
 
     Returns
     -------

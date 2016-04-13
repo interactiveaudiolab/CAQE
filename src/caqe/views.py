@@ -18,12 +18,12 @@ from flask import request, render_template, flash, url_for, redirect, session, m
 
 import experiment
 
-from ceaq import app
-from ceaq import db
+from caqe import app
+from caqe import db
 from models import Participant, Trial, Condition
 from constants import *
 from settings import *
-from ceaq import utilities
+from caqe import utilities
 
 
 logger = logging.getLogger(__name__)
@@ -73,7 +73,7 @@ def get_current_participant(current_session, allow_none=False):
 
     Returns
     -------
-    participant : ceaq.models.Participant
+    participant : caqe.models.Participant
     """
     participant_id = current_session.get('participant_id', None)
     if participant_id is None:
@@ -444,7 +444,7 @@ def hearing_test():
     Determines if the user is eligible to take the hearing test (i.e. has not exceeded `MAX_HEARING_TEST_ATTEMPTS`, and
     then renders the hearing test, which consists of the assessor counting the tones in two audio files.
 
-    If ceaq.ceaq_settings.HEARING_TEST_REJECTION_ENABLED is set to False, then pass them through after they had their 2
+    If caqe.settings.HEARING_TEST_REJECTION_ENABLED is set to False, then pass them through after they had their 2
     attempts.
 
     Returns

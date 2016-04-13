@@ -17,7 +17,7 @@ POST_TEST_SURVEY_ENABLED = True
 HEARING_RESPONSE_ESTIMATION_ENABLED = True
 
 # The location of the production server
-SERVER_NAME = ['ceaq.local:5000','ceaq.herokuapp.com'][PRODUCTION]
+SERVER_NAME = ['caqe.local:5000','caqe.herokuapp.com'][PRODUCTION]
 
 MTURK_HIT_PARAMETERS = {'question_url': 'https://%s/mturk' % SERVER_NAME,
                         'number_hits_approved_requirement':  1000,
@@ -149,17 +149,17 @@ def insert_tests_and_conditions():
 
     >>> import os
     >>> os.environ['FLASK_CONF'] = 'DEV' # for testing the Development configuration
-    >>> from ceaq import db
+    >>> from caqe import db
     >>> db.drop_all()
     >>> db.create_all()
-    >>> import ceaq
-    >>> import ceaq.settings
-    >>> with ceaq.app.app_context():
-    ...     ceaq.settings.insert_tests_and_conditions()
+    >>> import caqe
+    >>> import caqe.settings
+    >>> with caqe.app.app_context():
+    ...     caqe.settings.insert_tests_and_conditions()
     """
     import json
-    import ceaq.models as models
-    from ceaq import db
+    import caqe.models as models
+    from caqe import db
 
     num_audio_files = 10
 

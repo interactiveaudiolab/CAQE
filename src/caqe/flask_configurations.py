@@ -30,7 +30,7 @@ class Testing(Config):
     """
     For testing, add:
 
-        0.0.0.0     ceaq.local
+        0.0.0.0     caqe.local
 
     to /etc/hosts
     We need to set the SERVER_NAME to resolve `url_for` definitions when constructing the database, but we can't simply
@@ -39,13 +39,13 @@ class Testing(Config):
     TESTING = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
-    SERVER_NAME = 'ceaq.local:5000'
+    SERVER_NAME = 'caqe.local:5000'
 
 
 class Development(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
-    SERVER_NAME = 'ceaq.local:5000'
+    SERVER_NAME = 'caqe.local:5000'
 
 
 class Production(Config):

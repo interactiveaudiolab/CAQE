@@ -60,9 +60,9 @@ class TurkAdmin(object):
         print settings.MTURK_HOST
 
         if settings.MTURK_HOST== 'mechanicalturk.sandbox.amazonaws.com':
-            self.ceaq_qualification_id = '347ZGUFWMWDILOB7R70CM1L7PYBS52'
+            self.caqe_qualification_id = '347ZGUFWMWDILOB7R70CM1L7PYBS52'
         elif settings.MTURK_HOST== 'mechanicalturk.amazonaws.com':
-            self.ceaq_qualification_id = '3SEZZHS5L88XMFRPDXTVI75UQCCA9H'
+            self.caqe_qualification_id = '3SEZZHS5L88XMFRPDXTVI75UQCCA9H'
         self.all_hit_types = [self.hit_type_id, self.bonus_hit_type_id]
 
     def create_hits(self, num_hits, hit_params=settings.MTURK_HIT_PARAMETERS, hit_type_id=None):
@@ -136,12 +136,12 @@ class TurkAdmin(object):
             The HITTypeId which is how you refer to your newly registered hit with Amazon
         """
         qualifications = Qualifications()
-        qualifications.add(Requirement(self.ceaq_qualification_id, "GreaterThan", 0))
-        hit_type = self.connection.register_hit_type('CEAQ Bonus HIT - Qualified participants only',
-                                                     'CEAQ Bonus HIT',
+        qualifications.add(Requirement(self.caqe_qualification_id, "GreaterThan", 0))
+        hit_type = self.connection.register_hit_type('CAQE Bonus HIT - Qualified participants only',
+                                                     'CAQE Bonus HIT',
                                                      Price(0.01),
                                                      hit_params['assignmentDurationInSeconds'],
-                                                     'CEAQ',
+                                                     'CAQE',
                                                      hit_params['autoApprovalDelayInSeconds'],
                                                      qualifications)
         return hit_type[0].HITTypeId
@@ -385,14 +385,14 @@ class TurkAdmin(object):
                 times.append((x - y).seconds)
         return times
 
-    def create_ceaq_qualification_type(self):
-        return self.connection.create_qualification_type(name="CEAQ Worker",
+    def create_caqe_qualification_type(self):
+        return self.connection.create_qualification_type(name="CAQE Worker",
                                                          description="Crowdsourced Evaluation of Audio Quality worker",
                                                          status="Active",
                                                          auto_granted=False)
 
     def assign_qualification(self, worker_id, value):
-        return self.connection.assign_qualification(self.ceaq_qualification_id,
+        return self.connection.assign_qualification(self.caqe_qualification_id,
                                                     worker_id,
                                                     value,
                                                     send_notification=True)
@@ -421,7 +421,7 @@ class TurkAdmin(object):
         -------
         total_bonus: float
             The total amount paid
-        participants_wo_valid_asgnmts: list of ceaq.models.Participant
+        participants_wo_valid_asgnmts: list of caqe.models.Participant
             The participants who did not have valid assignments in their trial data (e.g. there must have been an error
             when submitting the assignment)
 
@@ -480,7 +480,7 @@ class TurkAdmin(object):
         -------
         total_bonus: float
             The total amount paid
-        participants_wo_valid_asgnmts: list of ceaq.models.Participant
+        participants_wo_valid_asgnmts: list of caqe.models.Participant
             The participants who did not have valid assignments in their trial data (e.g. there must have been an error
             when submitting the assignment)
 

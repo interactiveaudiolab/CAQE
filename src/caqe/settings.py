@@ -16,7 +16,7 @@ PRODUCTION = os.getenv('FLASK_CONF') == 'PRODUCTION'
 if os.environ.get('DATABASE_URL') is not None:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 else:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////%s' % os.path.expanduser('~/ceaq.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////%s' % os.path.expanduser('~/caqe.db')
 
 URL_SCHEME = ['http', 'https'][PRODUCTION]
 
@@ -26,7 +26,7 @@ MTURK_HOST = os.getenv('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
 # Audio file directory
 AUDIO_FILE_DIRECTORY = 'static/audio'
 
-from ceaq.test_configurations.pairwise import *
+from caqe.test_configurations.pairwise import *
 
 
 
