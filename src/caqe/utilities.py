@@ -76,7 +76,7 @@ def decrypt_data(encrypted_data):
 
     Returns
     -------
-    object
+    object : object
         Decrypted data
     """
     aes = AES.new(app.secret_key)

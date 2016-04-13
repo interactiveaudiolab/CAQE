@@ -17,12 +17,13 @@ POST_TEST_SURVEY_ENABLED = True
 HEARING_RESPONSE_ESTIMATION_ENABLED = True
 
 # The location of the production server
-SERVER_NAME = ['caqe.local:5000','caqe.herokuapp.com'][PRODUCTION]
+SERVER_NAME = ['caqe.local:5000', 'caqe.herokuapp.com'][PRODUCTION]
 
 MTURK_HIT_PARAMETERS = {'question_url': 'https://%s/mturk' % SERVER_NAME,
-                        'number_hits_approved_requirement':  1000,
+                        'number_hits_approved_requirement': 1000,
                         'percent_assignments_approved_requirement': 97,
-                        'title': 'Critical audio listening task. Listen to audio recordings and rate them on various scales of quality.',
+                        'title': 'Critical audio listening task. Listen to audio recordings and rate them on various '
+                                 'scales of quality.',
                         'description': 'This listening test aims to rate the quality of a set of signals produced by '
                                        'source separation systems. Source separation aims to extract the signal of a '
                                        'target source from a mixture of several sound sources. The resulting signals may'
@@ -79,12 +80,12 @@ HEARING_TEST_EXPIRATION_HOURS = 24
 # to take it again)
 MAX_HEARING_TEST_ATTEMPTS = 2
 # If this is set to True, then we still test the users, but we don't reject them...
-HEARING_TEST_REJECTION_ENABLED = False #True
+HEARING_TEST_REJECTION_ENABLED = False  # True
 
 # Hearing response estimation variables
 HEARING_RESPONSE_NFREQS = 8  # number of different frequencies
 HEARING_RESPONSE_NADD = 3  # number of max additional tones (60 for 10dB, 3 for 20dB Spacing)
-N_OPTIONS = 20 # max number of frequencies for user to respond with in hearing response estimation
+N_OPTIONS = 20  # max number of frequencies for user to respond with in hearing response estimation
 
 ENCRYPT_AUDIO_STIMULI_URLS = True
 
@@ -166,12 +167,12 @@ def insert_tests_and_conditions():
     # TEST VARIABLES
     default_test_vars = {'test_title': 'Task: Rate the <quality>',
                          'test_type': TEST_TYPE,
-                         'min_rating_value' : 0,
+                         'min_rating_value': 0,
                          'max_rating_value': 99,
                          'default_rating_value': 50,
                          'randomize_test_order': True,
-                         'test_timeout_sec': 5.,#60.,  # wait 60 seconds
-                         'require_listening_to_all_training_sounds': False, #True,
+                         'test_timeout_sec': 5.,  # 60.,  # wait 60 seconds
+                         'require_listening_to_all_training_sounds': False,  # True,
                          'references': (('Target', 'The target source which we are trying to isolate.'),
                                         ('Mixture', 'The mixture containing the target source and other sources.')),
                          'introduction_html': """
@@ -301,7 +302,7 @@ def insert_tests_and_conditions():
                               'High': [url_for('static', filename='audio/exp00_anchorArtif.wav'),
                                        url_for('static', filename='audio/exp00_anchorDistTarget.wav'),
                                        url_for('static', filename='audio/exp00_target.wav')]},
-                             {'Low': [url_for('static', filename='audio/exp00_anchorArtif.wav'),],
+                             {'Low': [url_for('static', filename='audio/exp00_anchorArtif.wav'), ],
                               'High': [url_for('static', filename='audio/exp00_anchorInterf.wav'),
                                        url_for('static', filename='audio/exp00_anchorDistTarget.wav'),
                                        url_for('static', filename='audio/exp00_target.wav')]},
@@ -312,14 +313,15 @@ def insert_tests_and_conditions():
     for quality, quality_explanation, reference_example_dict, quality_example_dict in zip(qualities,
                                                                                           quality_explanations,
                                                                                           reference_example_dict,
-                                                                                          quality_example_dicts,):
+                                                                                          quality_example_dicts, ):
         test_name = default_test_vars['test_title'].replace('<quality>', quality)
 
         introduction_html = default_test_vars['introduction_html'].replace('<quality>', quality)
         introduction_html = introduction_html.replace('<quality_explanation>', quality_explanation)
 
         first_task_introduction_html = default_test_vars['first_task_introduction_html'].replace('<quality>', quality)
-        first_task_introduction_html = first_task_introduction_html.replace('<quality_explanation>', quality_explanation)
+        first_task_introduction_html = first_task_introduction_html.replace('<quality_explanation>',
+                                                                            quality_explanation)
 
         training_instructions_html = default_test_vars['training_instructions_html'].replace('<quality>',
                                                                                              quality)
@@ -346,7 +348,7 @@ def insert_tests_and_conditions():
     db.session.commit()
 
     for test in models.Test.query.all():
-        for j in range(1, num_audio_files+1):
+        for j in range(1, num_audio_files + 1):
             # THE AUDIO STIMULUS FILES
             data = json.dumps({'reference_files': [('Target', 'exp%02d_target.wav' % j),
                                                    ('Mixture', 'exp%02d_anchorInterf.wav' % j)],

@@ -1,4 +1,5 @@
 boto==2.36.0
+crypto==1.4.1
 Flask==0.10.1
 Flask-Bootstrap==3.3.0.1
 Flask-SQLAlchemy==2.0
@@ -6,7 +7,12 @@ gunicorn==19.3.0
 itsdangerous==0.24
 Jinja2==2.7.3
 MarkupSafe==0.23
+Naked==0.1.31
+numpy==1.11.0
 psycopg2==2.6
 pycrypto==2.6.1
+PyYAML==3.11
+requests==2.9.1
+shellescape==3.4.1
 SQLAlchemy==0.9.8
 Werkzeug==0.10.1

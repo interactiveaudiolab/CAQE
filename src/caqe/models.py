@@ -25,11 +25,11 @@ class Participant(db.Model):
         The IP address of the participant
     crowd_worker_id : str
         The crowdsourcing site ID, e.g. Amazon MTurk's workerId
-    participant_type : str
-        The type of participant, e.g. ANONYMOUS, M_TURK, etc.
+    platform : str
+        The platform the participant came from, e.g. ANONYMOUS, M_TURK, etc.
     passed_hearing_test : bool
         The user has passed the hearing test
-    gave_consent: bool
+    gave_consent : bool
         Participant agreed to the consent form.
     hearing_test_attempts : int
         The number of hearing_test_attempts
@@ -39,6 +39,8 @@ class Participant(db.Model):
         Pre-test survey data in JSON
     post_test_survey : str
         Post-test survey data in JSON
+    hearing_response_estimation : str
+        Hearing response estimation data in JSON
     """
     id = db.Column(db.Integer, primary_key=True)
     ip_address = db.Column(db.String(45))
@@ -86,11 +88,13 @@ class Participant(db.Model):
             # through
             return self.passed_hearing_test or not HEARING_TEST_REJECTION_ENABLED
 
-
-
     def set_passed_hearing_test(self, passed_hearing_test):
         """
         Mark them as having passed the hearing test
+
+        Parameters
+        ----------
+        passed_hearing_test : bool
 
         Returns
         -------
@@ -185,5 +189,10 @@ class Trial(db.Model):
         self.datetime_completed = datetime.datetime.now()
 
     def __repr__(self):
-        return "<Trial id=%r, participant_id=%r, condition_id=%r, participant_passed_hearing_test=%r, datetime_completed=%r>" % \
-               (self.id, self.participant_id, self.condition_id, self.participant_passed_hearing_test, self.datetime_completed)
+        return "<Trial id=%r, participant_id=%r, condition_id=%r, " \
+               "participant_passed_hearing_test=%r, datetime_completed=%r>" % \
+               (self.id,
+                self.participant_id,
+                self.condition_id,
+                self.participant_passed_hearing_test,
+                self.datetime_completed)

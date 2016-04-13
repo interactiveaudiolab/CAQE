@@ -10,12 +10,12 @@ import random
 import datetime
 import itertools
 
-from sqlalchemy import func, and_
+from sqlalchemy import func
 
 from settings import *
 import utilities
 
-from models import Condition, Participant, Trial, Test
+from models import Condition, Participant, Trial
 from caqe import db
 
 logger = logging.getLogger(__name__)
@@ -55,6 +55,8 @@ def assign_conditions(participant, limit_to_condition_ids=None):
     Parameters
     ----------
     participant : caqe.models.Participant
+    limit_to_condition_ids : list, optional
+        List of integer ids.
 
     Returns
     -------
@@ -112,7 +114,7 @@ def assign_conditions(participant, limit_to_condition_ids=None):
 
         # if there are not enough conditions left from this test, add more from the next.
         if len(condition_ids) < CONDITIONS_PER_EVALUATION:
-            more_cids = [c.id for c in conditions if c.test_id == current_test_id+1]
+            more_cids = [c.id for c in conditions if c.test_id == current_test_id + 1]
             random.shuffle(more_cids)
             condition_ids += more_cids[:(CONDITIONS_PER_EVALUATION - len(condition_ids))]
     else:
@@ -128,8 +130,8 @@ def get_test_configurations(condition_ids, participant_id):
 
     Parameters
     ----------
-    condition_ids : list of dicts
-        The con
+    condition_ids : list
+    participant_id : int
 
     Returns
     -------
@@ -177,8 +179,8 @@ def generate_comparison_pairs(condition_datas):
     Returns
     -------
     condition_datas: list of dict
-        List of updated dictionary of condition data with a new field, `comparison_pairs`, which is a list of stimulus pairs,
-        e.g. (('E1','E2'),('E5','E8'),...)
+        List of updated dictionary of condition data with a new field, `comparison_pairs`, which is a list of stimulus
+        pairs, e.g. (('E1','E2'),('E5','E8'),...)
     """
     for condition_data in condition_datas:
         stimulus_names = [c[0] for c in condition_data['stimulus_files']]
@@ -215,11 +217,12 @@ def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_id):
         For all non-references, the key should be of the form E[0-9+]. The order of the stimuli will be random (except
         for the references)
     """
-    def encode_url(url, s_id, e_id):
-        adict = {'s_id': s_id,
+
+    def encode_url(url, _s_id, _e_id):
+        adict = {'s_id': _s_id,
                  'p_id': participant_id,
                  'c_id': condition_id,
-                 'e_id': e_id,
+                 'e_id': _e_id,
                  'URL': url}
         return '/audio/' + utilities.encrypt_data(adict) + '.wav'
 
@@ -233,7 +236,7 @@ def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_id):
         random.shuffle(non_references)
 
     for k, a in enumerate(non_references):
-        e_id = 'E%d' % (k+1)
+        e_id = 'E%d' % (k + 1)
         s_id = a[0]
         a[0] = e_id
         a[1] = encode_url(a[1], s_id, e_id)
@@ -247,13 +250,14 @@ def decrypt_audio_stimuli(condition_data):
 
     Parameters
     ----------
-    trial_data: dict
-        The trial data with encrypted audio URLs
+    condition_data: dict
+        The condition data with encrypted audio URLs
 
     Returns
     -------
     trial_data: dict
     """
+
     def decode_url(encrypted_url):
         # remove /audio/
         encrypted_data = encrypted_url[7:]

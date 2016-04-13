@@ -11,7 +11,8 @@ import urlparse
 import datetime
 import functools
 
-from flask import request, render_template, flash, url_for, redirect, session, make_response, send_from_directory, safe_join
+from flask import request, render_template, flash, redirect, session, make_response, send_from_directory, \
+    safe_join
 
 import experiment
 
@@ -28,7 +29,12 @@ logger = logging.getLogger(__name__)
 def nocache(view):
     """
     No cache decorator. Puts no cache directives in header to avoid caching of endpoint.
+
+    Parameters
+    ----------
+    view : flask view function
     """
+
     @functools.wraps(view)
     def no_cache(*args, **kwargs):
         response = make_response(view(*args, **kwargs))
@@ -55,6 +61,7 @@ def strip_query_from_url(url):
     split_url[3] = ''
     stripped_url = urlparse.urlunsplit(split_url)
     return stripped_url
+
 
 def get_current_participant(current_session, allow_none=False):
     """
@@ -118,34 +125,6 @@ def page_not_found(e):
     return render_template('sorry.html', message='404 Page Not Found -- Sorry, that page doesn\'t exist.'), 404
 
 
-@app.route('/')
-@app.route('/about')
-@nocache
-def about():
-    """
-    Render the about page
-        
-    Returns
-    -------
-    flask.Response
-    """
-    logger.info('this is about')
-    return render_template('about.html')
-
-
-@app.route('/contact')
-@nocache
-def contact():
-    """
-    Render contact page
-
-    Returns
-    -------
-    flask.Response
-    """
-    return render_template('contact.html', test_admin_name=TEST_ADMIN_NAME, test_admin_email=TEST_ADMIN_EMAIL)
-
-
 @app.route('/audio/<audio_file_key>.wav')
 @nocache
 def audio(audio_file_key):
@@ -165,8 +144,8 @@ def audio(audio_file_key):
     audio_file_dict = utilities.decrypt_data(str(audio_file_key))
 
     # can also assert that this file is for this specific participant and condition
-    assert(audio_file_dict['p_id'] == session['participant_id'])
-    assert(audio_file_dict['c_id'] in session['condition_ids'])
+    assert (audio_file_dict['p_id'] == session['participant_id'])
+    assert (audio_file_dict['c_id'] in session['condition_ids'])
 
     return send_from_directory(safe_join(app.root_path, AUDIO_FILE_DIRECTORY),
                                audio_file_dict['URL'])
@@ -243,6 +222,11 @@ def begin(platform, crowd_worker_id):
     evaluation pag since some workers accept many HITs at a time. We need to make sure that they don't get assigned
     the same conditions and that their session data is valid.
 
+    Parameters
+    ----------
+    platform : str
+    crowd_worker_id : str
+
     Returns
     -------
     flask.Response
@@ -316,7 +300,7 @@ def create_participant(participant_type, crowd_worker_id):
     ----------
     participant_type : str
         The type of participant, e.g. ANONYMOUS, M_TURK, LAB, etc.
-    crowd_worker_idvvvvv : str
+    crowd_worker_id : str
         An external identifier
 
     Returns
@@ -359,7 +343,6 @@ def pre_evaluation_tasks():
     -------
     flask.Response
     """
-
     participant = get_current_participant(session)
 
     # assign conditions
@@ -369,7 +352,7 @@ def pre_evaluation_tasks():
     if session['condition_ids'] is None or len(session['condition_ids']) == 0:
         return render_template('sorry.html', message='We\'re sorry, but there are no more tasks available for you.')
 
-    if OBTAIN_CONSENT and participant.gave_consent==False:
+    if OBTAIN_CONSENT and not participant.gave_consent:
         return redirect(url_for('consent', _external=True, scheme=URL_SCHEME))
 
     if HEARING_SCREENING_TEST_ENABLED and (not participant.has_passed_hearing_test_recently()):
@@ -428,7 +411,8 @@ def pre_test_survey():
             return pre_evaluation_tasks()
         else:
             return render_template('sorry.html',
-                                   message='Unfortunately, you do not meet the inclusion criteria for this study. Sorry.')
+                                   message='Unfortunately, you do not meet the inclusion criteria for this study. '
+                                           'Sorry.')
     else:
         return render_template('pre_test_survey.html')
 
@@ -474,12 +458,14 @@ def hearing_test():
             hearing_test_audio_index1 = session['hearing_test_audio_index1']
             hearing_test_audio_index2 = session['hearing_test_audio_index2']
         except KeyError as e:
+            hearing_test_audio_index1 = None
+            hearing_test_audio_index2 = None
             logger.error("Invalid state - %r" % e)
 
         if (int(request.form['audiofile1_tones']) ==
-                (utilities.decrypt_data(hearing_test_audio_index1) / HEARING_TEST_AUDIO_FILES_PER_TONES)) \
+                (int(utilities.decrypt_data(hearing_test_audio_index1)) / HEARING_TEST_AUDIO_FILES_PER_TONES)) \
                 and (int(request.form['audiofile2_tones']) ==
-                         (utilities.decrypt_data(hearing_test_audio_index2) / HEARING_TEST_AUDIO_FILES_PER_TONES)):
+                         (int(utilities.decrypt_data(hearing_test_audio_index2)) / HEARING_TEST_AUDIO_FILES_PER_TONES)):
             logger.info('Hearing test passed - %r' % participant)
             participant.set_passed_hearing_test(True)
             db.session.commit()
@@ -520,7 +506,7 @@ def hearing_test_audio(example_num):
         # calibration file
         file_path = 'hearing_test_audio/1000Hz.wav'
     else:
-        hearing_test_audio_index = utilities.decrypt_data(session['hearing_test_audio_index%s' % example_num])
+        hearing_test_audio_index = int(utilities.decrypt_data(session['hearing_test_audio_index%s' % example_num]))
         num_tones = hearing_test_audio_index / HEARING_TEST_AUDIO_FILES_PER_TONES
         file_num = hearing_test_audio_index % HEARING_TEST_AUDIO_FILES_PER_TONES
         logger.info('hearing_test %s - %d %d' % (example_num, num_tones, file_num))
@@ -532,7 +518,7 @@ def hearing_test_audio(example_num):
     return response
 
 
-@app.route('/evaluation', methods=['GET','POST'])
+@app.route('/evaluation', methods=['GET', 'POST'])
 @nocache
 def evaluation():
     """
@@ -552,7 +538,7 @@ def evaluation():
             crowd_data = session.get('crowd_data', None)
             participant_id = int(request.values['participant_id'])
             # ensure that the participant_id is correct
-            assert(participant.id == participant_id)
+            assert (participant.id == participant_id)
 
             condition_data = json.loads(request.values['completedConditionData'])
             for cd in condition_data:
@@ -563,7 +549,8 @@ def evaluation():
                 cd = experiment.decrypt_audio_stimuli(cd)
 
                 # create database object
-                trial = Trial(participant_id, condition_id, json.dumps(cd), json.dumps(crowd_data), participant.passed_hearing_test)
+                trial = Trial(participant_id, condition_id, json.dumps(cd), json.dumps(crowd_data),
+                              participant.passed_hearing_test)
                 db.session.add(trial)
                 logger.info('Results saved for %r' % trial)
 
@@ -576,7 +563,8 @@ def evaluation():
         test_configurations = experiment.get_test_configurations(session['condition_ids'], participant.id)
 
         # for now don't consider the case that there could be more than one test per participant
-        assert len(test_configurations) == 1, "`test_configuration` has length greater than 1. This is not supported for now."
+        assert len(
+            test_configurations) == 1, "`test_configuration` has length greater than 1. This is not supported for now."
         test_config = test_configurations[0]
 
         if test_config['test']['test_type'] == 'mushra':
@@ -585,7 +573,8 @@ def evaluation():
                                    conditions=test_config['conditions'],
                                    participant_id=participant.id,
                                    first_evaluation=participant.trials.count() == 0,
-                                   test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True, _scheme=URL_SCHEME),
+                                   test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True,
+                                                                      _scheme=URL_SCHEME),
                                    submission_url=url_for('evaluation', _external=True, _scheme=URL_SCHEME))
         elif test_config['test']['test_type'] == 'pairwise':
             test_config['conditions'] = experiment.generate_comparison_pairs(test_config['conditions'])
@@ -595,7 +584,8 @@ def evaluation():
                                    conditions=test_config['conditions'],
                                    participant_id=participant.id,
                                    first_evaluation=participant.trials.count() == 0,
-                                   test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True, _scheme=URL_SCHEME),
+                                   test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True,
+                                                                      _scheme=URL_SCHEME),
                                    submission_url=url_for('evaluation', _external=True, _scheme=URL_SCHEME))
         else:
             return render_template('%s.html' % test_config['test']['test_type'],
@@ -603,7 +593,8 @@ def evaluation():
                                    conditions=test_config['conditions'],
                                    participant_id=participant.id,
                                    first_evaluation=participant.trials.count() == 0,
-                                   test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True, _scheme=URL_SCHEME),
+                                   test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True,
+                                                                      _scheme=URL_SCHEME),
                                    submission_url=url_for('evaluation', _external=True, _scheme=URL_SCHEME))
 
 
@@ -702,6 +693,10 @@ def end(platform):
     Render a thank you page with a button on it that directs submits their task or simply closes the window (depending
     on the platform)
 
+    Parameters
+    ----------
+    platform : str
+
     Returns
     -------
     flask.Response
@@ -779,8 +774,3 @@ def bonus():
                            hit_id=hit_id,
                            assignment_id=assignment_id,
                            preview=['false', 'true'][assignment_id == 'ASSIGNMENT_ID_NOT_AVAILABLE'])
-
-
-
-
-
