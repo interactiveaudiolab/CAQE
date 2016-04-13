@@ -5,23 +5,26 @@ tuyrk_admin.py
 
 Amazon Mechanical Turk administration
 """
-try:
-    from secret_keys import AWS_ACCESS_KEY_ID, AWS_SECRET_KEY
-except ImportError:
-    raise ImportError('In order to run Amazon Mechanical Turk administration tasks, you must provide your credentials '
-                      'in `secret_keys.py`.')
-
 import json
 import settings
 import models
 import numpy as np
 
 from boto.mturk.connection import MTurkConnection, MTurkRequestError
-from boto.mturk.qualification import Qualifications, Requirement, NumberHitsApprovedRequirement, PercentAssignmentsApprovedRequirement
+from boto.mturk.qualification import Qualifications, Requirement, NumberHitsApprovedRequirement, \
+    PercentAssignmentsApprovedRequirement
 from boto.mturk.price import Price
 from boto.mturk.question import ExternalQuestion
 
 import datetime
+
+try:
+    from secret_keys import AWS_ACCESS_KEY_ID, AWS_SECRET_KEY
+except ImportError:
+    AWS_ACCESS_KEY_ID = None
+    AWS_SECRET_KEY = None
+    raise ImportError('In order to run Amazon Mechanical Turk administration tasks, you must provide your credentials '
+                      'in `secret_keys.py`.')
 
 
 def turk_connect():
@@ -30,40 +33,37 @@ def turk_connect():
                            host=settings.MTURK_HOST)
 
 
-def calculate_tsr(ratings, stimuli=['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8']):
+def calculate_tsr(ratings, stimuli=('S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8')):
     N = len(stimuli)
-    m = np.zeros([N,N])
-    for k,r in ratings.items():
-        m[stimuli.index(r['stimuli'][0]),stimuli.index(r['stimuli'][1])] = r['selection']=='A'
-        m[stimuli.index(r['stimuli'][1]),stimuli.index(r['stimuli'][0])] = not (r['selection']=='A')
+    m = np.zeros([N, N])
+    for k, r in ratings.items():
+        m[stimuli.index(r['stimuli'][0]), stimuli.index(r['stimuli'][1])] = r['selection'] == 'A'
+        m[stimuli.index(r['stimuli'][1]), stimuli.index(r['stimuli'][0])] = not (r['selection'] == 'A')
     n_test = 0
     n_pass = 0
-    for i in range(0,N-1):
-        for j in range(0,N-1):
-            for k in range(0,N-1):
-                if i==j or j==k:
+    for i in range(0, N - 1):
+        for j in range(0, N - 1):
+            for k in range(0, N - 1):
+                if i == j or j == k:
                     continue
-                if m[i,j]==1 and m[j,k]==1:
+                if m[i, j] == 1 and m[j, k] == 1:
                     n_test += 1
-                    if m[i,k]==1:
+                    if m[i, k] == 1:
                         n_pass += 1
     return float(n_pass) / n_test, n_pass, n_test, m
+
 
 class TurkAdmin(object):
     """
     Instantiate this class to connect to MTurk and perform administrative tasks.
     """
-    def __init__(self):        
+
+    def __init__(self):
         self.connection = turk_connect()
         self._hit_type_id = None
-        self._bonus_hit_type_id = None
         print settings.MTURK_HOST
 
-        if settings.MTURK_HOST== 'mechanicalturk.sandbox.amazonaws.com':
-            self.caqe_qualification_id = '347ZGUFWMWDILOB7R70CM1L7PYBS52'
-        elif settings.MTURK_HOST== 'mechanicalturk.amazonaws.com':
-            self.caqe_qualification_id = '3SEZZHS5L88XMFRPDXTVI75UQCCA9H'
-        self.all_hit_types = [self.hit_type_id, self.bonus_hit_type_id]
+        self.all_hit_types = [self.hit_type_id, ]
 
     def create_hits(self, num_hits, hit_params=settings.MTURK_HIT_PARAMETERS, hit_type_id=None):
         """
@@ -71,8 +71,9 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        num_audio_hits: int
+        num_hits: int
         hit_params: dict
+        hit_type_id: int, optional
 
         Returns
         -------
@@ -85,7 +86,7 @@ class TurkAdmin(object):
             self.connection.create_hit(hit_type=hit_type_id,
                                        question=question,
                                        lifetime=hit_params['lifetimeInSeconds'],
-                                       max_assignments=hit_params['maxAssignments'],)
+                                       max_assignments=hit_params['maxAssignments'], )
 
     def register_hit(self, hit_params=settings.MTURK_HIT_PARAMETERS):
         """
@@ -104,7 +105,8 @@ class TurkAdmin(object):
         qualifications.add(NumberHitsApprovedRequirement('GreaterThanOrEqualTo',
                                                          hit_params['number_hits_approved_requirement']))
         qualifications.add(PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo',
-                                                                 hit_params['percent_assignments_approved_requirement']))
+                                                                 hit_params[
+                                                                     'percent_assignments_approved_requirement']))
 
         hit_type = self.connection.register_hit_type(hit_params['title'],
                                                      hit_params['description'],
@@ -119,60 +121,8 @@ class TurkAdmin(object):
         if self._hit_type_id is None:
             self._hit_type_id = self.register_hit()
         return self._hit_type_id
+
     hit_type_id = property(fget=_get_hit_type_id)
-
-    def register_bonus_hit(self, hit_params=settings.MTURK_HIT_PARAMETERS):
-        """
-        This is a simple HIT that is only used to give people bonuses when something goes wrong (and they don't haven't
-        completed an assignment to give them a bonus on).
-
-        Parameters
-        ----------
-        hit_params: dict
-
-        Returns
-        -------
-        str
-            The HITTypeId which is how you refer to your newly registered hit with Amazon
-        """
-        qualifications = Qualifications()
-        qualifications.add(Requirement(self.caqe_qualification_id, "GreaterThan", 0))
-        hit_type = self.connection.register_hit_type('CAQE Bonus HIT - Qualified participants only',
-                                                     'CAQE Bonus HIT',
-                                                     Price(0.01),
-                                                     hit_params['assignmentDurationInSeconds'],
-                                                     'CAQE',
-                                                     hit_params['autoApprovalDelayInSeconds'],
-                                                     qualifications)
-        return hit_type[0].HITTypeId
-
-    def _get_bonus_hit_type_id(self):
-        if self._bonus_hit_type_id is None:
-            self._bonus_hit_type_id = self.register_bonus_hit()
-        return self._bonus_hit_type_id
-    bonus_hit_type_id = property(fget=_get_bonus_hit_type_id)
-
-    def create_bonus_hits(self, num_hits):
-        """
-        Create `num_audio_hits` according to the parameters specified in `hit_params`
-
-        Parameters
-        ----------
-        num_audio_hits: int
-        hit_params: dict
-
-        Returns
-        -------
-        None
-        """
-        hit_type_id = self.bonus_hit_type_id
-        question = ExternalQuestion('https://%s/bonus' % settings.SERVER_NAME,
-                                    frame_height=settings.MTURK_FRAME_HEIGHT)
-        for _i in range(num_hits):
-            self.connection.create_hit(hit_type=hit_type_id,
-                                       question=question,
-                                       lifetime=(60 * 60 * 24 * 2),  # 2 days,
-                                       max_assignments=1,)
 
     def filter_hits(self, hits, hit_types=None):
         """
@@ -194,10 +144,6 @@ class TurkAdmin(object):
     def expire_all_hits(self):
         """
         Expire all hits
-
-        Parameters
-        ----------
-        hit_types: list of str, optional
 
         Returns
         -------
@@ -224,7 +170,8 @@ class TurkAdmin(object):
         # todo: doc
         if hit_types is None:
             hit_types = self.all_hit_types
-        return [self.connection.expire_hit(hit.HITId) for hit in self.filter_hits(self.connection.get_all_hits(), hit_types)]
+        return [self.connection.expire_hit(hit.HITId) for hit in
+                self.filter_hits(self.connection.get_all_hits(), hit_types)]
 
     def dispose_hits(self, hit_types=None):
         """
@@ -241,15 +188,12 @@ class TurkAdmin(object):
         # todo: doc
         if hit_types is None:
             hit_types = self.all_hit_types
-        return [self.connection.dispose_hit(hit.HITId) for hit in self.filter_hits(self.connection.get_all_hits(), hit_types)]
+        return [self.connection.dispose_hit(hit.HITId) for hit in
+                self.filter_hits(self.connection.get_all_hits(), hit_types)]
 
     def dispose_all_hits(self):
         """
         Dispose all hits
-
-        Parameters
-        ----------
-        hit_types: list of str, optional
 
         Returns
         -------
@@ -283,7 +227,7 @@ class TurkAdmin(object):
         for hit in hits:
             assignments.extend(self.connection.get_assignments(hit.HITId, page_size=page_size, page_number=page_number))
         return assignments
-    
+
     def get_all_assignments(self):
         """
         Get all assignments regardless of HIT type
@@ -300,19 +244,30 @@ class TurkAdmin(object):
                 page_assignments = self.connection.get_assignments(hit.HITId, page_size=100, page_number=page)
                 assignments.extend(page_assignments)
                 page += 1
-                if len(page_assignments)==0:
+                if len(page_assignments) == 0:
                     break
         return assignments
-    
+
     def get_all_assignments_to_review(self, hit_type, status=('Submitted', 'Approved', 'Rejected')):
         """
         Get *all* the assignments to review for the specified HIT type
+
+        Parameters
+        ----------
+        hit_type: str
+        status: str, optional
+            Assignment status. Valid values are 'Submitted', 'Approved', 'Rejected'.
+
+        Returns
+        -------
+        assignment: list
         """
         assignments = []
         page_number = 1
         while True:
             # NOTE: this will retrieve all reviewable assignments (in Submitted, Approve, Rejected states)
-            page_assignments = [a for a in self.get_assignments_to_review(hit_type, 100, page_number) if a.AssignmentStatus in status]
+            page_assignments = [a for a in self.get_assignments_to_review(hit_type, 100, page_number) if
+                                a.AssignmentStatus in status]
             assignments.extend(page_assignments)
             page_number += 1
             if len(page_assignments) == 0:
@@ -322,10 +277,6 @@ class TurkAdmin(object):
     def approve_all(self, hit_types=None):
         """
         Approve all 'Submitted' assignments
-
-        Parameters
-        ----------
-        hit_types: list of str, optional
 
         Returns
         -------
@@ -357,7 +308,6 @@ class TurkAdmin(object):
             if a.AssignmentStatus == 'Submitted':
                 self.connection.approve_assignment(a.AssignmentId, 'Thank you!')
 
-
     def get_completion_times(self, assignments=None):
         """
         Compute completion time of `assignments`. The completion time is the time between when the HIT was
@@ -385,25 +335,13 @@ class TurkAdmin(object):
                 times.append((x - y).seconds)
         return times
 
-    def create_caqe_qualification_type(self):
-        return self.connection.create_qualification_type(name="CAQE Worker",
-                                                         description="Crowdsourced Evaluation of Audio Quality worker",
-                                                         status="Active",
-                                                         auto_granted=False)
-
-    def assign_qualification(self, worker_id, value):
-        return self.connection.assign_qualification(self.caqe_qualification_id,
-                                                    worker_id,
-                                                    value,
-                                                    send_notification=True)
-
     def give_bonus_to_all_first_completed_trials(self,
                                                  price=0.30,
-                                                 reason="Thanks for completing our Critical Audio Listening Task HIT. This "
-                                                        "bonus is to compensate you for the extra time needed to "
+                                                 reason="Thanks for completing our Critical Audio Listening Task HIT. "
+                                                        "This bonus is to compensate you for the extra time needed to "
                                                         "complete the first assignment of the HIT.",
                                                  calculate_amt_only=False,
-                                                 already_bonused_ids=set([])):
+                                                 already_bonused_ids=set()):
         """
         Grant bonuses for the first completed trial for each participant.
 
@@ -415,6 +353,8 @@ class TurkAdmin(object):
             The message to send the workers when they receive the bonus
         calculate_amt_only: bool, optional
             Only calculate the amount of the bonus, do not actual pay out the bonus.
+        already_bonused_ids: set, optional
+            Set of participant ids that have already been bonused
 
 
         Returns
@@ -459,7 +399,7 @@ class TurkAdmin(object):
                                reason="Thanks for completing our Critical Audio Listening Task HIT. This "
                                       "bonus is to award you for your consistency in ratings during the task.",
                                calculate_amt_only=False,
-                               already_bonused_ids=set([])):
+                               already_bonused_ids=set()):
         """
         Grant bonuses based on ratings consistency. Bonus calculated by
         ((consistency - threshold) / (1.0 - threshold)) * max_price * (consistency > threshold))
@@ -474,6 +414,8 @@ class TurkAdmin(object):
             The message to send the workers when they receive the bonus
         calculate_amt_only: bool, optional
             Only calculate the amount of the bonus, do not actual pay out the bonus.
+        already_bonused_ids: set, optional
+            Set of participant ids that have already been bonused
 
 
         Returns
@@ -497,7 +439,8 @@ class TurkAdmin(object):
                 assignment_id = crowd_data['assignment_id']
                 worker_id = t.participant.crowd_worker_id
                 consistency = calculate_tsr(data['rating'])[0]
-                price = round(abs(((consistency - threshold) / (1.0 - threshold)) * max_price * (consistency > threshold)), 2)
+                price = round(
+                    abs(((consistency - threshold) / (1.0 - threshold)) * max_price * (consistency > threshold)), 2)
                 if not calculate_amt_only and price > 0.0:
                     print price
                     self.connection.grant_bonus(worker_id, assignment_id, Price(price), reason)
@@ -506,6 +449,3 @@ class TurkAdmin(object):
                 print e
                 trials_wo_valid_asgnmts.append(t)
         return total_bonus, trials_wo_valid_asgnmts
-        
-        
-    
