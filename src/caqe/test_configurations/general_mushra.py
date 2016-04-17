@@ -107,7 +107,7 @@ CONFIGURATION = dict(CONFIGURATION, **{
         pairs of recordings are consistent, i.e. if one recording has better quality than
         another, it should be rated higher.</p>
         """
-}
+})
 
 
 # Configure and insert conditions
