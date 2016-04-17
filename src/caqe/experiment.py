@@ -1,7 +1,7 @@
 """
 experiment.py
 
-Contains functions related to the experimental design and analysis of the listening test
+Contains functions related to the experimental design of the listening test
 """
 import copy
 import json
@@ -50,7 +50,7 @@ def get_available_conditions(limit_to_condition_ids=None):
 
 def assign_conditions(participant, limit_to_condition_ids=None):
     """
-    Assign an experimental conditions for a participant's trial.
+    Assign experimental conditions for a participant's trial.
 
     Parameters
     ----------
@@ -289,3 +289,25 @@ def decrypt_audio_stimuli(condition_data):
                                'selection': v['selection']}
         condition_data['ratings'] = ratings_dict
     return condition_data
+
+
+def is_pre_test_survey_valid(survey, inclusion_criteria):
+    """
+    Make sure the participant meets the inclusion critera.
+
+    Parameters
+    ----------
+    survey: dict
+    inclusion_criteria: list
+        List of expressions as strings which we will evaluate. If any of these inclusion criteria are False,
+        return False.
+
+    Returns
+    -------
+    bool
+    """
+    for ic in inclusion_criteria:
+        if not eval(ic):
+            return False
+
+    return True

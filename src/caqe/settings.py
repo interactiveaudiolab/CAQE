@@ -18,13 +18,17 @@ else:
 
 URL_SCHEME = ['http', 'https'][PRODUCTION]
 
-# Amazon Mechanical Turk settings
-MTURK_HOST = os.getenv('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
-
 # Audio file directory
 AUDIO_FILE_DIRECTORY = 'static/audio'
 
-from caqe.test_configurations.pairwise import *
+# Amazon Mechanical Turk host location. By default set it to the sandbox, and configure it via an environment
+# variable (so, it can be easily modified when deploying and testing using Heroku).
+MTURK_HOST = os.getenv('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
+
+# The size of the frame when
+MTURK_DEBUG_FRAME_HEIGHT = 1200
+
+from caqe.test_configurations.mushra import *
 
 
 
