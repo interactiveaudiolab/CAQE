@@ -1,6 +1,4 @@
 """
-experiment.py
-
 Contains functions related to the experimental design of the listening test
 """
 import copy
@@ -32,7 +30,7 @@ def get_available_conditions(limit_to_condition_ids=None):
 
     Returns
     -------
-    conditions
+    conditions: list of Condition
         The available conditions
     """
     finished_conditions = db.session.query(Trial.condition_id).filter(Trial.participant_passed_hearing_test == True). \

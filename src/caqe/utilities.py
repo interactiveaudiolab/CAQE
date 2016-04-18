@@ -1,6 +1,5 @@
 """
-utilities.py
-
+Utility functions
 """
 import base64
 import json

@@ -1,3 +1,7 @@
+"""
+The base CAQE configuration from which the other configurations are derived.
+"""
+
 import os
 
 # Set as production

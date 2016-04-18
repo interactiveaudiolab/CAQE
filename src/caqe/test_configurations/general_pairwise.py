@@ -1,3 +1,8 @@
+"""
+A general pairwise (e.g. A is better than B) configuration for evaluating overall quality
+of a set of audio stimuli.
+"""
+
 import copy
 from flask import url_for
 

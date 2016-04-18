@@ -1,6 +1,4 @@
 """
-views.py
-
 URL route handlers
 """
 
@@ -64,13 +62,13 @@ def strip_query_from_url(url):
 
 def get_current_participant(current_session, allow_none=False):
     """
-    Get the participant based on the participant_id in the current session.
+    Get the participant based on the `participant_id` in the current session.
 
     Parameters
     ----------
     current_session : flask.Session
     allow_none : bool, optional
-        If `allow_none`==False, then if participant_id is not defined or the id is invalid, then raise an exception,
+        If `allow_none`==False, then if `participant_id` is not defined or the id is invalid, then raise an exception,
         otherwise return None. Default is False.
 
     Returns

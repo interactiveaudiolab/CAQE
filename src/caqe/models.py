@@ -1,6 +1,4 @@
 """
-models.py
-
 SQLAlchemy database models
 """
 import datetime

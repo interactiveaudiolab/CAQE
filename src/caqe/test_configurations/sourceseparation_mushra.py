@@ -1,3 +1,13 @@
+"""
+A MUSHRA (MUltiple Stimulus Hidden Reference and Anchor) configuration for evaluating output quality of audio source
+separation algorithms on 4 different quality scales:
+
+#. Preservation of the Target Sound
+#. Suppression of Other Sounds
+#. Absence of Additional Artificial Noise
+#. Lack of Distortions to the Target Sound
+"""
+
 import copy
 from flask import url_for
 

@@ -1,6 +1,4 @@
 """
-generate_key_file.py
-
 Generates `secret_keys.py` which contains the crypto keys for sessions and CSRF.
 """
 

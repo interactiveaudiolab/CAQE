@@ -1,4 +1,4 @@
-# caqe
-Crowdsourced Audio Quality Evaluation
+CAQE - Crowdsourced Audio Quality Evaluation
+============================================
 
 COMING SOON!

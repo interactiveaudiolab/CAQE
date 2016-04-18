@@ -1,6 +1,4 @@
 """
-flask_configurations.py
-
 Configurations for Flask
 """
 

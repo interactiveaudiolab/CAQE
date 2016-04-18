@@ -1,7 +1,5 @@
 """
-tuyrk_admin.py
-
-Amazon Mechanical Turk administration
+Amazon Mechanical Turk administration. Use this module to post, approve, expire, and bonus HITs.
 """
 import json
 import settings
@@ -9,7 +7,7 @@ import models
 import numpy as np
 
 from boto.mturk.connection import MTurkConnection, MTurkRequestError
-from boto.mturk.qualification import Qualifications, Requirement, NumberHitsApprovedRequirement, \
+from boto.mturk.qualification import Qualifications, NumberHitsApprovedRequirement, \
     PercentAssignmentsApprovedRequirement
 from boto.mturk.price import Price
 from boto.mturk.question import ExternalQuestion
@@ -32,16 +30,16 @@ def turk_connect():
 
 
 def calculate_tsr(ratings, stimuli=('S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8')):
-    N = len(stimuli)
-    m = np.zeros([N, N])
+    n = len(stimuli)
+    m = np.zeros([n, n])
     for k, r in ratings.items():
         m[stimuli.index(r['stimuli'][0]), stimuli.index(r['stimuli'][1])] = r['selection'] == 'A'
         m[stimuli.index(r['stimuli'][1]), stimuli.index(r['stimuli'][0])] = not (r['selection'] == 'A')
     n_test = 0
     n_pass = 0
-    for i in range(0, N - 1):
-        for j in range(0, N - 1):
-            for k in range(0, N - 1):
+    for i in range(0, n - 1):
+        for j in range(0, n - 1):
+            for k in range(0, n - 1):
                 if i == j or j == k:
                     continue
                 if m[i, j] == 1 and m[j, k] == 1:
@@ -63,55 +61,62 @@ class TurkAdmin(object):
 
         self.all_hit_types = [self.hit_type_id, ]
 
-    def create_hits(self, num_hits, hit_params=settings.MTURK_HIT_PARAMETERS, hit_type_id=None):
+    def create_hits(self, num_hits, configuration=None, hit_type_id=None):
         """
         Create `num_audio_hits` according to the parameters specified in `hit_params`
 
         Parameters
         ----------
         num_hits: int
-        hit_params: dict
+        configuration: dict
         hit_type_id: int, optional
 
         Returns
         -------
         None
         """
+        if configuration is None:
+            configuration = settings.CONFIGURATION
+
         if hit_type_id is None:
             hit_type_id = self.hit_type_id
-        question = ExternalQuestion(hit_params['question_url'], frame_height=settings.MTURK_FRAME_HEIGHT)
+        question = ExternalQuestion(configuration['question_url'],
+                                    frame_height=configuration['mturk_frame_height'])
         for _i in range(num_hits):
             self.connection.create_hit(hit_type=hit_type_id,
                                        question=question,
-                                       lifetime=hit_params['lifetimeInSeconds'],
-                                       max_assignments=hit_params['maxAssignments'], )
+                                       lifetime=configuration['lifetimeInSeconds'],
+                                       max_assignments=configuration['maxAssignments'], )
 
-    def register_hit(self, hit_params=settings.MTURK_HIT_PARAMETERS):
+    def register_hit(self, configuration=None):
         """
         Register a hit on Mechanical Turk according to `hit_params`. This will provide you with a HITTypeId.
 
         Parameters
         ----------
-        hit_params: dict
+        configuration: dict
 
         Returns
         -------
         str
             The HITTypeId which is how you refer to your newly registered hit with Amazon
         """
+        if configuration is None:
+            configuration = settings.CONFIGURATION
+
         qualifications = Qualifications()
         qualifications.add(NumberHitsApprovedRequirement('GreaterThanOrEqualTo',
-                                                         hit_params['number_hits_approved_requirement']))
+                                                         configuration['number_hits_approved_requirement']))
         qualifications.add(PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo',
-                                                                 hit_params[
+                                                                 configuration[
                                                                      'percent_assignments_approved_requirement']))
 
-        hit_type = self.connection.register_hit_type(hit_params['title'],
-                                                     hit_params['description'],
-                                                     Price(hit_params['reward']),
-                                                     hit_params['assignmentDurationInSeconds'],
-                                                     hit_params['keywords'],
-                                                     hit_params['autoApprovalDelayInSeconds'],
+        hit_type = self.connection.register_hit_type(configuration['title'],
+                                                     configuration['description'],
+                                                     Price(configuration['reward']),
+                                                     configuration['assignmentDurationInSeconds'],
+                                                     configuration['keywords'],
+                                                     configuration['autoApprovalDelayInSeconds'],
                                                      qualifications)
         return hit_type[0].HITTypeId
 
@@ -335,9 +340,7 @@ class TurkAdmin(object):
 
     def give_bonus_to_all_first_completed_trials(self,
                                                  price=0.30,
-                                                 reason="Thanks for completing our Critical Audio Listening Task HIT. "
-                                                        "This bonus is to compensate you for the extra time needed to "
-                                                        "complete the first assignment of the HIT.",
+                                                 reason=None,
                                                  calculate_amt_only=False,
                                                  already_bonused_ids=set()):
         """
@@ -364,6 +367,10 @@ class TurkAdmin(object):
             when submitting the assignment)
 
         """
+        if reason is None:
+            reason = "Thanks for completing our Critical Audio Listening Task HIT. This bonus is to compensate you " \
+                     "for the extra time needed to complete the first assignment of the HIT."
+
         total_bonus = 0
         participants_wo_valid_asgnmts = []
         participants = models.Participant.query.all()
@@ -394,13 +401,13 @@ class TurkAdmin(object):
     def give_consistency_bonus(self,
                                max_price=0.25,
                                threshold=0.7,
-                               reason="Thanks for completing our Critical Audio Listening Task HIT. This "
-                                      "bonus is to award you for your consistency in ratings during the task.",
+                               reason=None,
                                calculate_amt_only=False,
                                already_bonused_ids=set()):
         """
         Grant bonuses based on ratings consistency. Bonus calculated by
-        ((consistency - threshold) / (1.0 - threshold)) * max_price * (consistency > threshold))
+
+        .. math:: ((consistency - threshold) / (1.0 - threshold)) * max\_price * (consistency > threshold))
 
         Parameters
         ----------
@@ -425,6 +432,9 @@ class TurkAdmin(object):
             when submitting the assignment)
 
         """
+        if reason is None:
+            reason = "Thanks for completing our Critical Audio Listening Task HIT. This bonus is to award you for " \
+                     "your consistency in ratings during the task."
         total_bonus = 0
         trials_wo_valid_asgnmts = []
         trials = models.Trial.query.all()

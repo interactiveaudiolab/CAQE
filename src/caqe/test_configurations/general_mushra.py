@@ -1,3 +1,8 @@
+"""
+A general MUSHRA (MUltiple Stimulus Hidden Reference and Anchor) configuration for evaluating overall quality
+of a set of audio stimuli.
+"""
+
 import copy
 from flask import url_for
 

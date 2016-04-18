@@ -1,7 +1,5 @@
 """
-settings.py
-
-Settings for CEAQ. These are for the CEAQ user to configure.
+Settings for CAQE. These are for the CAQE user to configure.
 """
 import os
 
