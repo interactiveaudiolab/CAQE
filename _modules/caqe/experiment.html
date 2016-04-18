@@ -1,0 +1,509 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.experiment &mdash; CAQE 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1a1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1a1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/caqe.test_configurations.html">Testing Configurations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/caqe.html">CAQE Package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>caqe.experiment</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for caqe.experiment</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Contains functions related to the experimental design of the listening test</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">func</span>
+
+<span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">utilities</span>
+
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Participant</span><span class="p">,</span> <span class="n">Trial</span>
+<span class="kn">from</span> <span class="nn">caqe</span> <span class="kn">import</span> <span class="n">db</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_available_conditions"><a class="viewcode-back" href="../../source/caqe.experiment.html#caqe.experiment.get_available_conditions">[docs]</a><span class="k">def</span> <span class="nf">get_available_conditions</span><span class="p">(</span><span class="n">limit_to_condition_ids</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get conditions available without regard to participant.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    limit_to_condition_ids: list of int</span>
+<span class="sd">        List of conditions ids to limit to.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    conditions: list of Condition</span>
+<span class="sd">        The available conditions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">finished_conditions</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">condition_id</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">participant_passed_hearing_test</span> <span class="o">==</span> <span class="bp">True</span><span class="p">)</span><span class="o">.</span> \
+        <span class="n">group_by</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">condition_id</span><span class="p">)</span><span class="o">.</span><span class="n">having</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;trials_per_condition&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+    <span class="n">conditions</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Condition</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">notin_</span><span class="p">(</span><span class="n">finished_conditions</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">limit_to_condition_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="n">limit_to_condition_ids</span><span class="p">))</span>
+
+    <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">conditions</span></div>
+
+
+<div class="viewcode-block" id="assign_conditions"><a class="viewcode-back" href="../../source/caqe.experiment.html#caqe.experiment.assign_conditions">[docs]</a><span class="k">def</span> <span class="nf">assign_conditions</span><span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">limit_to_condition_ids</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assign experimental conditions for a participant&#39;s trial.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    participant : caqe.models.Participant</span>
+<span class="sd">    limit_to_condition_ids : list, optional</span>
+<span class="sd">        List of integer ids.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    condition_ids : list of ints</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ideal assignment in our scenario:</span>
+    <span class="c1"># If the participant passed the listening test:</span>
+    <span class="c1"># Assign a participant the first condition (in order of index) that has</span>
+    <span class="c1">#   A) not been assigned to them before</span>
+    <span class="c1">#   B) has not received the required number of ratings by people that have passed the listening test</span>
+    <span class="c1"># If the participant has not passed the listening test:</span>
+    <span class="c1">#   Same as above. This may give us a bit more ratings from lower condition indices for people that have not passed</span>
+    <span class="c1">#   the listening test, but I think that is ok.</span>
+
+    <span class="c1"># construct our subqueries</span>
+    <span class="c1"># conditions which have the required number of trials with hearing_test passed participants</span>
+    <span class="n">conditions</span> <span class="o">=</span> <span class="n">get_available_conditions</span><span class="p">(</span><span class="n">limit_to_condition_ids</span><span class="p">)</span>
+
+    <span class="c1"># the conditions the participant has already done</span>
+    <span class="n">participant_conditions</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">condition_id</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Participant</span><span class="p">)</span><span class="o">.</span> \
+        <span class="nb">filter</span><span class="p">(</span><span class="n">Participant</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">participant</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+
+    <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">notin_</span><span class="p">(</span><span class="n">participant_conditions</span><span class="p">))</span>
+
+    <span class="c1"># conditions = db.session.query(Condition). \</span>
+    <span class="c1">#     filter(and_(Condition.id.notin_(finished_conditions),</span>
+    <span class="c1">#                 Condition.id.notin_(participant_conditions),</span>
+    <span class="c1">#                 Condition.id.in_([2, 12, 22, 32, 42, 5, 15, 25, 35, 45]))). \</span>
+    <span class="c1">#     order_by(Condition.id).all()</span>
+    <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">conditions</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;No hits left for </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">participant</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;limit_subject_to_one_task_type&#39;</span><span class="p">]:</span>
+        <span class="n">previous_trial</span> <span class="o">=</span> <span class="n">participant</span><span class="o">.</span><span class="n">trials</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">datetime_completed</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">previous_trial</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">test_id</span> <span class="o">!=</span> <span class="n">conditions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">test_id</span><span class="p">:</span>
+                <span class="c1"># If the participant is supposed to be limited to one task type, and we are out of all task of that type</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Subject limited to ont task type. No hits left for </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">participant</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># no previous trials</span>
+            <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;test_condition_order_randomized&#39;</span><span class="p">]:</span>  <span class="c1"># i.e. randomize the condition order within a test</span>
+        <span class="c1"># determine what test we are on</span>
+        <span class="n">current_test_id</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">test_id</span>
+
+        <span class="c1"># randomize the order of the conditions within that test</span>
+        <span class="n">condition_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conditions</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">test_id</span> <span class="o">==</span> <span class="n">current_test_id</span><span class="p">]</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">condition_ids</span><span class="p">)</span>
+        <span class="n">condition_ids</span> <span class="o">=</span> <span class="n">condition_ids</span><span class="p">[:</span><span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;conditions_per_evaluation&#39;</span><span class="p">]]</span>
+
+        <span class="c1"># if there are not enough conditions left from this test, add more from the next.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition_ids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;conditions_per_evaluation&#39;</span><span class="p">]:</span>
+            <span class="n">more_cids</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conditions</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">test_id</span> <span class="o">==</span> <span class="n">current_test_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">more_cids</span><span class="p">)</span>
+            <span class="n">condition_ids</span> <span class="o">+=</span> <span class="n">more_cids</span><span class="p">[:(</span><span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;conditions_per_evaluation&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition_ids</span><span class="p">))]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">condition_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">[:</span><span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;conditions_per_evaluation&#39;</span><span class="p">]]]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Participant </span><span class="si">%r</span><span class="s1"> assigned conditions: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">condition_ids</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">condition_ids</span></div>
+
+
+<div class="viewcode-block" id="get_test_configurations"><a class="viewcode-back" href="../../source/caqe.experiment.html#caqe.experiment.get_test_configurations">[docs]</a><span class="k">def</span> <span class="nf">get_test_configurations</span><span class="p">(</span><span class="n">condition_ids</span><span class="p">,</span> <span class="n">participant_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate template configuration variables from the list of experimental conditions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    condition_ids : list</span>
+<span class="sd">    participant_id : int</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    test_configuration : list of list of dicts</span>
+<span class="sd">        A list of dictionaries containing all the configuration variables for each test, including a list of conditions</span>
+<span class="sd">        and their variables</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">test_configurations</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">current_test_id</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">test_config</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">for</span> <span class="n">c_id</span> <span class="ow">in</span> <span class="n">condition_ids</span><span class="p">:</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="n">Condition</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">c_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">condition</span><span class="o">.</span><span class="n">test_id</span> <span class="o">!=</span> <span class="n">current_test_id</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">test_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">test_configurations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_config</span><span class="p">)</span>
+            <span class="n">current_test_id</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">test_id</span>
+            <span class="n">test_config</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">data</span><span class="p">),</span>
+                           <span class="s1">&#39;conditions&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="n">condition_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="c1"># make sure that condition_id is added to the conditions dict</span>
+        <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;encrypt_audio_stimuli_urls&#39;</span><span class="p">]:</span>
+            <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;reference_files&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encrypt_audio_stimuli</span><span class="p">(</span><span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;reference_files&#39;</span><span class="p">],</span>
+                                                                      <span class="n">participant_id</span><span class="p">,</span>
+                                                                      <span class="n">condition</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+            <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;stimulus_files&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encrypt_audio_stimuli</span><span class="p">(</span><span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;stimulus_files&#39;</span><span class="p">],</span>
+                                                                     <span class="n">participant_id</span><span class="p">,</span>
+                                                                     <span class="n">condition</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">test_config</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">({</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">condition</span><span class="o">.</span><span class="n">id</span><span class="p">},</span> <span class="o">**</span><span class="n">condition_data</span><span class="p">))</span>
+    <span class="n">test_configurations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_config</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">test_configurations</span></div>
+
+
+<div class="viewcode-block" id="generate_comparison_pairs"><a class="viewcode-back" href="../../source/caqe.experiment.html#caqe.experiment.generate_comparison_pairs">[docs]</a><span class="k">def</span> <span class="nf">generate_comparison_pairs</span><span class="p">(</span><span class="n">condition_datas</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate all stimulus comparison pairs for a condition and return in a random order for a paired comparison test.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    condition_datas: list of dict</span>
+<span class="sd">        List of dictionary of condition data as returned in the test_configuration defined by get_test_configurations()</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    condition_datas: list of dict</span>
+<span class="sd">        List of updated dictionary of condition data with a new field, `comparison_pairs`, which is a list of stimulus</span>
+<span class="sd">        pairs, e.g. ((&#39;E1&#39;,&#39;E2&#39;),(&#39;E5&#39;,&#39;E8&#39;),...)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">condition_data</span> <span class="ow">in</span> <span class="n">condition_datas</span><span class="p">:</span>
+        <span class="n">stimulus_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;stimulus_files&#39;</span><span class="p">]]</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">stimulus_names</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>
+        <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;comparison_pairs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pairs</span>
+
+    <span class="k">return</span> <span class="n">condition_datas</span></div>
+
+
+<div class="viewcode-block" id="encrypt_audio_stimuli"><a class="viewcode-back" href="../../source/caqe.experiment.html#caqe.experiment.encrypt_audio_stimuli">[docs]</a><span class="k">def</span> <span class="nf">encrypt_audio_stimuli</span><span class="p">(</span><span class="n">audio_stimuli</span><span class="p">,</span> <span class="n">participant_id</span><span class="p">,</span> <span class="n">condition_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reorder and encrypt the condition files. Do this by encoding each file as a special URL. One in which is an</span>
+<span class="sd">    encrypted, serialized, dictionary. The dictionary contains, the participant_id (p_id), the condition_id (c_id),</span>
+<span class="sd">    the stimuli_id (s_id), and a encrypted stimuli_id (e_id)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    audio_stimuli: list of duples</span>
+<span class="sd">        The first element of each duple is a key, the second is the audio_file_path</span>
+<span class="sd">        For all non-references, the key should be of the form S[0-9+]</span>
+<span class="sd">    participant_id: int</span>
+<span class="sd">    condition_id: int</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    encrypted_audio_stimuli: list of duples</span>
+<span class="sd">        The first element of each duple is a key, the second is the encrypted audio_file_path</span>
+<span class="sd">        For all non-references, the key should be of the form E[0-9+]. The order of the stimuli will be random (except</span>
+<span class="sd">        for the references)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">encode_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">_s_id</span><span class="p">,</span> <span class="n">_e_id</span><span class="p">):</span>
+        <span class="n">adict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;s_id&#39;</span><span class="p">:</span> <span class="n">_s_id</span><span class="p">,</span>
+                 <span class="s1">&#39;p_id&#39;</span><span class="p">:</span> <span class="n">participant_id</span><span class="p">,</span>
+                 <span class="s1">&#39;c_id&#39;</span><span class="p">:</span> <span class="n">condition_id</span><span class="p">,</span>
+                 <span class="s1">&#39;e_id&#39;</span><span class="p">:</span> <span class="n">_e_id</span><span class="p">,</span>
+                 <span class="s1">&#39;URL&#39;</span><span class="p">:</span> <span class="n">url</span><span class="p">}</span>
+        <span class="k">return</span> <span class="s1">&#39;/audio/&#39;</span> <span class="o">+</span> <span class="n">utilities</span><span class="o">.</span><span class="n">encrypt_data</span><span class="p">(</span><span class="n">adict</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.wav&#39;</span>
+
+    <span class="n">audio_stimuli</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">audio_stimuli</span><span class="p">)</span>
+
+    <span class="n">references</span> <span class="o">=</span> <span class="p">[(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">encode_url</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">audio_stimuli</span> <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;S&#39;</span><span class="p">]</span>
+
+    <span class="n">non_references</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">audio_stimuli</span> <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;stimulus_order_randomized&#39;</span><span class="p">]:</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">non_references</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">non_references</span><span class="p">):</span>
+        <span class="n">e_id</span> <span class="o">=</span> <span class="s1">&#39;E</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">s_id</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">e_id</span>
+        <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">encode_url</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">s_id</span><span class="p">,</span> <span class="n">e_id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">references</span> <span class="o">+</span> <span class="n">non_references</span></div>
+
+
+<div class="viewcode-block" id="decrypt_audio_stimuli"><a class="viewcode-back" href="../../source/caqe.experiment.html#caqe.experiment.decrypt_audio_stimuli">[docs]</a><span class="k">def</span> <span class="nf">decrypt_audio_stimuli</span><span class="p">(</span><span class="n">condition_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decrypt the audio stimuli URLs from submitted trial data</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    condition_data: dict</span>
+<span class="sd">        The condition data with encrypted audio URLs</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    trial_data: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">decode_url</span><span class="p">(</span><span class="n">encrypted_url</span><span class="p">):</span>
+        <span class="c1"># remove /audio/</span>
+        <span class="n">encrypted_data</span> <span class="o">=</span> <span class="n">encrypted_url</span><span class="p">[</span><span class="mi">7</span><span class="p">:]</span>
+        <span class="c1"># remove .wav</span>
+        <span class="n">encrypted_data</span> <span class="o">=</span> <span class="n">encrypted_data</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">utilities</span><span class="o">.</span><span class="n">decrypt_data</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">encrypted_data</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;encrypt_audio_stimuli_urls&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">condition_data</span>
+    <span class="n">encrypted_filenames</span> <span class="o">=</span> <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;stimulusFiles&#39;</span><span class="p">]</span>
+    <span class="n">decrypted_filenames</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">translation</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># decrypt the URLs to find the mapping between s_id and e_id and the real filename</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">encrypted_filenames</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">adict</span> <span class="o">=</span> <span class="n">decode_url</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">decrypted_filenames</span><span class="p">[</span><span class="n">adict</span><span class="p">[</span><span class="s1">&#39;s_id&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">adict</span><span class="p">[</span><span class="s1">&#39;URL&#39;</span><span class="p">]</span>
+        <span class="n">translation</span><span class="p">[</span><span class="n">adict</span><span class="p">[</span><span class="s1">&#39;e_id&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">adict</span><span class="p">[</span><span class="s1">&#39;s_id&#39;</span><span class="p">]</span>
+
+    <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;stimulusFiles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">decrypted_filenames</span>
+
+    <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;test_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;mushra&#39;</span><span class="p">:</span>
+        <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;ratings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">translation</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;ratings&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+    <span class="k">elif</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;test_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pairwise&#39;</span><span class="p">:</span>
+        <span class="n">ratings_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;ratings&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">ratings_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;stimuli&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">translation</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;stimuli&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span>
+                                           <span class="n">translation</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;stimuli&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]]],</span>
+                               <span class="s1">&#39;selection&#39;</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;selection&#39;</span><span class="p">]}</span>
+        <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;ratings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratings_dict</span>
+    <span class="k">return</span> <span class="n">condition_data</span></div>
+
+
+<div class="viewcode-block" id="is_pre_test_survey_valid"><a class="viewcode-back" href="../../source/caqe.experiment.html#caqe.experiment.is_pre_test_survey_valid">[docs]</a><span class="k">def</span> <span class="nf">is_pre_test_survey_valid</span><span class="p">(</span><span class="n">survey</span><span class="p">,</span> <span class="n">inclusion_criteria</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make sure the participant meets the inclusion critera.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    survey: dict</span>
+<span class="sd">    inclusion_criteria: list</span>
+<span class="sd">        List of expressions as strings which we will evaluate. If any of these inclusion criteria are False,</span>
+<span class="sd">        return False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">ic</span> <span class="ow">in</span> <span class="n">inclusion_criteria</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">eval</span><span class="p">(</span><span class="n">ic</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="k">return</span> <span class="bp">True</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

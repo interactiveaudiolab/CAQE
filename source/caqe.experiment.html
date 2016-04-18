@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.experiment module &mdash; CAQE 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1a1 documentation" href="../index.html"/>
+        <link rel="up" title="caqe package" href="caqe.html"/>
+        <link rel="next" title="caqe.flask_configurations module" href="caqe.flask_configurations.html"/>
+        <link rel="prev" title="caqe package" href="caqe.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1a1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="caqe.test_configurations.html">Testing Configurations</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="caqe.html">CAQE Package</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">caqe.experiment module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.flask_configurations.html">caqe.flask_configurations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.generate_key_file.html">caqe.generate_key_file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.models.html">caqe.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.settings.html">caqe.settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.turk_admin.html">caqe.turk_admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.utilities.html">caqe.utilities module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.views.html">caqe.views module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="caqe.html">caqe package</a> &raquo;</li>
+      
+    <li>caqe.experiment module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/caqe.experiment.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-caqe.experiment">
+<span id="caqe-experiment-module"></span><h1>caqe.experiment module<a class="headerlink" href="#module-caqe.experiment" title="Permalink to this headline">¶</a></h1>
+<p>Contains functions related to the experimental design of the listening test</p>
+<dl class="function">
+<dt id="caqe.experiment.assign_conditions">
+<code class="descclassname">caqe.experiment.</code><code class="descname">assign_conditions</code><span class="sig-paren">(</span><em>participant</em>, <em>limit_to_condition_ids=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#assign_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.assign_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign experimental conditions for a participant&#8217;s trial.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>participant</strong> (<a class="reference internal" href="caqe.models.html#caqe.models.Participant" title="caqe.models.Participant"><em>caqe.models.Participant</em></a>) &#8211; </li>
+<li><strong>limit_to_condition_ids</strong> (<em>list, optional</em>) &#8211; List of integer ids.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>condition_ids</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of ints</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.experiment.decrypt_audio_stimuli">
+<code class="descclassname">caqe.experiment.</code><code class="descname">decrypt_audio_stimuli</code><span class="sig-paren">(</span><em>condition_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#decrypt_audio_stimuli"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.decrypt_audio_stimuli" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrypt the audio stimuli URLs from submitted trial data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>condition_data</strong> (<em>dict</em>) &#8211; The condition data with encrypted audio URLs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>trial_data</strong></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.experiment.encrypt_audio_stimuli">
+<code class="descclassname">caqe.experiment.</code><code class="descname">encrypt_audio_stimuli</code><span class="sig-paren">(</span><em>audio_stimuli</em>, <em>participant_id</em>, <em>condition_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#encrypt_audio_stimuli"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.encrypt_audio_stimuli" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reorder and encrypt the condition files. Do this by encoding each file as a special URL. One in which is an
+encrypted, serialized, dictionary. The dictionary contains, the participant_id (p_id), the condition_id (c_id),
+the stimuli_id (s_id), and a encrypted stimuli_id (e_id)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>audio_stimuli</strong> (<em>list of duples</em>) &#8211; The first element of each duple is a key, the second is the audio_file_path
+For all non-references, the key should be of the form S[0-9+]</li>
+<li><strong>participant_id</strong> (<em>int</em>) &#8211; </li>
+<li><strong>condition_id</strong> (<em>int</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>encrypted_audio_stimuli</strong> &#8211; The first element of each duple is a key, the second is the encrypted audio_file_path
+For all non-references, the key should be of the form E[0-9+]. The order of the stimuli will be random (except
+for the references)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of duples</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.experiment.generate_comparison_pairs">
+<code class="descclassname">caqe.experiment.</code><code class="descname">generate_comparison_pairs</code><span class="sig-paren">(</span><em>condition_datas</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#generate_comparison_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.generate_comparison_pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate all stimulus comparison pairs for a condition and return in a random order for a paired comparison test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>condition_datas</strong> (<em>list of dict</em>) &#8211; List of dictionary of condition data as returned in the test_configuration defined by get_test_configurations()</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>condition_datas</strong> &#8211; List of updated dictionary of condition data with a new field, <cite>comparison_pairs</cite>, which is a list of stimulus
+pairs, e.g. ((&#8216;E1&#8217;,&#8217;E2&#8217;),(&#8216;E5&#8217;,&#8217;E8&#8217;),...)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.experiment.get_available_conditions">
+<code class="descclassname">caqe.experiment.</code><code class="descname">get_available_conditions</code><span class="sig-paren">(</span><em>limit_to_condition_ids=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#get_available_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.get_available_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get conditions available without regard to participant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>limit_to_condition_ids</strong> (<em>list of int</em>) &#8211; List of conditions ids to limit to.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>conditions</strong> &#8211; The available conditions</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of Condition</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.experiment.get_test_configurations">
+<code class="descclassname">caqe.experiment.</code><code class="descname">get_test_configurations</code><span class="sig-paren">(</span><em>condition_ids</em>, <em>participant_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#get_test_configurations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.get_test_configurations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate template configuration variables from the list of experimental conditions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>condition_ids</strong> (<em>list</em>) &#8211; </li>
+<li><strong>participant_id</strong> (<em>int</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>test_configuration</strong> &#8211; A list of dictionaries containing all the configuration variables for each test, including a list of conditions
+and their variables</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of list of dicts</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.experiment.is_pre_test_survey_valid">
+<code class="descclassname">caqe.experiment.</code><code class="descname">is_pre_test_survey_valid</code><span class="sig-paren">(</span><em>survey</em>, <em>inclusion_criteria</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#is_pre_test_survey_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.is_pre_test_survey_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure the participant meets the inclusion critera.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>survey</strong> (<em>dict</em>) &#8211; </li>
+<li><strong>inclusion_criteria</strong> (<em>list</em>) &#8211; List of expressions as strings which we will evaluate. If any of these inclusion criteria are False,
+return False.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="caqe.flask_configurations.html" class="btn btn-neutral float-right" title="caqe.flask_configurations module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="caqe.html" class="btn btn-neutral" title="caqe package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.flask_configurations &mdash; CAQE 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1a1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1a1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/caqe.test_configurations.html">Testing Configurations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/caqe.html">CAQE Package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>caqe.flask_configurations</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for caqe.flask_configurations</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Configurations for Flask</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="n">SQLALCHEMY_DATABASE_URI</span><span class="p">,</span> <span class="n">SERVER_NAME</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">secret_keys</span> <span class="kn">import</span> <span class="n">CSRF_SECRET_KEY</span><span class="p">,</span> <span class="n">SESSION_KEY</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">CSRF_SECRET_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CSRF_SECRET_KEY&#39;</span><span class="p">]</span>
+        <span class="n">SESSION_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SESSION_KEY&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;No keys found. Either define a secret_keys.py file (using generate_key_files.py) or set the &#39;</span>
+                       <span class="s1">&#39;keys using environment variables.&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../source/caqe.flask_configurations.html#caqe.flask_configurations.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="n">CSRF_SECRET_KEY</span>
+    <span class="n">CSRF_SESSION_KEY</span> <span class="o">=</span> <span class="n">SESSION_KEY</span>
+    <span class="n">CSRF_ENABLED</span> <span class="o">=</span> <span class="bp">True</span></div>
+
+
+<div class="viewcode-block" id="Testing"><a class="viewcode-back" href="../../source/caqe.flask_configurations.html#caqe.flask_configurations.Testing">[docs]</a><span class="k">class</span> <span class="nc">Testing</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For testing, add:</span>
+
+<span class="sd">        0.0.0.0     caqe.local</span>
+
+<span class="sd">    to /etc/hosts</span>
+<span class="sd">    We need to set the SERVER_NAME to resolve `url_for` definitions when constructing the database, but we can&#39;t simply</span>
+<span class="sd">    use `localhost` because the secure sessions are not compatible with that.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TESTING</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite://&#39;</span>
+    <span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="s1">&#39;caqe.local:5000&#39;</span></div>
+
+
+<div class="viewcode-block" id="Development"><a class="viewcode-back" href="../../source/caqe.flask_configurations.html#caqe.flask_configurations.Development">[docs]</a><span class="k">class</span> <span class="nc">Development</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="n">SQLALCHEMY_DATABASE_URI</span>
+    <span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="s1">&#39;caqe.local:5000&#39;</span></div>
+
+
+<div class="viewcode-block" id="Production"><a class="viewcode-back" href="../../source/caqe.flask_configurations.html#caqe.flask_configurations.Production">[docs]</a><span class="k">class</span> <span class="nc">Production</span><span class="p">(</span><span class="n">Config</span><span class="p">):</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="n">SQLALCHEMY_DATABASE_URI</span>
+    <span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="n">SERVER_NAME</span>
+    <span class="n">PREFERRED_URL_SCHEME</span> <span class="o">=</span> <span class="s1">&#39;https&#39;</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

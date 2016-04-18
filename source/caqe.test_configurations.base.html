@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.test_configurations.base module &mdash; CAQE 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1a1 documentation" href="../index.html"/>
+        <link rel="up" title="caqe.test_configurations package" href="caqe.test_configurations.html"/>
+        <link rel="next" title="caqe.test_configurations.general_mushra module" href="caqe.test_configurations.general_mushra.html"/>
+        <link rel="prev" title="caqe.test_configurations package" href="caqe.test_configurations.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1a1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="caqe.test_configurations.html">Testing Configurations</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="caqe.test_configurations.html#pre-defined-configurations">Pre-defined Configurations</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Base configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#configuration-source">Configuration Source</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="caqe.test_configurations.general_mushra.html">MUSHRA for overall quality evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="caqe.test_configurations.general_pairwise.html">Pairwise for overall quality evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="caqe.test_configurations.sourceseparation_mushra.html">MUSHRA for source separation quality evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="caqe.test_configurations.sourceseparation_pairwise.html">Pairwise for source separation quality evaluation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="caqe.html">CAQE Package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="caqe.test_configurations.html">caqe.test_configurations package</a> &raquo;</li>
+      
+    <li>caqe.test_configurations.base module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/caqe.test_configurations.base.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-caqe.test_configurations.base">
+<span id="caqe-test-configurations-base-module"></span><h1>caqe.test_configurations.base module<a class="headerlink" href="#module-caqe.test_configurations.base" title="Permalink to this headline">¶</a></h1>
+<p>The base CAQE configuration from which the other configurations are derived.</p>
+<div class="section" id="configuration-source">
+<h2>Configuration Source<a class="headerlink" href="#configuration-source" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The base CAQE configuration from which the other configurations are derived.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Set as production</span>
+<span class="n">PRODUCTION</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;FLASK_CONF&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;PRODUCTION&#39;</span>
+
+<span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;caqe.local:5000&#39;</span><span class="p">,</span> <span class="s1">&#39;caqe.herokuapp.com&#39;</span><span class="p">][</span><span class="n">PRODUCTION</span><span class="p">]</span>
+
+<span class="c1"># CONFIGURATION contains all of the configurable values for the test. For each condition</span>
+<span class="n">CONFIGURATION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># BACKEND VARIABLES</span>
+    <span class="c1"># The location of the production server</span>
+    <span class="s1">&#39;server_name&#39;</span><span class="p">:</span> <span class="n">SERVER_NAME</span><span class="p">,</span>
+
+    <span class="c1"># Encrypt the URLs so that users can&#39;t game consistency</span>
+    <span class="s1">&#39;encrypt_audio_stimuli_urls&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># TESTING VARIABLES</span>
+    <span class="c1"># The test type (limited to &#39;pairwise&#39; or &#39;mushra&#39; for now)</span>
+    <span class="s1">&#39;test_type&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+
+    <span class="c1"># Enable participants to enter through &#39;/anonymous&#39;</span>
+    <span class="s1">&#39;anonymous_participants_enabled&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">][</span><span class="n">PRODUCTION</span><span class="p">],</span>
+
+    <span class="c1"># Save IP addresses of participants</span>
+    <span class="s1">&#39;ip_collection_enabled&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># Obtain consent from each participant (see consent.html)</span>
+    <span class="s1">&#39;obtain_consent&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># Ask participants a survey before evaluation (see pre_test_survey.html)</span>
+    <span class="s1">&#39;pre_test_survey_enabled&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># Pre-test survey inclusion criteria</span>
+    <span class="s1">&#39;pre_test_survey_inclusion_criteria&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;int(survey[&#39;age&#39;]) &gt;= 18&quot;</span><span class="p">,</span>
+                                           <span class="s2">&quot;survey[&#39;hearing_disorder&#39;] == &#39;No&#39;&quot;</span><span class="p">],</span>
+
+    <span class="c1"># Ask participants a survey after evaluation (see post_test_survey.html)</span>
+    <span class="s1">&#39;post_test_survey_enabled&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># Ask participants to complete the in-situ hearing response estimation</span>
+    <span class="s1">&#39;hearing_response_estimation_enabled&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># This is the number of conditions to present to a participant in a single visit to &#39;/evaluate&#39;</span>
+    <span class="s1">&#39;conditions_per_evaluation&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+
+    <span class="c1"># The number of trials we should collect per condition (with distinct participants)</span>
+    <span class="s1">&#39;trials_per_condition&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+
+    <span class="c1"># Subject can only do one type of test</span>
+    <span class="s1">&#39;limit_subject_to_one_task_type&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># Randomize the condition order per test for each participant</span>
+    <span class="s1">&#39;test_condition_order_randomized&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># Randomize the stimulus order per for each condition</span>
+    <span class="s1">&#39;stimulus_order_randomized&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># HEARING SCREENING VARIABLES</span>
+    <span class="c1"># Set to True if you want the participants to be required to take a hearing screening test</span>
+    <span class="s1">&#39;hearing_screening_test_enabled&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">][</span><span class="n">PRODUCTION</span><span class="p">],</span>
+
+    <span class="c1"># The number of hours their hearing test is valid for (they must retake after this time has passed)</span>
+    <span class="s1">&#39;hearing_test_expiration_hours&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+
+    <span class="c1"># The number of attempts one has before they are sent away (they must wait `hearing_test_expiration_hours`</span>
+    <span class="c1"># to take it again)</span>
+    <span class="s1">&#39;max_hearing_test_attempts&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+
+    <span class="c1"># If this is set to True, then we still test the users, but we don&#39;t reject them...</span>
+    <span class="s1">&#39;hearing_test_rejection_enabled&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># HEARING RESPONSE ESTIMATION VARIABLES</span>
+    <span class="c1"># number of different frequencies</span>
+    <span class="s1">&#39;hearing_response_nfreqs&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+
+    <span class="c1"># number of max additional tones (60 for 10dB, 3 for 20dB Spacing)</span>
+    <span class="s1">&#39;hearing_response_nadd&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+
+    <span class="c1"># max number of frequencies for user to respond with in hearing response estimation</span>
+    <span class="s1">&#39;n_options&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># MECHANICAL TURK VARIABLES</span>
+    <span class="c1"># Entry point URL</span>
+    <span class="s1">&#39;question_url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://</span><span class="si">%s</span><span class="s1">/mturk&#39;</span> <span class="o">%</span> <span class="n">SERVER_NAME</span><span class="p">,</span>
+
+    <span class="c1"># This is the reward given to each worker for an approved assignment</span>
+    <span class="c1"># (note that Amazon takes their Mechanical Turk Fee on top of this. See https://requester.mturk.com/pricing)</span>
+    <span class="s1">&#39;reward&#39;</span><span class="p">:</span> <span class="mf">0.50</span><span class="p">,</span>  <span class="c1"># USD (must convert to a boto.Price object)</span>
+
+    <span class="c1"># MTurk worker must have this many approved HITs to accept task</span>
+    <span class="s1">&#39;number_hits_approved_requirement&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+
+    <span class="c1"># MTurk worker must have this percentage of approved assignments to accept task</span>
+    <span class="s1">&#39;percent_assignments_approved_requirement&#39;</span><span class="p">:</span> <span class="mi">97</span><span class="p">,</span>
+
+    <span class="c1"># Title of MTurk HIT</span>
+    <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Critical audio listening task. Listen to audio recordings and rate them on various &#39;</span>
+             <span class="s1">&#39;scales of quality.&#39;</span><span class="p">,</span>
+
+    <span class="c1"># Description of MTurk HIT</span>
+    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;This listening test aims to rate the quality of a set of signals in comparison to a reference &#39;</span>
+                   <span class="s1">&#39;signal. Note that while the maximum number assignments a worker can do is 10, it</span><span class="se">\&#39;</span><span class="s1">s possible that &#39;</span>
+                   <span class="s1">&#39;fewer than 10 may be available to you. &#39;</span>
+                   <span class="s1">&#39;**CHROME ONLY** **BONUS AVAILABLE**&#39;</span><span class="p">,</span>
+
+    <span class="c1"># Keywords for MTurk HIT</span>
+    <span class="s1">&#39;keywords&#39;</span><span class="p">:</span> <span class="s1">&#39;audio, sound, music, listening, research&#39;</span><span class="p">,</span>
+
+    <span class="c1"># Accepted MTurk assignments must be completed within this duration or they will be released to other workers</span>
+    <span class="s1">&#39;assignmentDurationInSeconds&#39;</span><span class="p">:</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">30</span><span class="p">,</span>  <span class="c1"># 30 minutes</span>
+
+    <span class="c1"># HITs expire (no one can accept them) after this duration since being posted</span>
+    <span class="s1">&#39;lifetimeInSeconds&#39;</span><span class="p">:</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span><span class="p">,</span>  <span class="c1"># 1 week</span>
+
+    <span class="c1"># The maximum number of assignments per HIT. Since we are handling condition assignment on our end (not using</span>
+    <span class="c1"># Amazon&#39;s mechanism), this the total number of trials (i.e. no. of conditions * no. of assignments per condition)</span>
+    <span class="c1">#  that we are collecting.</span>
+    <span class="s1">&#39;maxAssignments&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+
+    <span class="c1"># If we do not review this assignments in this time period, the assignment will be automatically approved and the</span>
+    <span class="c1"># worker will be paid.</span>
+    <span class="s1">&#39;autoApprovalDelayInSeconds&#39;</span><span class="p">:</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># 1 day</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># FRONT-END VARIABLES</span>
+    <span class="c1"># The set of acceptable browsers. set as None to disable browser rejection</span>
+    <span class="s1">&#39;acceptable_browsers&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;chrome&#39;</span><span class="p">],</span>
+
+    <span class="c1"># If true, participants will have to click a button that launches a new window. This is useful in order to</span>
+    <span class="c1"># delay condition assignment until the user is engaged in the task, and allows a new window to be launched</span>
+    <span class="c1"># that is bigger than the Mechanical Turk frame for instance.</span>
+    <span class="s1">&#39;begin_button_enabled&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># The size of the window launched when participants press the &quot;begin button&quot; the task.</span>
+    <span class="s1">&#39;popup_width&#39;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">,</span>
+    <span class="s1">&#39;popup_height&#39;</span><span class="p">:</span> <span class="mi">1200</span><span class="p">,</span>
+
+    <span class="c1"># The participant must spend at least this amount of time on the evaluation task before submission</span>
+    <span class="s1">&#39;test_timeout_sec&#39;</span><span class="p">:</span> <span class="mf">60.</span><span class="p">,</span>  <span class="c1"># wait 60 seconds</span>
+
+    <span class="c1"># If True, the participant must listen to all of the training sounds before proceeding to the evaluation task</span>
+    <span class="s1">&#39;require_listening_to_all_training_sounds&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+    <span class="c1"># The reference stimuli in the evaluation task</span>
+    <span class="s1">&#39;references&#39;</span><span class="p">:</span> <span class="p">((</span><span class="s1">&#39;Reference&#39;</span><span class="p">,</span> <span class="s1">&#39;The reference signal to which test signals are compared.&#39;</span><span class="p">),),</span>
+
+    <span class="c1"># The HTML content of the preview page. This will be the same for all conditions, regardless of test since</span>
+    <span class="c1"># conditions are assigned on the fly (so we can have complete control over condition assignment).</span>
+    <span class="s1">&#39;preview_html&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># DEFAULT CONDITION AND TEST-SPECIFIC VARIABLES</span>
+    <span class="c1">#   (These will be configured for each condition and saved in the database)</span>
+
+    <span class="c1"># The test title that is displayed on the evaluation page</span>
+    <span class="s1">&#39;test_title&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+
+    <span class="c1"># The HTML content of the introduction page the first time they do a task</span>
+    <span class="s1">&#39;first_task_introduction_html&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+
+    <span class="c1"># The HTML content of the introduction page (after the first time they perform the task)</span>
+    <span class="s1">&#39;introduction_html&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+
+    <span class="c1"># The HTML content of the training instructions</span>
+    <span class="s1">&#39;training_instructions_html&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+
+    <span class="c1"># The HTML content of the evaluation instructions</span>
+    <span class="s1">&#39;evaluation_instructions_html&#39;</span><span class="p">:</span> <span class="kc">None</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="caqe.test_configurations.general_mushra.html" class="btn btn-neutral float-right" title="caqe.test_configurations.general_mushra module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="caqe.test_configurations.html" class="btn btn-neutral" title="caqe.test_configurations package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

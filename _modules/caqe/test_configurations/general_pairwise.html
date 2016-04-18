@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.test_configurations.general_pairwise &mdash; CAQE 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1a1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1a1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../deployment.html">Deployment</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/caqe.test_configurations.html">Testing Configurations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/caqe.html">CAQE Package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>caqe.test_configurations.general_pairwise</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for caqe.test_configurations.general_pairwise</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A general pairwise (e.g. A is better than B) configuration for evaluating overall quality</span>
+<span class="sd">of a set of audio stimuli.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">url_for</span>
+
+<span class="kn">import</span> <span class="nn">caqe.test_configurations.base</span>
+<span class="kn">from</span> <span class="nn">caqe.test_configurations.base</span> <span class="kn">import</span> <span class="n">SERVER_NAME</span>
+
+<span class="c1"># CONFIGURATION contains all of the configurable values for the test. For each condition</span>
+<span class="n">CONFIGURATION</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">caqe</span><span class="o">.</span><span class="n">test_configurations</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">CONFIGURATION</span><span class="p">)</span>
+<span class="n">CONFIGURATION</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">CONFIGURATION</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span>
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># TESTING VARIABLES</span>
+    <span class="c1"># The test type (limited to &#39;pairwise&#39; or &#39;mushra&#39; for now)</span>
+    <span class="s1">&#39;test_type&#39;</span><span class="p">:</span> <span class="s1">&#39;pairwise&#39;</span><span class="p">,</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># FRONT-END VARIABLES</span>
+    <span class="c1"># The participant must spend at least this amount of time on the evaluation task before submission</span>
+    <span class="s1">&#39;test_timeout_sec&#39;</span><span class="p">:</span> <span class="mf">5.</span><span class="p">,</span>  <span class="c1"># wait 5 seconds</span>
+
+    <span class="c1"># The HTML content of the preview page. This will be the same for all conditions, regardless of test since</span>
+    <span class="c1"># conditions are assigned on the fly (so we can have complete control over condition assignment).</span>
+    <span class="s1">&#39;preview_html&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &lt;p&gt;This listening test aims to rate the quality of a set of signals in comparison to a reference signal.&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;During the test, you will be asked to assess the quality of the audio. The test will have three parts: 1)</span>
+<span class="sd">        a short hearing test phase, 2) a training phase and 3) an evaluation phase. During the training phase, you</span>
+<span class="sd">        will be trained on example ratings of quality. During the evaluation phase, you will listen to several of pairs</span>
+<span class="sd">         of recordings and choose which recording in each pair has higher quality.&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;&lt;b&gt;You may receive up to a $0.25 bonus based on the consistency of your ratings.&lt;/b&gt;&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;The expected total duration of the test is 5-7 minutes.&lt;/p&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># DEFAULT CONDITION AND TEST-SPECIFIC VARIABLES</span>
+    <span class="c1">#   (These will be configured for each condition and saved in the database)</span>
+
+    <span class="c1"># The test title that is displayed on the evaluation page</span>
+    <span class="s1">&#39;test_title&#39;</span><span class="p">:</span> <span class="s1">&#39;Task: Rate the &lt;quality&gt;&#39;</span><span class="p">,</span>
+
+    <span class="c1"># The HTML content of the introduction page the first time they do a task</span>
+    <span class="s1">&#39;first_task_introduction_html&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &lt;p&gt;This listening test aims to rate the quality of a set of signals in comparison to a reference signal.&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;During the test, you will be asked to assess the quality of the audio. The test will have three parts: 1)</span>
+<span class="sd">        a short hearing test phase, 2) a training phase and 3) an evaluation phase. During the training phase, you will</span>
+<span class="sd">        be trained on example ratings of quality. During the evaluation phase, you will listen to several of pairs of</span>
+<span class="sd">        recordings and choose which recording in each pair has higher &lt;quality&gt;. Lastly, at the end, there will be a</span>
+<span class="sd">        short survey which you will only have to fill out for the first HIT you complete.&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;&lt;b&gt;You may receive up to a $0.25 bonus based on the consistency of your ratings.&lt;/b&gt;&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;Including the survey at the end, the expected total duration of the first HIT is 8-10 minutes. Because this</span>
+<span class="sd">        first HIT takes longer than the rest of the HITs in this group, you will be given an additional $0.30 bonus on</span>
+<span class="sd">        top of your consistency bonus.&lt;/p&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+
+    <span class="c1"># The HTML content of the introduction page (after the first time they perform the task)</span>
+    <span class="s1">&#39;introduction_html&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &lt;p&gt;This listening test aims to rate the quality of a set of signals in comparison to a reference signal.&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;During the test, you will be asked to assess the quality of the audio. The test will have three parts: 1)</span>
+<span class="sd">        a short hearing test phase, 2) a training phase and 3) an evaluation phase. During the training phase, you</span>
+<span class="sd">        will be trained on example ratings of quality. During the evaluation phase, you will listen to several of pairs</span>
+<span class="sd">         of recordings and choose which recording in each pair has higher quality.&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;&lt;b&gt;You may receive up to a $0.25 bonus based on the consistency of your ratings.&lt;/b&gt;&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;The expected total duration of the test is 5-7 minutes.&lt;/p&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+
+    <span class="c1"># The HTML content of the training instructions</span>
+    <span class="s1">&#39;training_instructions_html&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &lt;p&gt;&lt;quality_explanation&gt;&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;Instructions:</span>
+<span class="sd">        &lt;ol&gt;</span>
+<span class="sd">        &lt;li&gt;If you have not done so already, set the volume of your headphones/speakers so that</span>
+<span class="sd">        it&#39;s comfortable. You should be able to clearly hear differences between recordings</span>
+<span class="sd">        (the volume shouldn&#39;t be changed later on).&lt;/li&gt;</span>
+<span class="sd">        &lt;li&gt;Train yourself on the example recordings to learn what types of recordings we</span>
+<span class="sd">        expect to be higher or lower than average according to the quality scale.&lt;/li&gt;</span>
+<span class="sd">        &lt;/ol&gt;</span>
+<span class="sd">        &lt;/p&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+
+    <span class="c1"># The HTML content of the evaluation instructions</span>
+    <span class="s1">&#39;evaluation_instructions_html&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &lt;p&gt;Listen to the Target and Mixture recordings below by clicking on their labeled</span>
+<span class="sd">        buttons. The Mixture and Target recordings will be the same for all pairs of</span>
+<span class="sd">        A/B recordings.&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;Listen to recordings A and B, and select which of the two recordings you would rate</span>
+<span class="sd">        as having higher &lt;quality&gt;. &lt;quality_explanation&gt;&lt;/p&gt;</span>
+
+<span class="sd">        &lt;p&gt;You can listen to the recordings as many times as you want before deciding.&lt;/p&gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">})</span>
+
+
+<span class="c1"># Configure and insert conditions</span>
+<div class="viewcode-block" id="insert_tests_and_conditions"><a class="viewcode-back" href="../../../source/caqe.test_configurations.general_pairwise.html#caqe.test_configurations.general_pairwise.insert_tests_and_conditions">[docs]</a><span class="k">def</span> <span class="nf">insert_tests_and_conditions</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is where you configure and define the listening test. If you need to change HTML content based on</span>
+<span class="sd">    the testing condition, you configure it here as well, overriding the default values in `CONFIGURATION`.</span>
+<span class="sd">    Running this doctest initializes the development database.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    To call this you need the application context, e.g.:</span>
+
+<span class="sd">    &gt;&gt;&gt; import os</span>
+<span class="sd">    &gt;&gt;&gt; os.environ[&#39;FLASK_CONF&#39;] = &#39;DEV&#39; # for testing the Development configuration</span>
+<span class="sd">    &gt;&gt;&gt; from caqe import db</span>
+<span class="sd">    DEV</span>
+<span class="sd">    &gt;&gt;&gt; db.drop_all()</span>
+<span class="sd">    &gt;&gt;&gt; db.create_all()</span>
+<span class="sd">    &gt;&gt;&gt; import caqe</span>
+<span class="sd">    &gt;&gt;&gt; import caqe.settings</span>
+<span class="sd">    &gt;&gt;&gt; with caqe.app.app_context():</span>
+<span class="sd">    ...     caqe.settings.insert_tests_and_conditions()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">json</span>
+    <span class="kn">import</span> <span class="nn">caqe.models</span> <span class="kn">as</span> <span class="nn">models</span>
+    <span class="kn">from</span> <span class="nn">caqe</span> <span class="kn">import</span> <span class="n">db</span>
+
+    <span class="n">num_audio_files</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="c1"># The quality scales</span>
+    <span class="n">qualities</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;b&gt;overall quality&lt;/b&gt; compared to the reference sound for each recording&#39;</span><span class="p">,]</span>
+
+    <span class="c1"># Descriptions of the quality scales</span>
+    <span class="n">quality_explanations</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&lt;b&gt;Overall quality&lt;/b&gt; refers to overall quality of a recording based on how similar it is&#39;</span>
+                            <span class="s1">&#39; to the reference sound. For example, if a recording is very similar to the the reference,&#39;</span>
+                            <span class="s1">&#39; it should be given a high rating. However, if a recording is very different from the &#39;</span>
+                            <span class="s1">&#39;reference sound (e.g. because of degradation or additional sounds), it should be given a low&#39;</span>
+                            <span class="s1">&#39; rating.&#39;</span><span class="p">,]</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># TRAINING EXAMPLES FOR PARTICIPANTS</span>
+    <span class="c1"># These are the reference examples for the training examples</span>
+    <span class="c1"># List entries must be dicts composed as {&lt;reference_name&gt;: &lt;example_url&gt;, ...}</span>
+    <span class="n">reference_example_dict</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;Reference&#39;</span><span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/exp00_target.wav&#39;</span><span class="p">),},]</span>
+
+    <span class="c1"># These are the quality examples.</span>
+    <span class="c1"># List entries should be dicts composed as {&lt;description&gt;: &lt;example_url&gt;, ...}</span>
+    <span class="n">quality_example_dicts</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;Low&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/exp00_anchorArtif.wav&#39;</span><span class="p">),</span>
+                                      <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/exp00_anchorDistTarget.wav&#39;</span><span class="p">)],</span>
+                              <span class="s1">&#39;High&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/exp00_target.wav&#39;</span><span class="p">),</span> <span class="p">]},]</span>
+
+    <span class="k">for</span> <span class="n">quality</span><span class="p">,</span> <span class="n">quality_explanation</span><span class="p">,</span> <span class="n">reference_example_dict</span><span class="p">,</span> <span class="n">quality_example_dict</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">qualities</span><span class="p">,</span>
+                                                                                          <span class="n">quality_explanations</span><span class="p">,</span>
+                                                                                          <span class="n">reference_example_dict</span><span class="p">,</span>
+                                                                                          <span class="n">quality_example_dicts</span><span class="p">,</span> <span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">CONFIGURATION</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;reference_example_dict&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reference_example_dict</span>
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;quality_example_dict&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">quality_example_dict</span>
+
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;test_title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;test_title&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;quality&gt;&#39;</span><span class="p">,</span> <span class="n">quality</span><span class="p">)</span>
+
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;introduction_html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;introduction_html&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;quality&gt;&#39;</span><span class="p">,</span> <span class="n">quality</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;introduction_html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;introduction_html&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;quality_explanation&gt;&#39;</span><span class="p">,</span> <span class="n">quality_explanation</span><span class="p">)</span>
+
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;first_task_introduction_html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;first_task_introduction_html&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;quality&gt;&#39;</span><span class="p">,</span> <span class="n">quality</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;first_task_introduction_html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;first_task_introduction_html&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;quality_explanation&gt;&#39;</span><span class="p">,</span>
+                                                                                                <span class="n">quality_explanation</span><span class="p">)</span>
+
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;training_instructions_html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;training_instructions_html&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;quality&gt;&#39;</span><span class="p">,</span>
+                                                                                            <span class="n">quality</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;training_instructions_html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;training_instructions_html&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;quality_explanation&gt;&#39;</span><span class="p">,</span>
+                                                                                            <span class="n">quality_explanation</span><span class="p">)</span>
+
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;evaluation_instructions_html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;evaluation_instructions_html&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;quality&gt;&#39;</span><span class="p">,</span>
+                                                                                                <span class="n">quality</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">[</span><span class="s1">&#39;evaluation_instructions_html&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;evaluation_instructions_html&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;quality_explanation&gt;&#39;</span><span class="p">,</span>
+                                                                                                <span class="n">quality_explanation</span><span class="p">)</span>
+
+        <span class="n">test</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Test</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+    <span class="c1"># save all tests</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">Test</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_audio_files</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># THE AUDIO STIMULUS FILES</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s1">&#39;reference_files&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;Reference&#39;</span><span class="p">,</span> <span class="s1">&#39;exp</span><span class="si">%02d</span><span class="s1">_target.wav&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">),],</span>
+                               <span class="s1">&#39;stimulus_files&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="s1">&#39;exp</span><span class="si">%02d</span><span class="s1">_target.wav&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">),</span>
+                                                  <span class="p">(</span><span class="s1">&#39;S2&#39;</span><span class="p">,</span> <span class="s1">&#39;exp</span><span class="si">%02d</span><span class="s1">_anchorArtif.wav&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">),</span>
+                                                  <span class="p">(</span><span class="s1">&#39;S3&#39;</span><span class="p">,</span> <span class="s1">&#39;exp</span><span class="si">%02d</span><span class="s1">_anchorDistTarget.wav&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">),</span>
+                                                  <span class="p">(</span><span class="s1">&#39;S4&#39;</span><span class="p">,</span> <span class="s1">&#39;exp</span><span class="si">%02d</span><span class="s1">_test5.wav&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">),</span>
+                                                  <span class="p">(</span><span class="s1">&#39;S5&#39;</span><span class="p">,</span> <span class="s1">&#39;exp</span><span class="si">%02d</span><span class="s1">_test6.wav&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">),</span>
+                                                  <span class="p">(</span><span class="s1">&#39;S6&#39;</span><span class="p">,</span> <span class="s1">&#39;exp</span><span class="si">%02d</span><span class="s1">_test7.wav&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">),</span>
+                                                  <span class="p">(</span><span class="s1">&#39;S7&#39;</span><span class="p">,</span> <span class="s1">&#39;exp</span><span class="si">%02d</span><span class="s1">_test8.wav&#39;</span> <span class="o">%</span> <span class="n">j</span><span class="p">)]})</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Condition</span><span class="p">(</span><span class="n">test_id</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

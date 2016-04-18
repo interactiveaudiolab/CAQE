@@ -1,0 +1,657 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.turk_admin &mdash; CAQE 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1a1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1a1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/caqe.test_configurations.html">Testing Configurations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/caqe.html">CAQE Package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>caqe.turk_admin</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for caqe.turk_admin</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Amazon Mechanical Turk administration. Use this module to post, approve, expire, and bonus HITs.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">settings</span>
+<span class="kn">import</span> <span class="nn">models</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">boto.mturk.connection</span> <span class="kn">import</span> <span class="n">MTurkConnection</span><span class="p">,</span> <span class="n">MTurkRequestError</span>
+<span class="kn">from</span> <span class="nn">boto.mturk.qualification</span> <span class="kn">import</span> <span class="n">Qualifications</span><span class="p">,</span> <span class="n">NumberHitsApprovedRequirement</span><span class="p">,</span> \
+    <span class="n">PercentAssignmentsApprovedRequirement</span>
+<span class="kn">from</span> <span class="nn">boto.mturk.price</span> <span class="kn">import</span> <span class="n">Price</span>
+<span class="kn">from</span> <span class="nn">boto.mturk.question</span> <span class="kn">import</span> <span class="n">ExternalQuestion</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">secret_keys</span> <span class="kn">import</span> <span class="n">AWS_ACCESS_KEY_ID</span><span class="p">,</span> <span class="n">AWS_SECRET_KEY</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">AWS_ACCESS_KEY_ID</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">AWS_SECRET_KEY</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;In order to run Amazon Mechanical Turk administration tasks, you must provide your credentials &#39;</span>
+                      <span class="s1">&#39;in `secret_keys.py`.&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="turk_connect"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.turk_connect">[docs]</a><span class="k">def</span> <span class="nf">turk_connect</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">MTurkConnection</span><span class="p">(</span><span class="n">aws_access_key_id</span><span class="o">=</span><span class="n">AWS_ACCESS_KEY_ID</span><span class="p">,</span>
+                           <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="n">AWS_SECRET_KEY</span><span class="p">,</span>
+                           <span class="n">host</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">MTURK_HOST</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="calculate_tsr"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.calculate_tsr">[docs]</a><span class="k">def</span> <span class="nf">calculate_tsr</span><span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="n">stimuli</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="s1">&#39;S2&#39;</span><span class="p">,</span> <span class="s1">&#39;S3&#39;</span><span class="p">,</span> <span class="s1">&#39;S4&#39;</span><span class="p">,</span> <span class="s1">&#39;S5&#39;</span><span class="p">,</span> <span class="s1">&#39;S6&#39;</span><span class="p">,</span> <span class="s1">&#39;S7&#39;</span><span class="p">,</span> <span class="s1">&#39;S8&#39;</span><span class="p">)):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stimuli</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">m</span><span class="p">[</span><span class="n">stimuli</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;stimuli&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="n">stimuli</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;stimuli&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])]</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;selection&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span>
+        <span class="n">m</span><span class="p">[</span><span class="n">stimuli</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;stimuli&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="n">stimuli</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;stimuli&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])]</span> <span class="o">=</span> <span class="ow">not</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;selection&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>
+    <span class="n">n_test</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">n_pass</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span> <span class="ow">or</span> <span class="n">j</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">m</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">n_test</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">n_pass</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_pass</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_test</span><span class="p">,</span> <span class="n">n_pass</span><span class="p">,</span> <span class="n">n_test</span><span class="p">,</span> <span class="n">m</span></div>
+
+
+<div class="viewcode-block" id="TurkAdmin"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin">[docs]</a><span class="k">class</span> <span class="nc">TurkAdmin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Instantiate this class to connect to MTurk and perform administrative tasks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">turk_connect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hit_type_id</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">print</span> <span class="n">settings</span><span class="o">.</span><span class="n">MTURK_HOST</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_hit_types</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hit_type_id</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="TurkAdmin.create_hits"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.create_hits">[docs]</a>    <span class="k">def</span> <span class="nf">create_hits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_hits</span><span class="p">,</span> <span class="n">configuration</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">hit_type_id</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create `num_audio_hits` according to the parameters specified in `hit_params`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        num_hits: int</span>
+<span class="sd">        configuration: dict</span>
+<span class="sd">        hit_type_id: int, optional</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">configuration</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">configuration</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">CONFIGURATION</span>
+
+        <span class="k">if</span> <span class="n">hit_type_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">hit_type_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hit_type_id</span>
+        <span class="n">question</span> <span class="o">=</span> <span class="n">ExternalQuestion</span><span class="p">(</span><span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;question_url&#39;</span><span class="p">],</span>
+                                    <span class="n">frame_height</span><span class="o">=</span><span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;mturk_frame_height&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_hits</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">create_hit</span><span class="p">(</span><span class="n">hit_type</span><span class="o">=</span><span class="n">hit_type_id</span><span class="p">,</span>
+                                       <span class="n">question</span><span class="o">=</span><span class="n">question</span><span class="p">,</span>
+                                       <span class="n">lifetime</span><span class="o">=</span><span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;lifetimeInSeconds&#39;</span><span class="p">],</span>
+                                       <span class="n">max_assignments</span><span class="o">=</span><span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;maxAssignments&#39;</span><span class="p">],</span> <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.register_hit"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.register_hit">[docs]</a>    <span class="k">def</span> <span class="nf">register_hit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">configuration</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a hit on Mechanical Turk according to `hit_params`. This will provide you with a HITTypeId.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        configuration: dict</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The HITTypeId which is how you refer to your newly registered hit with Amazon</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">configuration</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">configuration</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">CONFIGURATION</span>
+
+        <span class="n">qualifications</span> <span class="o">=</span> <span class="n">Qualifications</span><span class="p">()</span>
+        <span class="n">qualifications</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">NumberHitsApprovedRequirement</span><span class="p">(</span><span class="s1">&#39;GreaterThanOrEqualTo&#39;</span><span class="p">,</span>
+                                                         <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;number_hits_approved_requirement&#39;</span><span class="p">]))</span>
+        <span class="n">qualifications</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">PercentAssignmentsApprovedRequirement</span><span class="p">(</span><span class="s1">&#39;GreaterThanOrEqualTo&#39;</span><span class="p">,</span>
+                                                                 <span class="n">configuration</span><span class="p">[</span>
+                                                                     <span class="s1">&#39;percent_assignments_approved_requirement&#39;</span><span class="p">]))</span>
+
+        <span class="n">hit_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">register_hit_type</span><span class="p">(</span><span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span>
+                                                     <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">],</span>
+                                                     <span class="n">Price</span><span class="p">(</span><span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;reward&#39;</span><span class="p">]),</span>
+                                                     <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;assignmentDurationInSeconds&#39;</span><span class="p">],</span>
+                                                     <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;keywords&#39;</span><span class="p">],</span>
+                                                     <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;autoApprovalDelayInSeconds&#39;</span><span class="p">],</span>
+                                                     <span class="n">qualifications</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hit_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">HITTypeId</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_hit_type_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hit_type_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hit_type_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_hit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hit_type_id</span>
+
+    <span class="n">hit_type_id</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_hit_type_id</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TurkAdmin.filter_hits"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.filter_hits">[docs]</a>    <span class="k">def</span> <span class="nf">filter_hits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hits</span><span class="p">,</span> <span class="n">hit_types</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the hits whose type is in `hit_types`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        hits: list of boto.HIT</span>
+<span class="sd">        hit_types: list of str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of boto.HIT</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">hit_types</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">hit_types</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hit_type_id</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">hit</span> <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span> <span class="k">if</span> <span class="n">hit</span><span class="o">.</span><span class="n">HITTypeId</span> <span class="ow">in</span> <span class="n">hit_types</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.expire_all_hits"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.expire_all_hits">[docs]</a>    <span class="k">def</span> <span class="nf">expire_all_hits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Expire all hits</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of ?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">get_all_hits</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">expire_hit</span><span class="p">(</span><span class="n">hit</span><span class="o">.</span><span class="n">HITId</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">e</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.expire_hits"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.expire_hits">[docs]</a>    <span class="k">def</span> <span class="nf">expire_hits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hit_types</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Expire all hits whose HITTypeId is in `hit_types`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        hit_types: list of str, optional</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of ?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># todo: doc</span>
+        <span class="k">if</span> <span class="n">hit_types</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">hit_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hit_types</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">expire_hit</span><span class="p">(</span><span class="n">hit</span><span class="o">.</span><span class="n">HITId</span><span class="p">)</span> <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filter_hits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">get_all_hits</span><span class="p">(),</span> <span class="n">hit_types</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.dispose_hits"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.dispose_hits">[docs]</a>    <span class="k">def</span> <span class="nf">dispose_hits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hit_types</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dispose all hits whose HITTypeId is in `hit_types` (Disposing a HIT removes it from the system).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        hit_types: list of str, optional</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of ?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># todo: doc</span>
+        <span class="k">if</span> <span class="n">hit_types</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">hit_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hit_types</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">dispose_hit</span><span class="p">(</span><span class="n">hit</span><span class="o">.</span><span class="n">HITId</span><span class="p">)</span> <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filter_hits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">get_all_hits</span><span class="p">(),</span> <span class="n">hit_types</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.dispose_all_hits"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.dispose_all_hits">[docs]</a>    <span class="k">def</span> <span class="nf">dispose_all_hits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dispose all hits</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of ?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">get_all_hits</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">dispose_hit</span><span class="p">(</span><span class="n">hit</span><span class="o">.</span><span class="n">HITId</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">e</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.get_assignments_to_review"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.get_assignments_to_review">[docs]</a>    <span class="k">def</span> <span class="nf">get_assignments_to_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hit_type</span><span class="p">,</span> <span class="n">page_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">page_number</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get assignments to review for the specified HIT type given page size and page number</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        hit_type: str</span>
+<span class="sd">            HITTypeId</span>
+<span class="sd">        page_size: int</span>
+<span class="sd">            How many assignments to return</span>
+<span class="sd">        page_number: int</span>
+<span class="sd">            What page of assignments to return</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        assignments: list of boto.Assignment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">get_reviewable_hits</span><span class="p">(</span><span class="n">hit_type</span><span class="o">=</span><span class="n">hit_type</span><span class="p">)</span>
+        <span class="n">assignments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">:</span>
+            <span class="n">assignments</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">get_assignments</span><span class="p">(</span><span class="n">hit</span><span class="o">.</span><span class="n">HITId</span><span class="p">,</span> <span class="n">page_size</span><span class="o">=</span><span class="n">page_size</span><span class="p">,</span> <span class="n">page_number</span><span class="o">=</span><span class="n">page_number</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">assignments</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.get_all_assignments"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.get_all_assignments">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_assignments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get all assignments regardless of HIT type</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        assignments: list of boto.Assignment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">get_all_hits</span><span class="p">()</span>
+        <span class="n">assignments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">:</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">page_assignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">get_assignments</span><span class="p">(</span><span class="n">hit</span><span class="o">.</span><span class="n">HITId</span><span class="p">,</span> <span class="n">page_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">page_number</span><span class="o">=</span><span class="n">page</span><span class="p">)</span>
+                <span class="n">assignments</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">page_assignments</span><span class="p">)</span>
+                <span class="n">page</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">page_assignments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">break</span>
+        <span class="k">return</span> <span class="n">assignments</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.get_all_assignments_to_review"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.get_all_assignments_to_review">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_assignments_to_review</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hit_type</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Submitted&#39;</span><span class="p">,</span> <span class="s1">&#39;Approved&#39;</span><span class="p">,</span> <span class="s1">&#39;Rejected&#39;</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get *all* the assignments to review for the specified HIT type</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        hit_type: str</span>
+<span class="sd">        status: str, optional</span>
+<span class="sd">            Assignment status. Valid values are &#39;Submitted&#39;, &#39;Approved&#39;, &#39;Rejected&#39;.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        assignment: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assignments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">page_number</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="c1"># NOTE: this will retrieve all reviewable assignments (in Submitted, Approve, Rejected states)</span>
+            <span class="n">page_assignments</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_assignments_to_review</span><span class="p">(</span><span class="n">hit_type</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">page_number</span><span class="p">)</span> <span class="k">if</span>
+                                <span class="n">a</span><span class="o">.</span><span class="n">AssignmentStatus</span> <span class="ow">in</span> <span class="n">status</span><span class="p">]</span>
+            <span class="n">assignments</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">page_assignments</span><span class="p">)</span>
+            <span class="n">page_number</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">page_assignments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">assignments</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.approve_all"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.approve_all">[docs]</a>    <span class="k">def</span> <span class="nf">approve_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hit_types</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Approve all &#39;Submitted&#39; assignments</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        hit_types: list of str, optional</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of ?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">hit_types</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">hit_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hit_types</span>
+        <span class="n">assignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_assignments</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">assignments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">AssignmentStatus</span> <span class="o">==</span> <span class="s1">&#39;Submitted&#39;</span><span class="p">:</span>
+                <span class="n">hit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">get_hit</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">HITId</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">hit</span><span class="o">.</span><span class="n">HITTypeId</span> <span class="ow">in</span> <span class="n">hit_types</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">approve_assignment</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">AssignmentId</span><span class="p">,</span> <span class="s1">&#39;Thank you!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.force_approve_all"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.force_approve_all">[docs]</a>    <span class="k">def</span> <span class="nf">force_approve_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Approve all &#39;Submitted&#39; assignments</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of ?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">assignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_assignments</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">assignments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">AssignmentStatus</span> <span class="o">==</span> <span class="s1">&#39;Submitted&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">approve_assignment</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">AssignmentId</span><span class="p">,</span> <span class="s1">&#39;Thank you!&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.get_completion_times"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.get_completion_times">[docs]</a>    <span class="k">def</span> <span class="nf">get_completion_times</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assignments</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute completion time of `assignments`. The completion time is the time between when the HIT was</span>
+<span class="sd">        accepted and submitted.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        assignments: list of Assignment, optional</span>
+<span class="sd">            The list of assignments to compute average completion time. If None, then compute on all assignments.</span>
+<span class="sd">            Default is None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        times: list of float</span>
+<span class="sd">            The list of completion times in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">assignments</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">assignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_all_assignments</span><span class="p">()</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">assignments</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">AssignmentStatus</span> <span class="o">==</span> <span class="s1">&#39;Submitted&#39;</span> <span class="ow">or</span> <span class="n">a</span><span class="o">.</span><span class="n">AssignmentStatus</span> <span class="o">==</span> <span class="s1">&#39;Approved&#39;</span><span class="p">:</span>
+                <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ&#39;</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">SubmitTime</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">AcceptTime</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+                <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">times</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.give_bonus_to_all_first_completed_trials"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.give_bonus_to_all_first_completed_trials">[docs]</a>    <span class="k">def</span> <span class="nf">give_bonus_to_all_first_completed_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                                 <span class="n">price</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span>
+                                                 <span class="n">reason</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                                 <span class="n">calculate_amt_only</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                                                 <span class="n">already_bonused_ids</span><span class="o">=</span><span class="nb">set</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Grant bonuses for the first completed trial for each participant.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        price: float, optional</span>
+<span class="sd">            The bonus amount to grant in dollars. Default is 30 cents.</span>
+<span class="sd">        reason: str, optional</span>
+<span class="sd">            The message to send the workers when they receive the bonus</span>
+<span class="sd">        calculate_amt_only: bool, optional</span>
+<span class="sd">            Only calculate the amount of the bonus, do not actual pay out the bonus.</span>
+<span class="sd">        already_bonused_ids: set, optional</span>
+<span class="sd">            Set of participant ids that have already been bonused</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        total_bonus: float</span>
+<span class="sd">            The total amount paid</span>
+<span class="sd">        participants_wo_valid_asgnmts: list of caqe.models.Participant</span>
+<span class="sd">            The participants who did not have valid assignments in their trial data (e.g. there must have been an error</span>
+<span class="sd">            when submitting the assignment)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="s2">&quot;Thanks for completing our Critical Audio Listening Task HIT. This bonus is to compensate you &quot;</span> \
+                     <span class="s2">&quot;for the extra time needed to complete the first assignment of the HIT.&quot;</span>
+
+        <span class="n">total_bonus</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">participants_wo_valid_asgnmts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">participants</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Participant</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">participants</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">already_bonused_ids</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">trials</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">trials</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trials</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">bonus_paid</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="n">p</span><span class="o">.</span><span class="n">id</span>
+                        <span class="n">crowd_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">crowd_data</span><span class="p">)</span>
+                        <span class="n">assignment_id</span> <span class="o">=</span> <span class="n">crowd_data</span><span class="p">[</span><span class="s1">&#39;assignment_id&#39;</span><span class="p">]</span>
+                        <span class="n">worker_id</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">crowd_worker_id</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">calculate_amt_only</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">grant_bonus</span><span class="p">(</span><span class="n">worker_id</span><span class="p">,</span> <span class="n">assignment_id</span><span class="p">,</span> <span class="n">Price</span><span class="p">(</span><span class="n">price</span><span class="p">),</span> <span class="n">reason</span><span class="p">)</span>
+                        <span class="n">total_bonus</span> <span class="o">+=</span> <span class="n">price</span>
+                        <span class="n">bonus_paid</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="k">break</span>
+                    <span class="k">except</span> <span class="n">MTurkRequestError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="n">e</span>
+                        <span class="k">continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">bonus_paid</span><span class="p">:</span>
+                    <span class="n">participants_wo_valid_asgnmts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">total_bonus</span><span class="p">,</span> <span class="n">participants_wo_valid_asgnmts</span></div>
+
+<div class="viewcode-block" id="TurkAdmin.give_consistency_bonus"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.give_consistency_bonus">[docs]</a>    <span class="k">def</span> <span class="nf">give_consistency_bonus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                               <span class="n">max_price</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+                               <span class="n">threshold</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                               <span class="n">reason</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                               <span class="n">calculate_amt_only</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                               <span class="n">already_bonused_ids</span><span class="o">=</span><span class="nb">set</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Grant bonuses based on ratings consistency. Bonus calculated by</span>
+
+<span class="sd">        .. math:: ((consistency - threshold) / (1.0 - threshold)) * max\_price * (consistency &gt; threshold))</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        max_price: float, optional</span>
+<span class="sd">            The maximum bonus amount to grant in dollars. Default is 25 cents.</span>
+<span class="sd">        threshold: bool</span>
+<span class="sd">            Consistency must exceed this value before a bonus is paid out.</span>
+<span class="sd">        reason: str, optional</span>
+<span class="sd">            The message to send the workers when they receive the bonus</span>
+<span class="sd">        calculate_amt_only: bool, optional</span>
+<span class="sd">            Only calculate the amount of the bonus, do not actual pay out the bonus.</span>
+<span class="sd">        already_bonused_ids: set, optional</span>
+<span class="sd">            Set of participant ids that have already been bonused</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        total_bonus: float</span>
+<span class="sd">            The total amount paid</span>
+<span class="sd">        participants_wo_valid_asgnmts: list of caqe.models.Participant</span>
+<span class="sd">            The participants who did not have valid assignments in their trial data (e.g. there must have been an error</span>
+<span class="sd">            when submitting the assignment)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">reason</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="s2">&quot;Thanks for completing our Critical Audio Listening Task HIT. This bonus is to award you for &quot;</span> \
+                     <span class="s2">&quot;your consistency in ratings during the task.&quot;</span>
+        <span class="n">total_bonus</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">trials_wo_valid_asgnmts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">trials</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Trial</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">already_bonused_ids</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">crowd_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">crowd_data</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+                <span class="n">assignment_id</span> <span class="o">=</span> <span class="n">crowd_data</span><span class="p">[</span><span class="s1">&#39;assignment_id&#39;</span><span class="p">]</span>
+                <span class="n">worker_id</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">participant</span><span class="o">.</span><span class="n">crowd_worker_id</span>
+                <span class="n">consistency</span> <span class="o">=</span> <span class="n">calculate_tsr</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;rating&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">price</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>
+                    <span class="nb">abs</span><span class="p">(((</span><span class="n">consistency</span> <span class="o">-</span> <span class="n">threshold</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">threshold</span><span class="p">))</span> <span class="o">*</span> <span class="n">max_price</span> <span class="o">*</span> <span class="p">(</span><span class="n">consistency</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)),</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">calculate_amt_only</span> <span class="ow">and</span> <span class="n">price</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="n">price</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">grant_bonus</span><span class="p">(</span><span class="n">worker_id</span><span class="p">,</span> <span class="n">assignment_id</span><span class="p">,</span> <span class="n">Price</span><span class="p">(</span><span class="n">price</span><span class="p">),</span> <span class="n">reason</span><span class="p">)</span>
+                <span class="n">total_bonus</span> <span class="o">+=</span> <span class="n">price</span>
+            <span class="k">except</span> <span class="n">MTurkRequestError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">print</span> <span class="n">e</span>
+                <span class="n">trials_wo_valid_asgnmts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">total_bonus</span><span class="p">,</span> <span class="n">trials_wo_valid_asgnmts</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

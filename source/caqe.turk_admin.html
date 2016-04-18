@@ -1,0 +1,559 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.turk_admin module &mdash; CAQE 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1a1 documentation" href="../index.html"/>
+        <link rel="up" title="caqe package" href="caqe.html"/>
+        <link rel="next" title="caqe.utilities module" href="caqe.utilities.html"/>
+        <link rel="prev" title="caqe.settings module" href="caqe.settings.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1a1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="caqe.test_configurations.html">Testing Configurations</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="caqe.html">CAQE Package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="caqe.experiment.html">caqe.experiment module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.flask_configurations.html">caqe.flask_configurations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.generate_key_file.html">caqe.generate_key_file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.models.html">caqe.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.settings.html">caqe.settings module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">caqe.turk_admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.utilities.html">caqe.utilities module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.views.html">caqe.views module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="caqe.html">caqe package</a> &raquo;</li>
+      
+    <li>caqe.turk_admin module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/caqe.turk_admin.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-caqe.turk_admin">
+<span id="caqe-turk-admin-module"></span><h1>caqe.turk_admin module<a class="headerlink" href="#module-caqe.turk_admin" title="Permalink to this headline">¶</a></h1>
+<p>Amazon Mechanical Turk administration. Use this module to post, approve, expire, and bonus HITs.</p>
+<dl class="class">
+<dt id="caqe.turk_admin.TurkAdmin">
+<em class="property">class </em><code class="descclassname">caqe.turk_admin.</code><code class="descname">TurkAdmin</code><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Instantiate this class to connect to MTurk and perform administrative tasks.</p>
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.approve_all">
+<code class="descname">approve_all</code><span class="sig-paren">(</span><em>hit_types=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.approve_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.approve_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approve all &#8216;Submitted&#8217; assignments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hit_types</strong> (<em>list of str, optional</em>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.create_hits">
+<code class="descname">create_hits</code><span class="sig-paren">(</span><em>num_hits</em>, <em>configuration=None</em>, <em>hit_type_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.create_hits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.create_hits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create <cite>num_audio_hits</cite> according to the parameters specified in <cite>hit_params</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>num_hits</strong> (<em>int</em>) &#8211; </li>
+<li><strong>configuration</strong> (<em>dict</em>) &#8211; </li>
+<li><strong>hit_type_id</strong> (<em>int, optional</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.dispose_all_hits">
+<code class="descname">dispose_all_hits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.dispose_all_hits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.dispose_all_hits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispose all hits</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.dispose_hits">
+<code class="descname">dispose_hits</code><span class="sig-paren">(</span><em>hit_types=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.dispose_hits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.dispose_hits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dispose all hits whose HITTypeId is in <cite>hit_types</cite> (Disposing a HIT removes it from the system).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hit_types</strong> (<em>list of str, optional</em>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.expire_all_hits">
+<code class="descname">expire_all_hits</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.expire_all_hits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.expire_all_hits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expire all hits</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.expire_hits">
+<code class="descname">expire_hits</code><span class="sig-paren">(</span><em>hit_types=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.expire_hits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.expire_hits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expire all hits whose HITTypeId is in <cite>hit_types</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>hit_types</strong> (<em>list of str, optional</em>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.filter_hits">
+<code class="descname">filter_hits</code><span class="sig-paren">(</span><em>hits</em>, <em>hit_types=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.filter_hits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.filter_hits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the hits whose type is in <cite>hit_types</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>hits</strong> (<em>list of boto.HIT</em>) &#8211; </li>
+<li><strong>hit_types</strong> (<em>list of str</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of boto.HIT</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.force_approve_all">
+<code class="descname">force_approve_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.force_approve_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.force_approve_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approve all &#8216;Submitted&#8217; assignments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.get_all_assignments">
+<code class="descname">get_all_assignments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.get_all_assignments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.get_all_assignments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all assignments regardless of HIT type</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>assignments</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of boto.Assignment</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.get_all_assignments_to_review">
+<code class="descname">get_all_assignments_to_review</code><span class="sig-paren">(</span><em>hit_type</em>, <em>status=('Submitted'</em>, <em>'Approved'</em>, <em>'Rejected')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.get_all_assignments_to_review"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.get_all_assignments_to_review" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get <em>all</em> the assignments to review for the specified HIT type</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>hit_type</strong> (<em>str</em>) &#8211; </li>
+<li><strong>status</strong> (<em>str, optional</em>) &#8211; Assignment status. Valid values are &#8216;Submitted&#8217;, &#8216;Approved&#8217;, &#8216;Rejected&#8217;.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>assignment</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.get_assignments_to_review">
+<code class="descname">get_assignments_to_review</code><span class="sig-paren">(</span><em>hit_type</em>, <em>page_size=100</em>, <em>page_number=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.get_assignments_to_review"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.get_assignments_to_review" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get assignments to review for the specified HIT type given page size and page number</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>hit_type</strong> (<em>str</em>) &#8211; HITTypeId</li>
+<li><strong>page_size</strong> (<em>int</em>) &#8211; How many assignments to return</li>
+<li><strong>page_number</strong> (<em>int</em>) &#8211; What page of assignments to return</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>assignments</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of boto.Assignment</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.get_completion_times">
+<code class="descname">get_completion_times</code><span class="sig-paren">(</span><em>assignments=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.get_completion_times"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.get_completion_times" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute completion time of <cite>assignments</cite>. The completion time is the time between when the HIT was
+accepted and submitted.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>assignments</strong> (<em>list of Assignment, optional</em>) &#8211; The list of assignments to compute average completion time. If None, then compute on all assignments.
+Default is None.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>times</strong> &#8211; The list of completion times in seconds.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.give_bonus_to_all_first_completed_trials">
+<code class="descname">give_bonus_to_all_first_completed_trials</code><span class="sig-paren">(</span><em>price=0.3</em>, <em>reason=None</em>, <em>calculate_amt_only=False</em>, <em>already_bonused_ids=set([])</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.give_bonus_to_all_first_completed_trials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.give_bonus_to_all_first_completed_trials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grant bonuses for the first completed trial for each participant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>price</strong> (<em>float, optional</em>) &#8211; The bonus amount to grant in dollars. Default is 30 cents.</li>
+<li><strong>reason</strong> (<em>str, optional</em>) &#8211; The message to send the workers when they receive the bonus</li>
+<li><strong>calculate_amt_only</strong> (<em>bool, optional</em>) &#8211; Only calculate the amount of the bonus, do not actual pay out the bonus.</li>
+<li><strong>already_bonused_ids</strong> (<em>set, optional</em>) &#8211; Set of participant ids that have already been bonused</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>total_bonus</strong> (<em>float</em>) &#8211; The total amount paid</li>
+<li><strong>participants_wo_valid_asgnmts</strong> (<em>list of caqe.models.Participant</em>) &#8211; The participants who did not have valid assignments in their trial data (e.g. there must have been an error
+when submitting the assignment)</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.give_consistency_bonus">
+<code class="descname">give_consistency_bonus</code><span class="sig-paren">(</span><em>max_price=0.25</em>, <em>threshold=0.7</em>, <em>reason=None</em>, <em>calculate_amt_only=False</em>, <em>already_bonused_ids=set([])</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.give_consistency_bonus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.give_consistency_bonus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grant bonuses based on ratings consistency. Bonus calculated by</p>
+<div class="math">
+\[((consistency - threshold) / (1.0 - threshold)) * max\_price * (consistency &gt; threshold))\]</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>max_price</strong> (<em>float, optional</em>) &#8211; The maximum bonus amount to grant in dollars. Default is 25 cents.</li>
+<li><strong>threshold</strong> (<em>bool</em>) &#8211; Consistency must exceed this value before a bonus is paid out.</li>
+<li><strong>reason</strong> (<em>str, optional</em>) &#8211; The message to send the workers when they receive the bonus</li>
+<li><strong>calculate_amt_only</strong> (<em>bool, optional</em>) &#8211; Only calculate the amount of the bonus, do not actual pay out the bonus.</li>
+<li><strong>already_bonused_ids</strong> (<em>set, optional</em>) &#8211; Set of participant ids that have already been bonused</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>total_bonus</strong> (<em>float</em>) &#8211; The total amount paid</li>
+<li><strong>participants_wo_valid_asgnmts</strong> (<em>list of caqe.models.Participant</em>) &#8211; The participants who did not have valid assignments in their trial data (e.g. there must have been an error
+when submitting the assignment)</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.turk_admin.TurkAdmin.hit_type_id">
+<code class="descname">hit_type_id</code><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.hit_type_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="caqe.turk_admin.TurkAdmin.register_hit">
+<code class="descname">register_hit</code><span class="sig-paren">(</span><em>configuration=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.register_hit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.register_hit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a hit on Mechanical Turk according to <cite>hit_params</cite>. This will provide you with a HITTypeId.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>configuration</strong> (<em>dict</em>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The HITTypeId which is how you refer to your newly registered hit with Amazon</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.turk_admin.calculate_tsr">
+<code class="descclassname">caqe.turk_admin.</code><code class="descname">calculate_tsr</code><span class="sig-paren">(</span><em>ratings</em>, <em>stimuli=('S1'</em>, <em>'S2'</em>, <em>'S3'</em>, <em>'S4'</em>, <em>'S5'</em>, <em>'S6'</em>, <em>'S7'</em>, <em>'S8')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#calculate_tsr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.calculate_tsr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="caqe.turk_admin.turk_connect">
+<code class="descclassname">caqe.turk_admin.</code><code class="descname">turk_connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#turk_connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.turk_connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="caqe.utilities.html" class="btn btn-neutral float-right" title="caqe.utilities module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="caqe.settings.html" class="btn btn-neutral" title="caqe.settings module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

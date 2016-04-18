@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.utilities module &mdash; CAQE 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1a1 documentation" href="../index.html"/>
+        <link rel="up" title="caqe package" href="caqe.html"/>
+        <link rel="next" title="caqe.views module" href="caqe.views.html"/>
+        <link rel="prev" title="caqe.turk_admin module" href="caqe.turk_admin.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1a1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="caqe.test_configurations.html">Testing Configurations</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="caqe.html">CAQE Package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="caqe.experiment.html">caqe.experiment module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.flask_configurations.html">caqe.flask_configurations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.generate_key_file.html">caqe.generate_key_file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.models.html">caqe.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.settings.html">caqe.settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.turk_admin.html">caqe.turk_admin module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">caqe.utilities module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.views.html">caqe.views module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="caqe.html">caqe package</a> &raquo;</li>
+      
+    <li>caqe.utilities module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/caqe.utilities.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-caqe.utilities">
+<span id="caqe-utilities-module"></span><h1>caqe.utilities module<a class="headerlink" href="#module-caqe.utilities" title="Permalink to this headline">¶</a></h1>
+<p>Utility functions</p>
+<dl class="function">
+<dt id="caqe.utilities.decrypt_data">
+<code class="descclassname">caqe.utilities.</code><code class="descname">decrypt_data</code><span class="sig-paren">(</span><em>encrypted_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/utilities.html#decrypt_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.utilities.decrypt_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decrypt and unserialize encrypted data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>encrypted_data</strong> (<em>str</em>) &#8211; The encrypted and serialized data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>object</strong> &#8211; Decrypted data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.utilities.encrypt_data">
+<code class="descclassname">caqe.utilities.</code><code class="descname">encrypt_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/utilities.html#encrypt_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.utilities.encrypt_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize and encrypt data (likely to be put in a session cookie).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data</strong> (<em>object</em>) &#8211; Data to be serialized and encrypted.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Encrypted data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.utilities.sign_data">
+<code class="descclassname">caqe.utilities.</code><code class="descname">sign_data</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/utilities.html#sign_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.utilities.sign_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize and sign data (likely to be put in a session cookie).
+:param data: Data to be serialized and signed.
+:type data: object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Encrypted data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.utilities.unsign_data">
+<code class="descclassname">caqe.utilities.</code><code class="descname">unsign_data</code><span class="sig-paren">(</span><em>signed_data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/utilities.html#unsign_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.utilities.unsign_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unsign and unserialize signed data
+:param signed_data: The signed and serialized data
+:type signed_data: str</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Decrypted data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="caqe.views.html" class="btn btn-neutral float-right" title="caqe.views module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="caqe.turk_admin.html" class="btn btn-neutral" title="caqe.turk_admin module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

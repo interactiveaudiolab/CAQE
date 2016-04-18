@@ -1,0 +1,548 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.models module &mdash; CAQE 0.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1a1 documentation" href="../index.html"/>
+        <link rel="up" title="caqe package" href="caqe.html"/>
+        <link rel="next" title="caqe.settings module" href="caqe.settings.html"/>
+        <link rel="prev" title="caqe.generate_key_file module" href="caqe.generate_key_file.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1a1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="caqe.test_configurations.html">Testing Configurations</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="caqe.html">CAQE Package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="caqe.experiment.html">caqe.experiment module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.flask_configurations.html">caqe.flask_configurations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.generate_key_file.html">caqe.generate_key_file module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">caqe.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.settings.html">caqe.settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.turk_admin.html">caqe.turk_admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.utilities.html">caqe.utilities module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.views.html">caqe.views module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="caqe.html">caqe package</a> &raquo;</li>
+      
+    <li>caqe.models module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/caqe.models.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-caqe.models">
+<span id="caqe-models-module"></span><h1>caqe.models module<a class="headerlink" href="#module-caqe.models" title="Permalink to this headline">¶</a></h1>
+<p>SQLAlchemy database models</p>
+<dl class="class">
+<dt id="caqe.models.Condition">
+<em class="property">class </em><code class="descclassname">caqe.models.</code><code class="descname">Condition</code><span class="sig-paren">(</span><em>data</em>, <em>test_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/models.html#Condition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.models.Condition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
+<p>An experimental condition, i.e. the variable conditions of a trial</p>
+<dl class="attribute">
+<dt id="caqe.models.Condition.id">
+<code class="descname">id</code><a class="headerlink" href="#caqe.models.Condition.id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Primary key</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Condition.test_id">
+<code class="descname">test_id</code><a class="headerlink" href="#caqe.models.Condition.test_id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int, optional</em> &#8211; Foreign key to the Test the condition belongs to</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Condition.data">
+<code class="descname">data</code><a class="headerlink" href="#caqe.models.Condition.data" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; JSON-enconded string of formatted condition variables</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">data</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">id</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">test_id</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Condition.trials">
+<code class="descname">trials</code><a class="headerlink" href="#caqe.models.Condition.trials" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="caqe.models.Participant">
+<em class="property">class </em><code class="descclassname">caqe.models.</code><code class="descname">Participant</code><span class="sig-paren">(</span><em>platform</em>, <em>crowd_worker_id=None</em>, <em>ip_address=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/models.html#Participant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.models.Participant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
+<p>A participant in an experiment</p>
+<dl class="attribute">
+<dt id="caqe.models.Participant.id">
+<code class="descname">id</code><a class="headerlink" href="#caqe.models.Participant.id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Primary key</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.ip_address">
+<code class="descname">ip_address</code><a class="headerlink" href="#caqe.models.Participant.ip_address" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The IP address of the participant</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.crowd_worker_id">
+<code class="descname">crowd_worker_id</code><a class="headerlink" href="#caqe.models.Participant.crowd_worker_id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The crowdsourcing site ID, e.g. Amazon MTurk&#8217;s workerId</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.platform">
+<code class="descname">platform</code><a class="headerlink" href="#caqe.models.Participant.platform" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The platform the participant came from, e.g. ANONYMOUS, M_TURK, etc.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.passed_hearing_test">
+<code class="descname">passed_hearing_test</code><a class="headerlink" href="#caqe.models.Participant.passed_hearing_test" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; The user has passed the hearing test</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.gave_consent">
+<code class="descname">gave_consent</code><a class="headerlink" href="#caqe.models.Participant.gave_consent" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Participant agreed to the consent form.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.hearing_test_attempts">
+<code class="descname">hearing_test_attempts</code><a class="headerlink" href="#caqe.models.Participant.hearing_test_attempts" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The number of hearing_test_attempts</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.hearing_test_last_attempt">
+<code class="descname">hearing_test_last_attempt</code><a class="headerlink" href="#caqe.models.Participant.hearing_test_last_attempt" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>DateTime</em> &#8211; The DateTime of the last hearing test attempt (pass or fail)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.pre_test_survey">
+<code class="descname">pre_test_survey</code><a class="headerlink" href="#caqe.models.Participant.pre_test_survey" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Pre-test survey data in JSON</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.post_test_survey">
+<code class="descname">post_test_survey</code><a class="headerlink" href="#caqe.models.Participant.post_test_survey" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Post-test survey data in JSON</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.hearing_response_estimation">
+<code class="descname">hearing_response_estimation</code><a class="headerlink" href="#caqe.models.Participant.hearing_response_estimation" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Hearing response estimation data in JSON</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">crowd_worker_id</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">gave_consent</code></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="caqe.models.Participant.has_passed_hearing_test_recently">
+<code class="descname">has_passed_hearing_test_recently</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/models.html#Participant.has_passed_hearing_test_recently"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.models.Participant.has_passed_hearing_test_recently" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check to see if participant has passed the hearing test recently (as defined in settings.py)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">hearing_response_estimation</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">hearing_test_attempts</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">hearing_test_last_attempt</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">id</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">ip_address</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">passed_hearing_test</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">platform</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">post_test_survey</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">pre_test_survey</code></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="caqe.models.Participant.set_passed_hearing_test">
+<code class="descname">set_passed_hearing_test</code><span class="sig-paren">(</span><em>passed_hearing_test</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/models.html#Participant.set_passed_hearing_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.models.Participant.set_passed_hearing_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark them as having passed the hearing test</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>passed_hearing_test</strong> (<em>bool</em>) &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Participant.trials">
+<code class="descname">trials</code><a class="headerlink" href="#caqe.models.Participant.trials" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="caqe.models.Test">
+<em class="property">class </em><code class="descclassname">caqe.models.</code><code class="descname">Test</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/models.html#Test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.models.Test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
+<p>An experimental test. Many conditions may share these properties.</p>
+<dl class="attribute">
+<dt id="caqe.models.Test.id">
+<code class="descname">id</code><a class="headerlink" href="#caqe.models.Test.id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Primary key</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Test.data">
+<code class="descname">data</code><a class="headerlink" href="#caqe.models.Test.data" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; JSON-encoded string of formatted test variables</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Test.conditions">
+<code class="descname">conditions</code><a class="headerlink" href="#caqe.models.Test.conditions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">data</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">id</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="caqe.models.Trial">
+<em class="property">class </em><code class="descclassname">caqe.models.</code><code class="descname">Trial</code><span class="sig-paren">(</span><em>participant_id</em>, <em>condition_id</em>, <em>data</em>, <em>crowd_data=None</em>, <em>participant_passed_hearing_test=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/models.html#Trial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.models.Trial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
+<p>A trial in an experiment</p>
+<dl class="attribute">
+<dt id="caqe.models.Trial.id">
+<code class="descname">id</code><a class="headerlink" href="#caqe.models.Trial.id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Primary key</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Trial.participant_id">
+<code class="descname">participant_id</code><a class="headerlink" href="#caqe.models.Trial.participant_id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Foreign key to the Participant of the trial</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Trial.condition_id">
+<code class="descname">condition_id</code><a class="headerlink" href="#caqe.models.Trial.condition_id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Foreign key to the Condition of the trial</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Trial.crowd_data">
+<code class="descname">crowd_data</code><a class="headerlink" href="#caqe.models.Trial.crowd_data" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; JSON-encoded string of data from the crowdsourcing site (e.g. workerId, assignmentId, HITId, etc. from MTurk)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Trial.data">
+<code class="descname">data</code><a class="headerlink" href="#caqe.models.Trial.data" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; JSON-enconded string formatted trial data dictionary</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Trial.participant_passed_hearing_test">
+<code class="descname">participant_passed_hearing_test</code><a class="headerlink" href="#caqe.models.Trial.participant_passed_hearing_test" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Participant passed hearing test at time of trial</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">condition_id</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">crowd_data</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">data</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Trial.datetime_completed">
+<code class="descname">datetime_completed</code><a class="headerlink" href="#caqe.models.Trial.datetime_completed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">id</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">participant_id</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">participant_passed_hearing_test</code></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="caqe.settings.html" class="btn btn-neutral float-right" title="caqe.settings module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="caqe.generate_key_file.html" class="btn btn-neutral" title="caqe.generate_key_file module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
