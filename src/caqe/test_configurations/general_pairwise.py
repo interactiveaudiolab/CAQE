@@ -1,13 +1,8 @@
-import os
 import copy
 from flask import url_for
 
 import caqe.test_configurations.base
-
-# Set as production
-PRODUCTION = os.getenv('FLASK_CONF') == 'PRODUCTION'
-
-SERVER_NAME = ['caqe.local:5000', 'caqe.herokuapp.com'][PRODUCTION]
+from caqe.test_configurations.base import SERVER_NAME
 
 # CONFIGURATION contains all of the configurable values for the test. For each condition
 CONFIGURATION = copy.deepcopy(caqe.test_configurations.base.CONFIGURATION)

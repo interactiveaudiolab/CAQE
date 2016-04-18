@@ -8,7 +8,7 @@ import uuid
 import logging
 
 from caqe import db
-from caqe.settings import HEARING_TEST_EXPIRATION_HOURS, IP_COLLECTION_ENABLED, HEARING_TEST_REJECTION_ENABLED
+from caqe.settings import CONFIGURATION
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ class Participant(db.Model):
             self.crowd_worker_id = uuid.uuid4().hex
         else:
             self.crowd_worker_id = crowd_worker_id
-        if IP_COLLECTION_ENABLED:
+        if CONFIGURATION['ip_collection_enabled']:
             self.ip_address = ip_address
 
     def __repr__(self):
@@ -76,7 +76,7 @@ class Participant(db.Model):
         bool
         """
         if (datetime.datetime.now() - self.hearing_test_last_attempt) \
-                >= datetime.timedelta(hours=HEARING_TEST_EXPIRATION_HOURS):
+                >= datetime.timedelta(hours=CONFIGURATION['hearing_test_expiration_hours']):
             self.passed_hearing_test = False
             self.hearing_test_attempts = 0
 
@@ -86,7 +86,7 @@ class Participant(db.Model):
         else:
             # regardless if they have taken the test recently, if HEARING_TEST_REJECTION_ENABLED is False, let them
             # through
-            return self.passed_hearing_test or not HEARING_TEST_REJECTION_ENABLED
+            return self.passed_hearing_test or not CONFIGURATION['hearing_test_rejection_enabled']
 
     def set_passed_hearing_test(self, passed_hearing_test):
         """

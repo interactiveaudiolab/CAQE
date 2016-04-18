@@ -2,6 +2,7 @@ import copy
 from flask import url_for
 
 import caqe.test_configurations.base
+from caqe.test_configurations.base import SERVER_NAME
 
 # CONFIGURATION contains all of the configurable values for the test. For each condition
 CONFIGURATION = copy.deepcopy(caqe.test_configurations.base.CONFIGURATION)

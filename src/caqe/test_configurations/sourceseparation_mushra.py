@@ -2,6 +2,7 @@ import copy
 from flask import url_for
 
 import caqe.test_configurations.general_mushra
+from caqe.test_configurations.general_mushra import SERVER_NAME
 
 # CONFIGURATION contains all of the configurable values for the test. For each condition
 CONFIGURATION = copy.deepcopy(caqe.test_configurations.general_mushra.CONFIGURATION)

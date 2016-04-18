@@ -36,7 +36,7 @@ def get_available_conditions(limit_to_condition_ids=None):
         The available conditions
     """
     finished_conditions = db.session.query(Trial.condition_id).filter(Trial.participant_passed_hearing_test == True). \
-        group_by(Trial.condition_id).having(func.count('*') >= TRIALS_PER_CONDITION).subquery()
+        group_by(Trial.condition_id).having(func.count('*') >= CONFIGURATION['trials_per_condition']).subquery()
 
     conditions = db.session.query(Condition).filter(Condition.id.notin_(finished_conditions))
 
@@ -92,7 +92,7 @@ def assign_conditions(participant, limit_to_condition_ids=None):
         logger.info('No hits left for %r' % participant)
         return None
 
-    if LIMIT_SUBJECT_TO_ONE_TASK_TYPE:
+    if CONFIGURATION['limit_subject_to_one_task_type']:
         previous_trial = participant.trials.filter(Trial.datetime_completed > datetime.datetime(2015, 5, 25)).first()
         try:
             if previous_trial.condition.test_id != conditions[0].test_id:
@@ -103,22 +103,22 @@ def assign_conditions(participant, limit_to_condition_ids=None):
             # no previous trials
             pass
 
-    if TEST_CONDITION_ORDER_RANDOMIZED:  # i.e. randomize the condition order within a test
+    if CONFIGURATION['test_condition_order_randomized']:  # i.e. randomize the condition order within a test
         # determine what test we are on
         current_test_id = conditions[0].test_id
 
         # randomize the order of the conditions within that test
         condition_ids = [c.id for c in conditions if c.test_id == current_test_id]
         random.shuffle(condition_ids)
-        condition_ids = condition_ids[:CONDITIONS_PER_EVALUATION]
+        condition_ids = condition_ids[:CONFIGURATION['conditions_per_evaluation']]
 
         # if there are not enough conditions left from this test, add more from the next.
-        if len(condition_ids) < CONDITIONS_PER_EVALUATION:
+        if len(condition_ids) < CONFIGURATION['conditions_per_evaluation']:
             more_cids = [c.id for c in conditions if c.test_id == current_test_id + 1]
             random.shuffle(more_cids)
-            condition_ids += more_cids[:(CONDITIONS_PER_EVALUATION - len(condition_ids))]
+            condition_ids += more_cids[:(CONFIGURATION['conditions_per_evaluation'] - len(condition_ids))]
     else:
-        condition_ids = [c.id for c in conditions[:CONDITIONS_PER_EVALUATION]]
+        condition_ids = [c.id for c in conditions[:CONFIGURATION['conditions_per_evaluation']]]
 
     logger.info('Participant %r assigned conditions: %r' % (participant, condition_ids))
     return condition_ids
@@ -154,7 +154,7 @@ def get_test_configurations(condition_ids, participant_id):
 
         condition_data = json.loads(condition.data)
         # make sure that condition_id is added to the conditions dict
-        if ENCRYPT_AUDIO_STIMULI_URLS:
+        if CONFIGURATION['encrypt_audio_stimuli_urls']:
             condition_data['reference_files'] = encrypt_audio_stimuli(condition_data['reference_files'],
                                                                       participant_id,
                                                                       condition.id)
@@ -232,7 +232,7 @@ def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_id):
 
     non_references = [a for a in audio_stimuli if a[0][0] == 'S']
 
-    if STIMULUS_ORDER_RANDOMIZED:
+    if CONFIGURATION['stimulus_order_randomized']:
         random.shuffle(non_references)
 
     for k, a in enumerate(non_references):
@@ -265,7 +265,7 @@ def decrypt_audio_stimuli(condition_data):
         encrypted_data = encrypted_data[:-4]
         return utilities.decrypt_data(str(encrypted_data))
 
-    if not ENCRYPT_AUDIO_STIMULI_URLS:
+    if not CONFIGURATION['encrypt_audio_stimuli_urls']:
         return condition_data
     encrypted_filenames = condition_data['stimulusFiles']
     decrypted_filenames = {}
@@ -279,9 +279,9 @@ def decrypt_audio_stimuli(condition_data):
 
     condition_data['stimulusFiles'] = decrypted_filenames
 
-    if TEST_TYPE == 'mushra':
+    if CONFIGURATION['test_type'] == 'mushra':
         condition_data['ratings'] = dict([(translation[k], v) for k, v in condition_data['ratings'].items()])
-    elif TEST_TYPE == 'pairwise':
+    elif CONFIGURATION['test_type'] == 'pairwise':
         ratings_dict = {}
         for k, v in condition_data['ratings'].items():
             ratings_dict[k] = {'stimuli': [translation[v['stimuli'][0]],

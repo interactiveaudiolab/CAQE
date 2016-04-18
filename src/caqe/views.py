@@ -19,7 +19,6 @@ import experiment
 from caqe import app
 from caqe import db
 from models import Participant, Trial, Condition
-from constants import *
 from settings import *
 from caqe import utilities
 
@@ -163,7 +162,7 @@ def anonymous():
     """
     preview = int(request.args.get('preview', 0))
 
-    if not ANONYMOUS_PARTICIPANTS_ENABLED:
+    if not CONFIGURATION['anonymous_participants_enabled']:
         logger.info('Anonymous participant attempted access, but anonymous participants is disabled.')
         return render_template('sorry.html', message='This experiment is currently closed to anonymous participants.')
 
@@ -235,7 +234,7 @@ def begin(platform, crowd_worker_id):
 
     # check browser
     browser = request.user_agent.browser
-    if ACCEPTABLE_BROWSERS is not None and browser not in ACCEPTABLE_BROWSERS:
+    if CONFIGURATION['acceptable_browsers'] is not None and browser not in CONFIGURATION['acceptable_browsers']:
         return render_template('sorry.html', message='We\'re sorry, but your web browser is not supported. Please try '
                                                      'again using <a href="http://www.google.com/chrome" '
                                                      'target="_blank">Chrome</a>.')
@@ -250,10 +249,10 @@ def begin(platform, crowd_worker_id):
     if preview:
         return render_template('preview.html',
                                link="",
-                               preview_html=PREVIEW_HTML,
+                               preview_html=CONFIGURATION['preview_html'],
                                **request.args)
 
-    if BEGIN_BUTTON_ENABLED:
+    if CONFIGURATION['begin_button_enabled']:
         if platform == 'mturk':
             print 'mturk'
             return render_template('mturk/begin.html',
@@ -263,8 +262,8 @@ def begin(platform, crowd_worker_id):
                                                 _external=True,
                                                 _scheme=URL_SCHEME,
                                                 **request.args),
-                                   width=POPUP_WIDTH,
-                                   height=POPUP_HEIGHT,
+                                   width=CONFIGURATION['popup_width'],
+                                   height=CONFIGURATION['popup_height'],
                                    worker_id=crowd_worker_id,
                                    assignment_id=request.args.get('assignment_id'),
                                    hit_id=request.args.get('assignment_type'),
@@ -278,8 +277,8 @@ def begin(platform, crowd_worker_id):
                                                 _external=True,
                                                 _scheme=URL_SCHEME,
                                                 **request.args),
-                                   width=POPUP_WIDTH,
-                                   height=POPUP_HEIGHT,
+                                   width=CONFIGURATION['popup_width'],
+                                   height=CONFIGURATION['popup_height'],
                                    **request.args)
     else:
         return redirect(url_for('create_participant',
@@ -352,16 +351,17 @@ def pre_evaluation_tasks():
     if session['condition_ids'] is None or len(session['condition_ids']) == 0:
         return render_template('sorry.html', message='We\'re sorry, but there are no more tasks available for you.')
 
-    if OBTAIN_CONSENT and not participant.gave_consent:
+    if CONFIGURATION['obtain_consent'] and not participant.gave_consent:
         return redirect(url_for('consent', _external=True, scheme=URL_SCHEME))
 
-    if HEARING_SCREENING_TEST_ENABLED and (not participant.has_passed_hearing_test_recently()):
+    if CONFIGURATION['hearing_screening_test_enabled'] and (not participant.has_passed_hearing_test_recently()):
         return redirect(url_for('hearing_test', _external=True, scheme=URL_SCHEME))
 
-    if PRE_TEST_SURVEY_ENABLED:
+    if CONFIGURATION['pre_test_survey_enabled']:
         if participant.pre_test_survey is None:
             return redirect(url_for('pre_test_survey', _external=True, scheme=URL_SCHEME))
-        if not is_pre_test_survey_valid(json.loads(participant.pre_test_survey)):
+        if not experiment.is_pre_test_survey_valid(json.loads(participant.pre_test_survey),
+                                                   CONFIGURATION['pre_test_survey_inclusion_criteria']):
             return render_template('sorry.html',
                                    message='Unfortunately, you do not meet the inclusion criteria for this study. '
                                            'Sorry.')
@@ -407,7 +407,7 @@ def pre_test_survey():
         participant = get_current_participant(session)
         participant.pre_test_survey = json.dumps(request.form)
         db.session.commit()
-        if is_pre_test_survey_valid(request.form):
+        if experiment.is_pre_test_survey_valid(request.form, CONFIGURATION['pre_test_survey_inclusion_criteria']):
             return pre_evaluation_tasks()
         else:
             return render_template('sorry.html',
@@ -434,7 +434,7 @@ def hearing_test():
     participant = get_current_participant(session)
 
     if request.method == 'GET':
-        if participant.hearing_test_attempts >= MAX_HEARING_TEST_ATTEMPTS:
+        if participant.hearing_test_attempts >= CONFIGURATION['max_hearing_test_attempts']:
             logger.info('Max hearing test attempts reached - %r' % participant)
             return render_template('sorry.html', message='Sorry. You have exceed the number of allowed attempts. '
                                                          'Please try again tomorrow.')
@@ -475,12 +475,12 @@ def hearing_test():
             participant.set_passed_hearing_test(False)
             db.session.commit()
 
-            if participant.hearing_test_attempts < MAX_HEARING_TEST_ATTEMPTS:
+            if participant.hearing_test_attempts < CONFIGURATION['max_hearing_test_attempts']:
                 flash('You answered incorrectly. If you are unable to pass this test, it is likely that your output '
                       'device (e.g. your headphones) is not producing the full range of frequencies required for this '
                       'task. Try using better headphones.', 'danger')
             else:
-                if not HEARING_TEST_REJECTION_ENABLED:
+                if not CONFIGURATION['hearing_test_rejection_enabled']:
                     # They attempted, but they failed, but pass them through since rejection is not enabled
                     logger.info('Hearing test rejection enabled. Passing failed participant to evaluation.')
                     return pre_evaluation_tasks()
@@ -614,10 +614,10 @@ def post_evaluation_tasks():
 
     participant = get_current_participant(session)
 
-    if HEARING_RESPONSE_ESTIMATION_ENABLED and participant.hearing_response_estimation is None:
+    if CONFIGURATION['hearing_response_estimation_enabled'] and participant.hearing_response_estimation is None:
         return redirect(url_for('hearing_response_estimation', _external=True, scheme=URL_SCHEME))
 
-    if POST_TEST_SURVEY_ENABLED and participant.post_test_survey is None:
+    if CONFIGURATION['post_test_survey_enabled'] and participant.post_test_survey is None:
         return redirect(url_for('post_test_survey', _external=True, scheme=URL_SCHEME))
 
     platform = session.get('platform', None)
@@ -650,13 +650,13 @@ def hearing_response_estimation():
 
         hearing_response_file_path = strip_query_from_url(hearing_response_file_path)
 
-        freq_seq = range(HEARING_RESPONSE_NFREQS)
+        freq_seq = range(CONFIGURATION['hearing_response_nfreqs'])
         random.shuffle(freq_seq)
 
         hearing_response_ids = []
         hearing_response_files = []
         for f in freq_seq:
-            hearing_response_id = '%d_%d' % (f, random.randint(0, HEARING_RESPONSE_NADD))
+            hearing_response_id = '%d_%d' % (f, random.randint(0, CONFIGURATION['hearing_response_nadd']))
             hearing_response_file = '%s%s.wav' % (hearing_response_file_path, hearing_response_id)
             hearing_response_ids.append(hearing_response_id)
             hearing_response_files.append(hearing_response_file)
@@ -664,7 +664,7 @@ def hearing_response_estimation():
         return render_template('hearing_response_estimation.html',
                                hearing_response_ids=hearing_response_ids,
                                hearing_response_files=hearing_response_files,
-                               n_options=N_OPTIONS)
+                               n_options=CONFIGURATION['n_options'])
 
 
 @app.route('/post_test_survey', methods=['GET', 'POST'])
