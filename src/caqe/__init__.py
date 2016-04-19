@@ -8,6 +8,15 @@ from werkzeug.contrib.fixers import ProxyFix
 from settings import SQLALCHEMY_DATABASE_URI
 import caqe.flask_configurations
 
+__version__ = '0.1.1a1'
+__title__ = 'CAQE'
+__description__ = 'A crowdsourced audio quality evaluation toolkit.'
+__uri__ = 'https://github.com/mcartwright/CAQE'
+__author__ = 'Mark Cartwright'
+__email__ = 'mcartwright@gmail.com'
+__license__ = 'MIT'
+__copyright__ = 'Copyright (c) 2016 Mark Cartwright'
+
 app = Flask('caqe')
 
 if os.getenv('FLASK_CONF') == 'DEV':
