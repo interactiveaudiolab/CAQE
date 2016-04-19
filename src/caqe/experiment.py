@@ -60,7 +60,7 @@ def assign_conditions(participant, limit_to_condition_ids=None):
 
     Returns
     -------
-    condition_ids : list of ints
+    condition_ids : list of int
     """
     # Ideal assignment in our scenario:
     # If the participant passed the listening test:
@@ -135,7 +135,7 @@ def get_test_configurations(condition_ids, participant_id):
 
     Returns
     -------
-    test_configuration : list of list of dicts
+    test_configuration : list of list of dict
         A list of dictionaries containing all the configuration variables for each test, including a list of conditions
         and their variables
     """
@@ -204,7 +204,7 @@ def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_id):
 
     Parameters
     ----------
-    audio_stimuli: list of duples
+    audio_stimuli: list of tuple
         The first element of each duple is a key, the second is the audio_file_path
         For all non-references, the key should be of the form S[0-9+]
     participant_id: int
@@ -212,7 +212,7 @@ def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_id):
 
     Returns
     -------
-    encrypted_audio_stimuli: list of duples
+    encrypted_audio_stimuli: list of tuple
         The first element of each duple is a key, the second is the encrypted audio_file_path
         For all non-references, the key should be of the form E[0-9+]. The order of the stimuli will be random (except
         for the references)

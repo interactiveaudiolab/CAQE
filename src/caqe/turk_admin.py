@@ -32,6 +32,21 @@ def turk_connect():
 
 
 def calculate_tsr(ratings, stimuli=('S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8')):
+    """
+    Calculate the Transitivity Satisfaction Rate for a group of ratings.
+
+    Parameters
+    ----------
+    ratings : dict
+        Ratings dictionary
+    stimuli : tuple of str
+        Tuple of stimulus identifiers in order.
+
+    Returns
+    -------
+    float
+        The TSR.
+    """
     n = len(stimuli)
     m = np.zeros([n, n])
     for k, r in ratings.items():
@@ -96,7 +111,7 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        configuration: dict
+        configuration : dict
 
         Returns
         -------
@@ -135,8 +150,8 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        hits: list of boto.HIT
-        hit_types: list of str
+        hits : list of boto.HIT
+        hit_types : list of str
 
         Returns
         -------
@@ -152,7 +167,7 @@ class TurkAdmin(object):
 
         Returns
         -------
-        list of ?
+        None
         """
         for hit in self.connection.get_all_hits():
             try:
@@ -166,17 +181,17 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        hit_types: list of str, optional
+        hit_types : list of str, optional
 
         Returns
         -------
-        list of ?
+        None
         """
         # todo: doc
         if hit_types is None:
             hit_types = self.all_hit_types
-        return [self.connection.expire_hit(hit.HITId) for hit in
-                self.filter_hits(self.connection.get_all_hits(), hit_types)]
+        for hit in self.filter_hits(self.connection.get_all_hits(), hit_types):
+            self.connection.expire_hit(hit.HITId)
 
     def dispose_hits(self, hit_types=None):
         """
@@ -184,17 +199,17 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        hit_types: list of str, optional
+        hit_types : list of str, optional
 
         Returns
         -------
-        list of ?
+        None
         """
         # todo: doc
         if hit_types is None:
             hit_types = self.all_hit_types
-        return [self.connection.dispose_hit(hit.HITId) for hit in
-                self.filter_hits(self.connection.get_all_hits(), hit_types)]
+        for hit in self.filter_hits(self.connection.get_all_hits(), hit_types):
+            self.connection.dispose_hit(hit.HITId)
 
     def dispose_all_hits(self):
         """
@@ -202,7 +217,7 @@ class TurkAdmin(object):
 
         Returns
         -------
-        list of ?
+        None
         """
         for hit in self.connection.get_all_hits():
             try:
@@ -216,16 +231,16 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        hit_type: str
+        hit_type : str
             HITTypeId
-        page_size: int
+        page_size : int
             How many assignments to return
-        page_number: int
+        page_number : int
             What page of assignments to return
 
         Returns
         -------
-        assignments: list of boto.Assignment
+        assignments : list of boto.Assignment
         """
         hits = self.connection.get_reviewable_hits(hit_type=hit_type)
         assignments = []
@@ -239,7 +254,7 @@ class TurkAdmin(object):
 
         Returns
         -------
-        assignments: list of boto.Assignment
+        assignments : list of boto.Assignment
         """
         hits = self.connection.get_all_hits()
         assignments = []
@@ -259,13 +274,13 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        hit_type: str
-        status: str, optional
+        hit_type : str
+        status : str, optional
             Assignment status. Valid values are 'Submitted', 'Approved', 'Rejected'.
 
         Returns
         -------
-        assignment: list
+        assignments: list of boto.Assignment
         """
         assignments = []
         page_number = 1
@@ -285,11 +300,11 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        hit_types: list of str, optional
+        hit_types : list of str, optional
 
         Returns
         -------
-        list of ?
+        None
         """
         if hit_types is None:
             hit_types = self.all_hit_types
@@ -306,7 +321,7 @@ class TurkAdmin(object):
 
         Returns
         -------
-        list of ?
+        None
         """
         assignments = self.get_all_assignments()
         for a in assignments:
@@ -320,13 +335,13 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        assignments: list of Assignment, optional
+        assignments : list of Assignment, optional
             The list of assignments to compute average completion time. If None, then compute on all assignments.
             Default is None.
 
         Returns
         -------
-        times: list of float
+        times : list of float
             The list of completion times in seconds.
         """
         if assignments is None:
@@ -350,13 +365,13 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        price: float, optional
+        price : float, optional
             The bonus amount to grant in dollars. Default is 30 cents.
-        reason: str, optional
+        reason : str, optional
             The message to send the workers when they receive the bonus
-        calculate_amt_only: bool, optional
+        calculate_amt_only : bool, optional
             Only calculate the amount of the bonus, do not actual pay out the bonus.
-        already_bonused_ids: set, optional
+        already_bonused_ids : set, optional
             Set of participant ids that have already been bonused
 
 
@@ -413,23 +428,23 @@ class TurkAdmin(object):
 
         Parameters
         ----------
-        max_price: float, optional
+        max_price : float, optional
             The maximum bonus amount to grant in dollars. Default is 25 cents.
-        threshold: bool
+        threshold : bool
             Consistency must exceed this value before a bonus is paid out.
-        reason: str, optional
+        reason : str, optional
             The message to send the workers when they receive the bonus
-        calculate_amt_only: bool, optional
+        calculate_amt_only : bool, optional
             Only calculate the amount of the bonus, do not actual pay out the bonus.
-        already_bonused_ids: set, optional
+        already_bonused_ids : set, optional
             Set of participant ids that have already been bonused
 
 
         Returns
         -------
-        total_bonus: float
+        total_bonus : float
             The total amount paid
-        participants_wo_valid_asgnmts: list of caqe.models.Participant
+        participants_wo_valid_asgnmts : list of caqe.models.Participant
             The participants who did not have valid assignments in their trial data (e.g. there must have been an error
             when submitting the assignment)
 
