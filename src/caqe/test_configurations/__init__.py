@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 A test configuration defines the user-tunable parameters of the quality evaluation such as the:
 

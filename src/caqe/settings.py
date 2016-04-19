@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Settings for CAQE. These are for the CAQE user to configure.
 """

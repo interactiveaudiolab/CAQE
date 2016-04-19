@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Amazon Mechanical Turk administration. Use this module to post, approve, expire, and bonus HITs.
 """

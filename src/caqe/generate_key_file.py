@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Generates `secret_keys.py` which contains the crypto keys for sessions and CSRF.
 """

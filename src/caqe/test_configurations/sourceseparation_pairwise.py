@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 A pairwise (e.g. A is better than B configuration for evaluating output quality of audio source
 separation algorithms on 4 different quality scales:

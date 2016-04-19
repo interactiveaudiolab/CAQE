@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 The base CAQE configuration from which the other configurations are derived.
 """

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 A MUSHRA (MUltiple Stimulus Hidden Reference and Anchor) configuration for evaluating output quality of audio source
 separation algorithms on 4 different quality scales:
