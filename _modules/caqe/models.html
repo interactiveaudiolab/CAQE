@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>caqe.models &mdash; CAQE 0.1a1 documentation</title>
+  <title>caqe.models &mdash; CAQE 0.1.1a1 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="CAQE 0.1a1 documentation" href="../../index.html"/>
+    <link rel="top" title="CAQE 0.1.1a1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.1a1
+                0.1
               </div>
             
           
@@ -85,7 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../source/caqe.test_configurations.html">Testing Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test_configurations.html">Test Configurations</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../source/caqe.html">CAQE Package</a></li>
@@ -134,7 +134,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for caqe.models</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">SQLAlchemy database models</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
@@ -142,7 +144,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">caqe</span> <span class="kn">import</span> <span class="n">db</span>
-<span class="kn">from</span> <span class="nn">caqe.settings</span> <span class="kn">import</span> <span class="n">CONFIGURATION</span>
+<span class="kn">from</span> <span class="nn">caqe</span> <span class="kn">import</span> <span class="n">app</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
@@ -195,7 +197,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">crowd_worker_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">crowd_worker_id</span> <span class="o">=</span> <span class="n">crowd_worker_id</span>
-        <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;ip_collection_enabled&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;IP_COLLECTION_ENABLED&#39;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ip_address</span> <span class="o">=</span> <span class="n">ip_address</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -210,7 +212,7 @@
 <span class="sd">        bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">hearing_test_last_attempt</span><span class="p">)</span> \
-                <span class="o">&gt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;hearing_test_expiration_hours&#39;</span><span class="p">]):</span>
+                <span class="o">&gt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;HEARING_TEST_EXPIRATION_HOURS&#39;</span><span class="p">]):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">passed_hearing_test</span> <span class="o">=</span> <span class="bp">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hearing_test_attempts</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -220,7 +222,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># regardless if they have taken the test recently, if HEARING_TEST_REJECTION_ENABLED is False, let them</span>
             <span class="c1"># through</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">passed_hearing_test</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;hearing_test_rejection_enabled&#39;</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">passed_hearing_test</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;HEARING_TEST_REJECTION_ENABLED&#39;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Participant.set_passed_hearing_test"><a class="viewcode-back" href="../../source/caqe.models.html#caqe.models.Participant.set_passed_hearing_test">[docs]</a>    <span class="k">def</span> <span class="nf">set_passed_hearing_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">passed_hearing_test</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -341,7 +343,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Mark Cartwright.
+        &copy; Copyright Copyright (c) 2016 Mark Cartwright.
 
     </p>
   </div>
@@ -363,7 +365,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1a1',
+            VERSION:'0.1.1a1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

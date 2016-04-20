@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>caqe.generate_key_file module &mdash; CAQE 0.1a1 documentation</title>
+  <title>caqe.generate_key_file module &mdash; CAQE 0.1.1a1 documentation</title>
   
 
   
@@ -30,10 +30,10 @@
   
 
   
-    <link rel="top" title="CAQE 0.1a1 documentation" href="../index.html"/>
+    <link rel="top" title="CAQE 0.1.1a1 documentation" href="../index.html"/>
         <link rel="up" title="caqe package" href="caqe.html"/>
         <link rel="next" title="caqe.models module" href="caqe.models.html"/>
-        <link rel="prev" title="caqe.flask_configurations module" href="caqe.flask_configurations.html"/> 
+        <link rel="prev" title="caqe.configuration module" href="caqe.configuration.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1a1
+                0.1
               </div>
             
           
@@ -87,15 +87,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="caqe.test_configurations.html">Testing Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_configurations.html">Test Configurations</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="caqe.html">CAQE Package</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="caqe.experiment.html">caqe.experiment module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caqe.flask_configurations.html">caqe.flask_configurations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.configuration.html">caqe.configuration module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">caqe.generate_key_file module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.models.html">caqe.models module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caqe.settings.html">caqe.settings module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.turk_admin.html">caqe.turk_admin module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.utilities.html">caqe.utilities module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.views.html">caqe.views module</a></li>
@@ -149,12 +148,9 @@
             
   <div class="section" id="module-caqe.generate_key_file">
 <span id="caqe-generate-key-file-module"></span><h1>caqe.generate_key_file module<a class="headerlink" href="#module-caqe.generate_key_file" title="Permalink to this headline">¶</a></h1>
-<p>Generates <cite>secret_keys.py</cite> which contains the crypto keys for sessions and CSRF.</p>
-<dl class="function">
-<dt id="caqe.generate_key_file.main">
-<code class="descclassname">caqe.generate_key_file.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/generate_key_file.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.generate_key_file.main" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<p>Generates <cite>secret_keys.py</cite> which contains the crypto keys for sessions and CSRF. Run on the command line, e.g.:</p>
+<blockquote>
+<div>$ python generate_key_file.py</div></blockquote>
 </div>
 
 
@@ -167,7 +163,7 @@
         <a href="caqe.models.html" class="btn btn-neutral float-right" title="caqe.models module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="caqe.flask_configurations.html" class="btn btn-neutral" title="caqe.flask_configurations module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="caqe.configuration.html" class="btn btn-neutral" title="caqe.configuration module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -176,7 +172,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Mark Cartwright.
+        &copy; Copyright Copyright (c) 2016 Mark Cartwright.
 
     </p>
   </div>
@@ -198,7 +194,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1a1',
+            VERSION:'0.1.1a1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

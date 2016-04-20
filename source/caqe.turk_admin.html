@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>caqe.turk_admin module &mdash; CAQE 0.1a1 documentation</title>
+  <title>caqe.turk_admin module &mdash; CAQE 0.1.1a1 documentation</title>
   
 
   
@@ -30,10 +30,10 @@
   
 
   
-    <link rel="top" title="CAQE 0.1a1 documentation" href="../index.html"/>
+    <link rel="top" title="CAQE 0.1.1a1 documentation" href="../index.html"/>
         <link rel="up" title="caqe package" href="caqe.html"/>
         <link rel="next" title="caqe.utilities module" href="caqe.utilities.html"/>
-        <link rel="prev" title="caqe.settings module" href="caqe.settings.html"/> 
+        <link rel="prev" title="caqe.models module" href="caqe.models.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1a1
+                0.1
               </div>
             
           
@@ -87,15 +87,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="caqe.test_configurations.html">Testing Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_configurations.html">Test Configurations</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="caqe.html">CAQE Package</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="caqe.experiment.html">caqe.experiment module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caqe.flask_configurations.html">caqe.flask_configurations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.configuration.html">caqe.configuration module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.generate_key_file.html">caqe.generate_key_file module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.models.html">caqe.models module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caqe.settings.html">caqe.settings module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">caqe.turk_admin module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.utilities.html">caqe.utilities module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.views.html">caqe.views module</a></li>
@@ -167,7 +166,7 @@
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -208,7 +207,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -226,7 +225,7 @@
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -242,7 +241,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -260,7 +259,7 @@
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -300,7 +299,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list of ?</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -336,10 +335,10 @@
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>assignment</strong></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>assignments</strong></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of boto.Assignment</p>
 </td>
 </tr>
 </tbody>
@@ -478,12 +477,43 @@ when submitting the assignment)</li>
 <dl class="function">
 <dt id="caqe.turk_admin.calculate_tsr">
 <code class="descclassname">caqe.turk_admin.</code><code class="descname">calculate_tsr</code><span class="sig-paren">(</span><em>ratings</em>, <em>stimuli=('S1'</em>, <em>'S2'</em>, <em>'S3'</em>, <em>'S4'</em>, <em>'S5'</em>, <em>'S6'</em>, <em>'S7'</em>, <em>'S8')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#calculate_tsr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.calculate_tsr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculate the Transitivity Satisfaction Rate (TSR) for a group of ratings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ratings</strong> (<em>dict</em>) &#8211; Ratings dictionary</li>
+<li><strong>stimuli</strong> (<em>tuple of str</em>) &#8211; Tuple of stimulus identifiers in order.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The TSR.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="caqe.turk_admin.turk_connect">
 <code class="descclassname">caqe.turk_admin.</code><code class="descname">turk_connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#turk_connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.turk_connect" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Connect to Mechanical Turk and return a connection. This uses <cite>AWS_ACCESS_KEY_ID</cite> and <cite>AWS_SECRET_KEY</cite> from
+<cite>secret_keys.py</cite> (you must put these in yourself).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">boto.MTurkConnection</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </div>
 
@@ -497,7 +527,7 @@ when submitting the assignment)</li>
         <a href="caqe.utilities.html" class="btn btn-neutral float-right" title="caqe.utilities module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="caqe.settings.html" class="btn btn-neutral" title="caqe.settings module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="caqe.models.html" class="btn btn-neutral" title="caqe.models module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -506,7 +536,7 @@ when submitting the assignment)</li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Mark Cartwright.
+        &copy; Copyright Copyright (c) 2016 Mark Cartwright.
 
     </p>
   </div>
@@ -528,7 +558,7 @@ when submitting the assignment)</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1a1',
+            VERSION:'0.1.1a1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

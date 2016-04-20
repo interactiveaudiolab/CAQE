@@ -1,0 +1,689 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.configuration module &mdash; CAQE 0.1.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1.1a1 documentation" href="../index.html"/>
+        <link rel="up" title="caqe package" href="caqe.html"/>
+        <link rel="next" title="caqe.generate_key_file module" href="caqe.generate_key_file.html"/>
+        <link rel="prev" title="caqe.experiment module" href="caqe.experiment.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../test_configurations.html">Test Configurations</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="caqe.html">CAQE Package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="caqe.experiment.html">caqe.experiment module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">caqe.configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.generate_key_file.html">caqe.generate_key_file module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.models.html">caqe.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.turk_admin.html">caqe.turk_admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.utilities.html">caqe.utilities module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.views.html">caqe.views module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="caqe.html">caqe package</a> &raquo;</li>
+      
+    <li>caqe.configuration module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/source/caqe.configuration.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-caqe.configuration">
+<span id="caqe-configuration-module"></span><h1>caqe.configuration module<a class="headerlink" href="#module-caqe.configuration" title="Permalink to this headline">¶</a></h1>
+<p>A app configuration defines the user-tunable parameters of the application and also the quality evaluation such as the:</p>
+<ul class="simple">
+<li>Amazon Mechanical Turk HIT description, pricing, keywords, etc.</li>
+<li>The description and instructions of the task</li>
+<li>The configuration of the type of test (e.g &#8216;mushra&#8217; or &#8216;pairwise&#8217;)</li>
+<li>The definition of the quality scales</li>
+<li>The paths to the audio stimuli</li>
+<li>Which components of the evaluation are active (e.g. pre-test survey, post-test survey, hearing screening, etc.)</li>
+</ul>
+<p>This subpackage contains a base configuration which contains overridable defaults, as well as pre-defined testing
+configurations for common audio quality evaluation scenarios.</p>
+<dl class="class">
+<dt id="caqe.configuration.BaseConfig">
+<em class="property">class </em><code class="descclassname">caqe.configuration.</code><code class="descname">BaseConfig</code><a class="reference internal" href="../_modules/caqe/configuration.html#BaseConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.configuration.BaseConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>The base application configuration.</p>
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.DEBUG">
+<code class="descname">DEBUG</code><a class="headerlink" href="#caqe.configuration.BaseConfig.DEBUG" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Enable/disable debug mode (see Flask docs) (default is False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.TESTING">
+<code class="descname">TESTING</code><a class="headerlink" href="#caqe.configuration.BaseConfig.TESTING" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Enable/disable testing mode (see Flask docs) (default is False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.SECRET_KEY">
+<code class="descname">SECRET_KEY</code><a class="headerlink" href="#caqe.configuration.BaseConfig.SECRET_KEY" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; If a secret key is set, cryptographic components can use this to sign cookies and other things. Set this to a
+complex random value when you want to use the secure cookie for instance. Set via <cite>generate_key_file.py</cite> or
+using environment variable &#8216;SECRET_KEY&#8217;. (see Flask Docs)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.CSRF_SESSION_KEY">
+<code class="descname">CSRF_SESSION_KEY</code><a class="headerlink" href="#caqe.configuration.BaseConfig.CSRF_SESSION_KEY" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; A Cross-site Request Forgery (CSRF) secret key for signing data. Set via <cite>generate_key_file.py</cite> or
+using environment variable &#8216;CSRF_SESSION_KEY&#8217;. (see Flask docs)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.CSRF_ENABLED">
+<code class="descname">CSRF_ENABLED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.CSRF_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Enable/disable protection against <em>Cross-site Request Forgery (CSRF)</em> (see Flask docs) (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.SERVER_NAME">
+<code class="descname">SERVER_NAME</code><a class="headerlink" href="#caqe.configuration.BaseConfig.SERVER_NAME" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The name and port number of the server (e.g.: &#8216;caqe.local:5000&#8217;) (see Flask docs) (default is None)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.SQLALCHEMY_DATABASE_URI">
+<code class="descname">SQLALCHEMY_DATABASE_URI</code><a class="headerlink" href="#caqe.configuration.BaseConfig.SQLALCHEMY_DATABASE_URI" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The database URI that should be used for the connection (see Flask-SQLAlchemy docs). Examples:
+* sqlite:////tmp/test.db
+* mysql://username:password&#64;server/db
+Can be set via environment variable &#8216;DATABASE_URL&#8217;. (default is&#8217;sqlite:////~/caqe.db&#8217;)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.PREFERRED_URL_SCHEME">
+<code class="descname">PREFERRED_URL_SCHEME</code><a class="headerlink" href="#caqe.configuration.BaseConfig.PREFERRED_URL_SCHEME" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The URL scheme that should be used for URL generation if no URL scheme is available. &#8216;http&#8217; or &#8216;https&#8217;
+(default is &#8216;https&#8217;)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.AUDIO_FILE_DIRECTORY">
+<code class="descname">AUDIO_FILE_DIRECTORY</code><a class="headerlink" href="#caqe.configuration.BaseConfig.AUDIO_FILE_DIRECTORY" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Relative directory path to testing audio stimuli. (default is &#8216;static/audio&#8217;)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.ENCRYPT_AUDIO_STIMULI_URLS">
+<code class="descname">ENCRYPT_AUDIO_STIMULI_URLS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.ENCRYPT_AUDIO_STIMULI_URLS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Enable/disable encryption of the URLs so that users can&#8217;t game consistency. (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.TEST_TYPE">
+<code class="descname">TEST_TYPE</code><a class="headerlink" href="#caqe.configuration.BaseConfig.TEST_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The test type (limited to &#8216;pairwise&#8217; or &#8216;mushra&#8217; for now). (default is None)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.ANONYMOUS_PARTICIPANTS_ENABLED">
+<code class="descname">ANONYMOUS_PARTICIPANTS_ENABLED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.ANONYMOUS_PARTICIPANTS_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Enable/disable participants to enter through &#8216;/anonymous&#8217; entry point. (default is False)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.IP_COLLECTION_ENABLED">
+<code class="descname">IP_COLLECTION_ENABLED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.IP_COLLECTION_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Enable/disable collection participants&#8217; IP addresses. (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.OBTAIN_CONSENT">
+<code class="descname">OBTAIN_CONSENT</code><a class="headerlink" href="#caqe.configuration.BaseConfig.OBTAIN_CONSENT" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If True, obtain consent from each participant (see consent.html) (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.PRE_TEST_SURVEY_ENABLED">
+<code class="descname">PRE_TEST_SURVEY_ENABLED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.PRE_TEST_SURVEY_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If True, ask participants a survey before evaluation (see pre_test_survey.html). (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.PRE_TEST_SURVEY_INCLUSION_CRITERIA">
+<code class="descname">PRE_TEST_SURVEY_INCLUSION_CRITERIA</code><a class="headerlink" href="#caqe.configuration.BaseConfig.PRE_TEST_SURVEY_INCLUSION_CRITERIA" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of str</em> &#8211; Pre-test survey inclusion criteria.
+(default is [&#8220;int(survey[&#8216;age&#8217;]) &gt;= 18&#8221;, &#8220;survey[&#8216;hearing_disorder&#8217;] == &#8216;No&#8217;&#8221;])</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.POST_TEST_SURVEY_ENABLED">
+<code class="descname">POST_TEST_SURVEY_ENABLED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.POST_TEST_SURVEY_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If True, ask participants a survey after evaluation (see post_test_survey.html) (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.HEARING_RESPONSE_ESTIMATION_ENABLED">
+<code class="descname">HEARING_RESPONSE_ESTIMATION_ENABLED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.HEARING_RESPONSE_ESTIMATION_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If enabled, ask participants to complete the in-situ hearing response estimation. (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.CONDITIONS_PER_EVALUATION">
+<code class="descname">CONDITIONS_PER_EVALUATION</code><a class="headerlink" href="#caqe.configuration.BaseConfig.CONDITIONS_PER_EVALUATION" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The number of conditions to present to a participant in a single visit to &#8216;/evaluate&#8217;. (default is 1)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.TRIALS_PER_CONDITION">
+<code class="descname">TRIALS_PER_CONDITION</code><a class="headerlink" href="#caqe.configuration.BaseConfig.TRIALS_PER_CONDITION" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The number of trials we should collect per condition (with distinct participants). (default is 20)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.LIMIT_SUBJECT_TO_ONE_TASK_TYPE">
+<code class="descname">LIMIT_SUBJECT_TO_ONE_TASK_TYPE</code><a class="headerlink" href="#caqe.configuration.BaseConfig.LIMIT_SUBJECT_TO_ONE_TASK_TYPE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If True, each subject is limited to one type of Test. (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.TEST_CONDITION_ORDER_RANDOMIZED">
+<code class="descname">TEST_CONDITION_ORDER_RANDOMIZED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.TEST_CONDITION_ORDER_RANDOMIZED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Randomize the condition order per test for each participant. (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.STIMULUS_ORDER_RANDOMIZED">
+<code class="descname">STIMULUS_ORDER_RANDOMIZED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.STIMULUS_ORDER_RANDOMIZED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Randomize the stimulus order per for each condition. (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.HEARING_SCREENING_TEST_ENABLED">
+<code class="descname">HEARING_SCREENING_TEST_ENABLED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.HEARING_SCREENING_TEST_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; Set to True if you want the participants to be required to take a hearing screening test. (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.HEARING_TEST_EXPIRATION_HOURS">
+<code class="descname">HEARING_TEST_EXPIRATION_HOURS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.HEARING_TEST_EXPIRATION_HOURS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The number of hours their hearing test is valid for (they must retake after this time has passed)
+(default is 24)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MAX_HEARING_TEST_ATTEMPTS">
+<code class="descname">MAX_HEARING_TEST_ATTEMPTS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MAX_HEARING_TEST_ATTEMPTS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The number of attempts one has before they are sent away (they must wait <cite>hearing_test_expiration_hours</cite>
+to take it again) (default is 2)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.HEARING_TEST_REJECTION_ENABLED">
+<code class="descname">HEARING_TEST_REJECTION_ENABLED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.HEARING_TEST_REJECTION_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If this is set to True, then we still test the users, but we don&#8217;t reject them. (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.HEARING_RESPONSE_NOPTIONS">
+<code class="descname">HEARING_RESPONSE_NOPTIONS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.HEARING_RESPONSE_NOPTIONS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Max number of frequencies for user to respond with in hearing response estimation. (default is 20)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_HOST">
+<code class="descname">MTURK_HOST</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_HOST" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Amazon Mechanical Turk host location. By default set it to the sandbox, and configure it via an environment
+variable (so, it can be easily modified when deploying and testing using Heroku).
+Can be set via environment variable &#8216;MTURK_HOST&#8217;. (default is &#8216;mechanicalturk.sandbox.amazonaws.com&#8217;)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_QUESTION_URL">
+<code class="descname">MTURK_QUESTION_URL</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_QUESTION_URL" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Entry point URL. (default is &#8216;<a class="reference external" href="https://%s/mturk">https://%s/mturk</a>&#8216; % SERVER_NAME)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_REWARD">
+<code class="descname">MTURK_REWARD</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_REWARD" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; This is the reward given to each worker for an approved assignment (in USD)
+(note that Amazon takes their Mechanical Turk Fee on top of this. See <a class="reference external" href="https://requester.mturk.com/pricing">https://requester.mturk.com/pricing</a>)
+(default is 0.50)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_NUMBER_HITS_APPROVED_REQUIREMENT">
+<code class="descname">MTURK_NUMBER_HITS_APPROVED_REQUIREMENT</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_NUMBER_HITS_APPROVED_REQUIREMENT" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; MTurk worker must have this many approved HITs to accept task. (default is 1000)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT">
+<code class="descname">MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; MTurk worker must have this percentage of approved assignments to accept task. (default is 97)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_TITLE">
+<code class="descname">MTURK_TITLE</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_TITLE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Title of MTurk HIT (default is &#8216;Critical audio listening task. Listen to audio recordings and rate them on
+various scales of quality.&#8217;)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_DESCRIPTION">
+<code class="descname">MTURK_DESCRIPTION</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_DESCRIPTION" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Description of MTurk HIT.
+(default is &#8216;This listening test aims to rate the quality of a set of signals in comparison to a reference
+signal. Note that while the maximum number assignments a worker can do is 10, it&#8217;s possible that fewer than
+10 may be available to you. **CHROME ONLY** **BONUS AVAILABLE**&#8217;)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_KEYWORDS">
+<code class="descname">MTURK_KEYWORDS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_KEYWORDS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; Keywords for MTurk HIT. (default is &#8216;audio, sound, music, listening, research&#8217;)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_ASSIGNMENT_DURATION_IN_SECONDS">
+<code class="descname">MTURK_ASSIGNMENT_DURATION_IN_SECONDS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_ASSIGNMENT_DURATION_IN_SECONDS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; Accepted MTurk assignments must be completed within this duration or they will be released to other workers
+(default is 60 * 30, i.e. 30 minutes)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_LIFETIME_IN_SECONDS">
+<code class="descname">MTURK_LIFETIME_IN_SECONDS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_LIFETIME_IN_SECONDS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; HITs expire (no one can accept them) after this duration since being posted.
+(default is 60 * 60 * 24 * 7, i.e 1 week)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.ACCEPTABLE_BROWSERS">
+<code class="descname">ACCEPTABLE_BROWSERS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.ACCEPTABLE_BROWSERS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of str</em> &#8211; The set of acceptable browsers. set as None to disable browser rejection. (default is [&#8216;chrome&#8217;,])</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.BEGIN_BUTTON_ENABLED">
+<code class="descname">BEGIN_BUTTON_ENABLED</code><a class="headerlink" href="#caqe.configuration.BaseConfig.BEGIN_BUTTON_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If true, participants will have to click a button that launches a new window. This is useful in order to
+delay condition assignment until the user is engaged in the task, and allows a new window to be launched
+that is bigger than the Mechanical Turk frame for instance. (default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.POPUP_WIDTH">
+<code class="descname">POPUP_WIDTH</code><a class="headerlink" href="#caqe.configuration.BaseConfig.POPUP_WIDTH" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The width of the window launched when participants press the &#8220;begin button&#8221; the task. (default is 1200)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.POPUP_HEIGHT">
+<code class="descname">POPUP_HEIGHT</code><a class="headerlink" href="#caqe.configuration.BaseConfig.POPUP_HEIGHT" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The height of the window launched when participants press the &#8220;begin button&#8221; the task. (default is 1200)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.TEST_TIMEOUT_SEC">
+<code class="descname">TEST_TIMEOUT_SEC</code><a class="headerlink" href="#caqe.configuration.BaseConfig.TEST_TIMEOUT_SEC" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; The participant must spend at least this amount of time on the evaluation task before submission.
+(default is 60.)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS">
+<code class="descname">REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em> &#8211; If True, the participant must listen to all of the training sounds before proceeding to the evaluation task.
+(default is True)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.REFERENCES">
+<code class="descname">REFERENCES</code><a class="headerlink" href="#caqe.configuration.BaseConfig.REFERENCES" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>tuple of tuple of str</em> &#8211; The reference stimuli in the evaluation task.
+(default is ((&#8216;Reference&#8217;, &#8216;The reference signal to which test signals are compared.&#8217;),))</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.PREVIEW_HTML">
+<code class="descname">PREVIEW_HTML</code><a class="headerlink" href="#caqe.configuration.BaseConfig.PREVIEW_HTML" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The HTML content of the preview page. This will be the same for all conditions, regardless of test since
+conditions are assigned on the fly (so we can have complete control over condition assignment).
+(default is None)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MIN_RATING_VALUE">
+<code class="descname">MIN_RATING_VALUE</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MIN_RATING_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The minimum rating value on the MUSHRA slider. (default is 0)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MAX_RATING_VALUE">
+<code class="descname">MAX_RATING_VALUE</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MAX_RATING_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The maximum rating value on the MUSHRA slider. (default is 99)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.DEFAULT_RATING_VALUE">
+<code class="descname">DEFAULT_RATING_VALUE</code><a class="headerlink" href="#caqe.configuration.BaseConfig.DEFAULT_RATING_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The default rating value on the MUSHRA slider. (default is 50)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.TESTS">
+<code class="descname">TESTS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.TESTS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of dict</em> &#8211; The test and condition-specific configuration variables. The dicts are of the form:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;test_config_variables&#39;</span> <span class="p">:</span>
+    <span class="p">{</span><span class="s1">&#39;test_title&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># The test title that is displayed on the evaluation page</span>
+     <span class="s1">&#39;first_task_introduction_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span>  <span class="c1"># Content of the intro page the first time they do a task</span>
+     <span class="s1">&#39;introduction_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># Content of the intro page (after the first time they perform the task)</span>
+     <span class="s1">&#39;training_instructions_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># The HTML content of the training instructions</span>
+     <span class="s1">&#39;evaluation_instructions_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">},</span> <span class="c1"># The HTML content of the evaluation instructions</span>
+     <span class="s1">&#39;reference_example_dict&#39;</span> <span class="p">:</span>
+        <span class="p">{</span><span class="s1">&#39;&lt;reference_name}&#39;</span><span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/&lt;reference_filename&gt;.wav&#39;</span><span class="p">),</span> <span class="o">...</span> <span class="p">},</span>
+     <span class="s1">&#39;quality_example_dict&#39;</span> <span class="p">:</span>
+        <span class="p">{</span><span class="s1">&#39;&lt;example_type0&gt;&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/&lt;example0_filename&gt;.wav&#39;</span><span class="p">),</span>
+                           <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/&lt;example1_filename&gt;.wav&#39;</span><span class="p">),],</span>
+         <span class="s1">&#39;&lt;example_type1&gt;&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/&lt;example3_filename&gt;),]}},</span>
+ <span class="s1">&#39;conditions&#39;</span> <span class="p">:</span>
+    <span class="p">[{</span><span class="s1">&#39;reference_files&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="o">&lt;</span><span class="n">reference_name</span><span class="o">&gt;</span><span class="p">,</span> <span class="s1">&#39;&lt;reference_filename&gt;.wav&#39;</span><span class="p">),],</span>
+      <span class="s1">&#39;stimulus_files&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;S1_filename&gt;.wav&#39;</span><span class="p">),</span>
+                        <span class="p">(</span><span class="s1">&#39;S2&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;S2_filename&gt;.wav&#39;</span><span class="p">),]},]}</span>
+</pre></div>
+</div>
+<p>(default is [])</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>For testing, add:</p>
+<blockquote>
+<div>0.0.0.0     caqe.local</div></blockquote>
+<p class="last">to /etc/hosts
+We need to set the SERVER_NAME to resolve <cite>url_for</cite> definitions when constructing the database, but we can&#8217;t simply
+use <cite>localhost</cite> because the secure sessions are not compatible with that.</p>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="caqe.configuration.TestingOverrideConfig">
+<em class="property">class </em><code class="descclassname">caqe.configuration.</code><code class="descname">TestingOverrideConfig</code><a class="reference internal" href="../_modules/caqe/configuration.html#TestingOverrideConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.configuration.TestingOverrideConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Override config for testing.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>To enable these parameters set environment variable <cite>APP_MODE</cite> to &#8216;PRODUCTION&#8217;. In Linux:</p>
+<blockquote class="last">
+<div>$ export APP_MODE=TESTING</div></blockquote>
+</div>
+<dl class="attribute">
+<dt id="caqe.configuration.TestingOverrideConfig.DEBUG">
+<code class="descname">DEBUG</code><em class="property"> = True</em><a class="headerlink" href="#caqe.configuration.TestingOverrideConfig.DEBUG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.TestingOverrideConfig.PREFERRED_URL_SCHEME">
+<code class="descname">PREFERRED_URL_SCHEME</code><em class="property"> = 'http'</em><a class="headerlink" href="#caqe.configuration.TestingOverrideConfig.PREFERRED_URL_SCHEME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.TestingOverrideConfig.SERVER_NAME">
+<code class="descname">SERVER_NAME</code><em class="property"> = 'caqe.local:5000'</em><a class="headerlink" href="#caqe.configuration.TestingOverrideConfig.SERVER_NAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.TestingOverrideConfig.SQLALCHEMY_DATABASE_URI">
+<code class="descname">SQLALCHEMY_DATABASE_URI</code><em class="property"> = 'sqlite://'</em><a class="headerlink" href="#caqe.configuration.TestingOverrideConfig.SQLALCHEMY_DATABASE_URI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.TestingOverrideConfig.TESTING">
+<code class="descname">TESTING</code><em class="property"> = True</em><a class="headerlink" href="#caqe.configuration.TestingOverrideConfig.TESTING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="caqe.configuration.DevelopmentOverrideConfig">
+<em class="property">class </em><code class="descclassname">caqe.configuration.</code><code class="descname">DevelopmentOverrideConfig</code><a class="reference internal" href="../_modules/caqe/configuration.html#DevelopmentOverrideConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Override config for development.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>To enable these parameters set environment variable <cite>APP_MODE</cite> to &#8216;PRODUCTION&#8217;. In Linux:</p>
+<blockquote class="last">
+<div>$ export APP_MODE=DEVELOPMENT</div></blockquote>
+</div>
+<dl class="attribute">
+<dt id="caqe.configuration.DevelopmentOverrideConfig.DEBUG">
+<code class="descname">DEBUG</code><em class="property"> = True</em><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig.DEBUG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.DevelopmentOverrideConfig.HEARING_TEST_REJECTION_ENABLED">
+<code class="descname">HEARING_TEST_REJECTION_ENABLED</code><em class="property"> = False</em><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig.HEARING_TEST_REJECTION_ENABLED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.DevelopmentOverrideConfig.PREFERRED_URL_SCHEME">
+<code class="descname">PREFERRED_URL_SCHEME</code><em class="property"> = 'http'</em><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig.PREFERRED_URL_SCHEME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.DevelopmentOverrideConfig.SERVER_NAME">
+<code class="descname">SERVER_NAME</code><em class="property"> = 'caqe.local:5000'</em><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig.SERVER_NAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="caqe.configuration.ProductionOverrideConfig">
+<em class="property">class </em><code class="descclassname">caqe.configuration.</code><code class="descname">ProductionOverrideConfig</code><a class="reference internal" href="../_modules/caqe/configuration.html#ProductionOverrideConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.configuration.ProductionOverrideConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Override config for production.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>To enable these parameters set environment variable <cite>APP_MODE</cite> to &#8216;PRODUCTION&#8217;. In Linux:</p>
+<blockquote class="last">
+<div>$ export APP_MODE=PRODUCTION</div></blockquote>
+</div>
+<dl class="attribute">
+<dt id="caqe.configuration.ProductionOverrideConfig.DEBUG">
+<code class="descname">DEBUG</code><em class="property"> = False</em><a class="headerlink" href="#caqe.configuration.ProductionOverrideConfig.DEBUG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.ProductionOverrideConfig.TESTING">
+<code class="descname">TESTING</code><em class="property"> = False</em><a class="headerlink" href="#caqe.configuration.ProductionOverrideConfig.TESTING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="caqe.generate_key_file.html" class="btn btn-neutral float-right" title="caqe.generate_key_file module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="caqe.experiment.html" class="btn btn-neutral" title="caqe.experiment module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Copyright (c) 2016 Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

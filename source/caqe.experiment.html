@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>caqe.experiment module &mdash; CAQE 0.1a1 documentation</title>
+  <title>caqe.experiment module &mdash; CAQE 0.1.1a1 documentation</title>
   
 
   
@@ -30,9 +30,9 @@
   
 
   
-    <link rel="top" title="CAQE 0.1a1 documentation" href="../index.html"/>
+    <link rel="top" title="CAQE 0.1.1a1 documentation" href="../index.html"/>
         <link rel="up" title="caqe package" href="caqe.html"/>
-        <link rel="next" title="caqe.flask_configurations module" href="caqe.flask_configurations.html"/>
+        <link rel="next" title="caqe.configuration module" href="caqe.configuration.html"/>
         <link rel="prev" title="caqe package" href="caqe.html"/> 
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.1a1
+                0.1
               </div>
             
           
@@ -87,15 +87,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="caqe.test_configurations.html">Testing Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_configurations.html">Test Configurations</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="caqe.html">CAQE Package</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">caqe.experiment module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caqe.flask_configurations.html">caqe.flask_configurations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caqe.configuration.html">caqe.configuration module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.generate_key_file.html">caqe.generate_key_file module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.models.html">caqe.models module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caqe.settings.html">caqe.settings module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.turk_admin.html">caqe.turk_admin module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.utilities.html">caqe.utilities module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.views.html">caqe.views module</a></li>
@@ -167,7 +166,7 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>condition_ids</strong></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of ints</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of int</p>
 </td>
 </tr>
 </tbody>
@@ -203,7 +202,7 @@ the stimuli_id (s_id), and a encrypted stimuli_id (e_id)</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>audio_stimuli</strong> (<em>list of duples</em>) &#8211; The first element of each duple is a key, the second is the audio_file_path
+<li><strong>audio_stimuli</strong> (<em>list of tuple</em>) &#8211; The first element of each duple is a key, the second is the audio_file_path
 For all non-references, the key should be of the form S[0-9+]</li>
 <li><strong>participant_id</strong> (<em>int</em>) &#8211; </li>
 <li><strong>condition_id</strong> (<em>int</em>) &#8211; </li>
@@ -215,7 +214,7 @@ For all non-references, the key should be of the form E[0-9+]. The order of the 
 for the references)</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of duples</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of tuple</p>
 </td>
 </tr>
 </tbody>
@@ -277,11 +276,45 @@ pairs, e.g. ((&#8216;E1&#8217;,&#8217;E2&#8217;),(&#8216;E5&#8217;,&#8217;E8&#82
 and their variables</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of list of dicts</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of list of dict</p>
 </td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.experiment.insert_tests_and_conditions">
+<code class="descclassname">caqe.experiment.</code><code class="descname">insert_tests_and_conditions</code><span class="sig-paren">(</span><em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#insert_tests_and_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.insert_tests_and_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is where you configure and define the listening test. If you need to change HTML content based on
+the testing condition, you configure it here as well, overriding the default values in <cite>CONFIGURATION</cite>.
+Running this doctest initializes the development database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>flask.Config</em>) &#8211; The application configuration</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>To call this you need the application context, e.g.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;FLASK_CONF&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DEV&#39;</span> <span class="c1"># for testing the Development configuration</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">caqe</span> <span class="k">import</span> <span class="n">db</span>
+<span class="go">DEV</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">drop_all</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">caqe</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">caqe.experiment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">caqe</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">caqe</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">insert_tests_and_conditions</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -318,7 +351,7 @@ return False.</li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="caqe.flask_configurations.html" class="btn btn-neutral float-right" title="caqe.flask_configurations module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="caqe.configuration.html" class="btn btn-neutral float-right" title="caqe.configuration module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="caqe.html" class="btn btn-neutral" title="caqe package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -330,7 +363,7 @@ return False.</li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Mark Cartwright.
+        &copy; Copyright Copyright (c) 2016 Mark Cartwright.
 
     </p>
   </div>
@@ -352,7 +385,7 @@ return False.</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1a1',
+            VERSION:'0.1.1a1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

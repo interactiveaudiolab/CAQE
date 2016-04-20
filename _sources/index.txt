@@ -24,11 +24,11 @@ Getting Started
 
 
 Testing Configurations
---------------
+----------------------
 .. toctree::
     :maxdepth: 2
 
-    Testing Configurations </source/caqe.test_configurations>
+    test_configurations
 
 
 Package Documentation

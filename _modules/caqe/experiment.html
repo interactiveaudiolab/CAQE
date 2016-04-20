@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>caqe.experiment &mdash; CAQE 0.1a1 documentation</title>
+  <title>caqe.experiment &mdash; CAQE 0.1.1a1 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="CAQE 0.1a1 documentation" href="../../index.html"/>
+    <link rel="top" title="CAQE 0.1.1a1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                0.1a1
+                0.1
               </div>
             
           
@@ -85,7 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../source/caqe.test_configurations.html">Testing Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../test_configurations.html">Test Configurations</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../source/caqe.html">CAQE Package</a></li>
@@ -134,7 +134,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for caqe.experiment</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Contains functions related to the experimental design of the listening test</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">copy</span>
@@ -146,13 +148,59 @@
 
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">func</span>
 
-<span class="kn">from</span> <span class="nn">settings</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">import</span> <span class="nn">utilities</span>
+<span class="kn">import</span> <span class="nn">caqe.utilities</span> <span class="kn">as</span> <span class="nn">utilities</span>
 
-<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Participant</span><span class="p">,</span> <span class="n">Trial</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Participant</span><span class="p">,</span> <span class="n">Trial</span><span class="p">,</span> <span class="n">Test</span>
 <span class="kn">from</span> <span class="nn">caqe</span> <span class="kn">import</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">caqe</span> <span class="kn">import</span> <span class="n">app</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<span class="c1"># Configure and insert conditions</span>
+<div class="viewcode-block" id="insert_tests_and_conditions"><a class="viewcode-back" href="../../source/caqe.experiment.html#caqe.experiment.insert_tests_and_conditions">[docs]</a><span class="k">def</span> <span class="nf">insert_tests_and_conditions</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is where you configure and define the listening test. If you need to change HTML content based on</span>
+<span class="sd">    the testing condition, you configure it here as well, overriding the default values in `CONFIGURATION`.</span>
+<span class="sd">    Running this doctest initializes the development database.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config : flask.Config</span>
+<span class="sd">        The application configuration</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    To call this you need the application context, e.g.:</span>
+
+<span class="sd">    &gt;&gt;&gt; import os</span>
+<span class="sd">    &gt;&gt;&gt; os.environ[&#39;FLASK_CONF&#39;] = &#39;DEV&#39; # for testing the Development configuration</span>
+<span class="sd">    &gt;&gt;&gt; from caqe import db</span>
+<span class="sd">    DEV</span>
+<span class="sd">    &gt;&gt;&gt; db.drop_all()</span>
+<span class="sd">    &gt;&gt;&gt; db.create_all()</span>
+<span class="sd">    &gt;&gt;&gt; import caqe</span>
+<span class="sd">    &gt;&gt;&gt; import caqe.experiment</span>
+<span class="sd">    &gt;&gt;&gt; with caqe.app.app_context():</span>
+<span class="sd">    ...     caqe.experiment.insert_tests_and_conditions()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span>
+        
+    <span class="k">for</span> <span class="n">test_dict</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">]:</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">Test</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">test_dict</span><span class="p">[</span><span class="s1">&#39;test_config_variables&#39;</span><span class="p">]))</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">condition_dict</span> <span class="ow">in</span> <span class="n">test_dict</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="n">test_id</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">condition_dict</span><span class="p">))</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+    <span class="c1"># commit tests and conditions</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="get_available_conditions"><a class="viewcode-back" href="../../source/caqe.experiment.html#caqe.experiment.get_available_conditions">[docs]</a><span class="k">def</span> <span class="nf">get_available_conditions</span><span class="p">(</span><span class="n">limit_to_condition_ids</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -170,7 +218,7 @@
 <span class="sd">        The available conditions</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">finished_conditions</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">condition_id</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">participant_passed_hearing_test</span> <span class="o">==</span> <span class="bp">True</span><span class="p">)</span><span class="o">.</span> \
-        <span class="n">group_by</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">condition_id</span><span class="p">)</span><span class="o">.</span><span class="n">having</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;trials_per_condition&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
+        <span class="n">group_by</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">condition_id</span><span class="p">)</span><span class="o">.</span><span class="n">having</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;TRIALS_PER_CONDITION&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">subquery</span><span class="p">()</span>
 
     <span class="n">conditions</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Condition</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Condition</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">notin_</span><span class="p">(</span><span class="n">finished_conditions</span><span class="p">))</span>
 
@@ -194,7 +242,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    condition_ids : list of ints</span>
+<span class="sd">    condition_ids : list of int</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Ideal assignment in our scenario:</span>
     <span class="c1"># If the participant passed the listening test:</span>
@@ -226,7 +274,7 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;No hits left for </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">participant</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">None</span>
 
-    <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;limit_subject_to_one_task_type&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;LIMIT_SUBJECT_TO_ONE_TASK_TYPE&#39;</span><span class="p">]:</span>
         <span class="n">previous_trial</span> <span class="o">=</span> <span class="n">participant</span><span class="o">.</span><span class="n">trials</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Trial</span><span class="o">.</span><span class="n">datetime_completed</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">previous_trial</span><span class="o">.</span><span class="n">condition</span><span class="o">.</span><span class="n">test_id</span> <span class="o">!=</span> <span class="n">conditions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">test_id</span><span class="p">:</span>
@@ -237,22 +285,22 @@
             <span class="c1"># no previous trials</span>
             <span class="k">pass</span>
 
-    <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;test_condition_order_randomized&#39;</span><span class="p">]:</span>  <span class="c1"># i.e. randomize the condition order within a test</span>
+    <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;TEST_CONDITION_ORDER_RANDOMIZED&#39;</span><span class="p">]:</span>  <span class="c1"># i.e. randomize the condition order within a test</span>
         <span class="c1"># determine what test we are on</span>
         <span class="n">current_test_id</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">test_id</span>
 
         <span class="c1"># randomize the order of the conditions within that test</span>
         <span class="n">condition_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conditions</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">test_id</span> <span class="o">==</span> <span class="n">current_test_id</span><span class="p">]</span>
         <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">condition_ids</span><span class="p">)</span>
-        <span class="n">condition_ids</span> <span class="o">=</span> <span class="n">condition_ids</span><span class="p">[:</span><span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;conditions_per_evaluation&#39;</span><span class="p">]]</span>
+        <span class="n">condition_ids</span> <span class="o">=</span> <span class="n">condition_ids</span><span class="p">[:</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;CONDITIONS_PER_EVALUATION&#39;</span><span class="p">]]</span>
 
         <span class="c1"># if there are not enough conditions left from this test, add more from the next.</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition_ids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;conditions_per_evaluation&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition_ids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;CONDITIONS_PER_EVALUATION&#39;</span><span class="p">]:</span>
             <span class="n">more_cids</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conditions</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">test_id</span> <span class="o">==</span> <span class="n">current_test_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
             <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">more_cids</span><span class="p">)</span>
-            <span class="n">condition_ids</span> <span class="o">+=</span> <span class="n">more_cids</span><span class="p">[:(</span><span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;conditions_per_evaluation&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition_ids</span><span class="p">))]</span>
+            <span class="n">condition_ids</span> <span class="o">+=</span> <span class="n">more_cids</span><span class="p">[:(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;CONDITIONS_PER_EVALUATION&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">condition_ids</span><span class="p">))]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">condition_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">[:</span><span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;conditions_per_evaluation&#39;</span><span class="p">]]]</span>
+        <span class="n">condition_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">[:</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;CONDITIONS_PER_EVALUATION&#39;</span><span class="p">]]]</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Participant </span><span class="si">%r</span><span class="s1"> assigned conditions: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">participant</span><span class="p">,</span> <span class="n">condition_ids</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">condition_ids</span></div>
@@ -269,7 +317,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    test_configuration : list of list of dicts</span>
+<span class="sd">    test_configuration : list of list of dict</span>
 <span class="sd">        A list of dictionaries containing all the configuration variables for each test, including a list of conditions</span>
 <span class="sd">        and their variables</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -287,14 +335,14 @@
                            <span class="s1">&#39;conditions&#39;</span><span class="p">:</span> <span class="p">[]}</span>
 
         <span class="n">condition_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">condition</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="c1"># make sure that condition_id is added to the conditions dict</span>
-        <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;encrypt_audio_stimuli_urls&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;ENCRYPT_AUDIO_STIMULI_URLS&#39;</span><span class="p">]:</span>
             <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;reference_files&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encrypt_audio_stimuli</span><span class="p">(</span><span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;reference_files&#39;</span><span class="p">],</span>
                                                                       <span class="n">participant_id</span><span class="p">,</span>
                                                                       <span class="n">condition</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
             <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;stimulus_files&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encrypt_audio_stimuli</span><span class="p">(</span><span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;stimulus_files&#39;</span><span class="p">],</span>
                                                                      <span class="n">participant_id</span><span class="p">,</span>
                                                                      <span class="n">condition</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="c1"># make sure that condition_id is added to the conditions dict</span>
         <span class="n">test_config</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">dict</span><span class="p">({</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">condition</span><span class="o">.</span><span class="n">id</span><span class="p">},</span> <span class="o">**</span><span class="n">condition_data</span><span class="p">))</span>
     <span class="n">test_configurations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_config</span><span class="p">)</span>
 
@@ -338,7 +386,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    audio_stimuli: list of duples</span>
+<span class="sd">    audio_stimuli: list of tuple</span>
 <span class="sd">        The first element of each duple is a key, the second is the audio_file_path</span>
 <span class="sd">        For all non-references, the key should be of the form S[0-9+]</span>
 <span class="sd">    participant_id: int</span>
@@ -346,7 +394,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    encrypted_audio_stimuli: list of duples</span>
+<span class="sd">    encrypted_audio_stimuli: list of tuple</span>
 <span class="sd">        The first element of each duple is a key, the second is the encrypted audio_file_path</span>
 <span class="sd">        For all non-references, the key should be of the form E[0-9+]. The order of the stimuli will be random (except</span>
 <span class="sd">        for the references)</span>
@@ -366,7 +414,7 @@
 
     <span class="n">non_references</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">audio_stimuli</span> <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;stimulus_order_randomized&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;STIMULUS_ORDER_RANDOMIZED&#39;</span><span class="p">]:</span>
         <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">non_references</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">non_references</span><span class="p">):</span>
@@ -399,8 +447,6 @@
         <span class="n">encrypted_data</span> <span class="o">=</span> <span class="n">encrypted_data</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">utilities</span><span class="o">.</span><span class="n">decrypt_data</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">encrypted_data</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;encrypt_audio_stimuli_urls&#39;</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">condition_data</span>
     <span class="n">encrypted_filenames</span> <span class="o">=</span> <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;stimulusFiles&#39;</span><span class="p">]</span>
     <span class="n">decrypted_filenames</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">translation</span> <span class="o">=</span> <span class="p">{}</span>
@@ -413,9 +459,9 @@
 
     <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;stimulusFiles&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">decrypted_filenames</span>
 
-    <span class="k">if</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;test_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;mushra&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;TEST_TYPE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;mushra&#39;</span><span class="p">:</span>
         <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;ratings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">translation</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;ratings&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
-    <span class="k">elif</span> <span class="n">CONFIGURATION</span><span class="p">[</span><span class="s1">&#39;test_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pairwise&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;TEST_TYPE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pairwise&#39;</span><span class="p">:</span>
         <span class="n">ratings_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">condition_data</span><span class="p">[</span><span class="s1">&#39;ratings&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">ratings_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;stimuli&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">translation</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;stimuli&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span>
@@ -456,7 +502,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2016, Mark Cartwright.
+        &copy; Copyright Copyright (c) 2016 Mark Cartwright.
 
     </p>
   </div>
@@ -478,7 +524,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1a1',
+            VERSION:'0.1.1a1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

@@ -1,0 +1,536 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>caqe.configuration &mdash; CAQE 0.1.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1.1a1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../test_configurations.html">Test Configurations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/caqe.html">CAQE Package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>caqe.configuration</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for caqe.configuration</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A app configuration defines the user-tunable parameters of the application and also the quality evaluation such as the:</span>
+
+<span class="sd">* Amazon Mechanical Turk HIT description, pricing, keywords, etc.</span>
+<span class="sd">* The description and instructions of the task</span>
+<span class="sd">* The configuration of the type of test (e.g &#39;mushra&#39; or &#39;pairwise&#39;)</span>
+<span class="sd">* The definition of the quality scales</span>
+<span class="sd">* The paths to the audio stimuli</span>
+<span class="sd">* Which components of the evaluation are active (e.g. pre-test survey, post-test survey, hearing screening, etc.)</span>
+
+<span class="sd">This subpackage contains a base configuration which contains overridable defaults, as well as pre-defined testing</span>
+<span class="sd">configurations for common audio quality evaluation scenarios.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">secret_keys</span> <span class="kn">import</span> <span class="n">CSRF_SECRET_KEY</span><span class="p">,</span> <span class="n">SESSION_KEY</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">CSRF_SECRET_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CSRF_SECRET_KEY&#39;</span><span class="p">]</span>
+        <span class="n">SESSION_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SESSION_KEY&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;No keys found. Either define a secret_keys.py file (using generate_key_files.py) or set the &#39;</span>
+                       <span class="s1">&#39;keys using environment variables.&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get the application mode from the environment variable APP_MODE</span>
+<span class="n">APP_MODE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;APP_MODE&#39;</span><span class="p">)</span>
+
+<span class="c1"># The size of the frame when entry point is /mturk_debug</span>
+<span class="n">MTURK_DEBUG_FRAME_HEIGHT</span> <span class="o">=</span> <span class="mi">1200</span>
+
+<span class="c1"># HEARING TEST CONSTANTS</span>
+<span class="n">MIN_HEARING_TEST_AUDIO_TONES</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">MAX_HEARING_TEST_AUDIO_TONES</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">HEARING_TEST_AUDIO_FILES_PER_TONES</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">MIN_HEARING_TEST_AUDIO_INDEX</span> <span class="o">=</span> <span class="n">HEARING_TEST_AUDIO_FILES_PER_TONES</span> <span class="o">*</span> <span class="n">MIN_HEARING_TEST_AUDIO_TONES</span>
+<span class="n">MAX_HEARING_TEST_AUDIO_INDEX</span> <span class="o">=</span> <span class="n">HEARING_TEST_AUDIO_FILES_PER_TONES</span> <span class="o">*</span> <span class="n">MAX_HEARING_TEST_AUDIO_TONES</span>
+
+<span class="c1"># HEARING RESPONSE ESTIMATION CONSTANTS</span>
+<span class="n">HEARING_RESPONSE_NFREQS</span> <span class="o">=</span> <span class="mi">8</span> <span class="c1"># number of different frequencies</span>
+<span class="n">HEARING_RESPONSE_NADD</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># number of max additional tones (60 for 10dB, 3 for 20dB Spacing)</span>
+
+
+<div class="viewcode-block" id="BaseConfig"><a class="viewcode-back" href="../../source/caqe.configuration.html#caqe.configuration.BaseConfig">[docs]</a><span class="k">class</span> <span class="nc">BaseConfig</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The base application configuration.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    DEBUG : bool</span>
+<span class="sd">        Enable/disable debug mode (see Flask docs) (default is False)</span>
+<span class="sd">    TESTING : bool</span>
+<span class="sd">        Enable/disable testing mode (see Flask docs) (default is False)</span>
+<span class="sd">    SECRET_KEY : str</span>
+<span class="sd">        If a secret key is set, cryptographic components can use this to sign cookies and other things. Set this to a</span>
+<span class="sd">        complex random value when you want to use the secure cookie for instance. Set via `generate_key_file.py` or</span>
+<span class="sd">        using environment variable &#39;SECRET_KEY&#39;. (see Flask Docs)</span>
+<span class="sd">    CSRF_SESSION_KEY : str</span>
+<span class="sd">        A Cross-site Request Forgery (CSRF) secret key for signing data. Set via `generate_key_file.py` or</span>
+<span class="sd">        using environment variable &#39;CSRF_SESSION_KEY&#39;. (see Flask docs)</span>
+<span class="sd">    CSRF_ENABLED : bool</span>
+<span class="sd">        Enable/disable protection against *Cross-site Request Forgery (CSRF)* (see Flask docs) (default is True)</span>
+<span class="sd">    SERVER_NAME : str</span>
+<span class="sd">        The name and port number of the server (e.g.: &#39;caqe.local:5000&#39;) (see Flask docs) (default is None)</span>
+<span class="sd">    SQLALCHEMY_DATABASE_URI : str</span>
+<span class="sd">        The database URI that should be used for the connection (see Flask-SQLAlchemy docs). Examples:</span>
+<span class="sd">        * sqlite:////tmp/test.db</span>
+<span class="sd">        * mysql://username:password@server/db</span>
+<span class="sd">        Can be set via environment variable &#39;DATABASE_URL&#39;. (default is&#39;sqlite:////~/caqe.db&#39;)</span>
+<span class="sd">    PREFERRED_URL_SCHEME : str</span>
+<span class="sd">        The URL scheme that should be used for URL generation if no URL scheme is available. &#39;http&#39; or &#39;https&#39;</span>
+<span class="sd">        (default is &#39;https&#39;)</span>
+<span class="sd">    AUDIO_FILE_DIRECTORY : str</span>
+<span class="sd">        Relative directory path to testing audio stimuli. (default is &#39;static/audio&#39;)</span>
+<span class="sd">    ENCRYPT_AUDIO_STIMULI_URLS : bool</span>
+<span class="sd">        Enable/disable encryption of the URLs so that users can&#39;t game consistency. (default is True)</span>
+<span class="sd">    TEST_TYPE : str</span>
+<span class="sd">        The test type (limited to &#39;pairwise&#39; or &#39;mushra&#39; for now). (default is None)</span>
+<span class="sd">    ANONYMOUS_PARTICIPANTS_ENABLED : bool</span>
+<span class="sd">        Enable/disable participants to enter through &#39;/anonymous&#39; entry point. (default is False)</span>
+<span class="sd">    IP_COLLECTION_ENABLED : bool</span>
+<span class="sd">        Enable/disable collection participants&#39; IP addresses. (default is True)</span>
+<span class="sd">    OBTAIN_CONSENT : bool</span>
+<span class="sd">        If True, obtain consent from each participant (see consent.html) (default is True)</span>
+<span class="sd">    PRE_TEST_SURVEY_ENABLED : bool</span>
+<span class="sd">        If True, ask participants a survey before evaluation (see pre_test_survey.html). (default is True)</span>
+<span class="sd">    PRE_TEST_SURVEY_INCLUSION_CRITERIA : list of str</span>
+<span class="sd">        Pre-test survey inclusion criteria.</span>
+<span class="sd">        (default is [&quot;int(survey[&#39;age&#39;]) &gt;= 18&quot;, &quot;survey[&#39;hearing_disorder&#39;] == &#39;No&#39;&quot;])</span>
+<span class="sd">    POST_TEST_SURVEY_ENABLED : bool</span>
+<span class="sd">        If True, ask participants a survey after evaluation (see post_test_survey.html) (default is True)</span>
+<span class="sd">    HEARING_RESPONSE_ESTIMATION_ENABLED : bool</span>
+<span class="sd">        If enabled, ask participants to complete the in-situ hearing response estimation. (default is True)</span>
+<span class="sd">    CONDITIONS_PER_EVALUATION : int</span>
+<span class="sd">        The number of conditions to present to a participant in a single visit to &#39;/evaluate&#39;. (default is 1)</span>
+<span class="sd">    TRIALS_PER_CONDITION : int</span>
+<span class="sd">        The number of trials we should collect per condition (with distinct participants). (default is 20)</span>
+<span class="sd">    LIMIT_SUBJECT_TO_ONE_TASK_TYPE : bool</span>
+<span class="sd">        If True, each subject is limited to one type of Test. (default is True)</span>
+<span class="sd">    TEST_CONDITION_ORDER_RANDOMIZED : bool</span>
+<span class="sd">        Randomize the condition order per test for each participant. (default is True)</span>
+<span class="sd">    STIMULUS_ORDER_RANDOMIZED : bool</span>
+<span class="sd">        Randomize the stimulus order per for each condition. (default is True)</span>
+<span class="sd">    HEARING_SCREENING_TEST_ENABLED : bool</span>
+<span class="sd">        Set to True if you want the participants to be required to take a hearing screening test. (default is True)</span>
+<span class="sd">    HEARING_TEST_EXPIRATION_HOURS : int</span>
+<span class="sd">        The number of hours their hearing test is valid for (they must retake after this time has passed)</span>
+<span class="sd">        (default is 24)</span>
+<span class="sd">    MAX_HEARING_TEST_ATTEMPTS : int</span>
+<span class="sd">        The number of attempts one has before they are sent away (they must wait `hearing_test_expiration_hours`</span>
+<span class="sd">        to take it again) (default is 2)</span>
+<span class="sd">    HEARING_TEST_REJECTION_ENABLED : bool</span>
+<span class="sd">        If this is set to True, then we still test the users, but we don&#39;t reject them. (default is True)</span>
+<span class="sd">    HEARING_RESPONSE_NOPTIONS : int</span>
+<span class="sd">        Max number of frequencies for user to respond with in hearing response estimation. (default is 20)</span>
+<span class="sd">    MTURK_HOST : str</span>
+<span class="sd">        Amazon Mechanical Turk host location. By default set it to the sandbox, and configure it via an environment</span>
+<span class="sd">        variable (so, it can be easily modified when deploying and testing using Heroku).</span>
+<span class="sd">        Can be set via environment variable &#39;MTURK_HOST&#39;. (default is &#39;mechanicalturk.sandbox.amazonaws.com&#39;)</span>
+<span class="sd">    MTURK_QUESTION_URL : str</span>
+<span class="sd">        Entry point URL. (default is &#39;https://%s/mturk&#39; % SERVER_NAME)</span>
+<span class="sd">    MTURK_REWARD : float</span>
+<span class="sd">        This is the reward given to each worker for an approved assignment (in USD)</span>
+<span class="sd">        (note that Amazon takes their Mechanical Turk Fee on top of this. See https://requester.mturk.com/pricing)</span>
+<span class="sd">        (default is 0.50)</span>
+<span class="sd">    MTURK_NUMBER_HITS_APPROVED_REQUIREMENT : int</span>
+<span class="sd">        MTurk worker must have this many approved HITs to accept task. (default is 1000)</span>
+<span class="sd">    MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT : int</span>
+<span class="sd">        MTurk worker must have this percentage of approved assignments to accept task. (default is 97)</span>
+<span class="sd">    MTURK_TITLE : str</span>
+<span class="sd">        Title of MTurk HIT (default is &#39;Critical audio listening task. Listen to audio recordings and rate them on</span>
+<span class="sd">        various scales of quality.&#39;)</span>
+<span class="sd">    MTURK_DESCRIPTION : str</span>
+<span class="sd">        Description of MTurk HIT.</span>
+<span class="sd">        (default is &#39;This listening test aims to rate the quality of a set of signals in comparison to a reference</span>
+<span class="sd">        signal. Note that while the maximum number assignments a worker can do is 10, it&#39;s possible that fewer than</span>
+<span class="sd">        10 may be available to you. \*\*CHROME ONLY\*\* \*\*BONUS AVAILABLE\*\*&#39;)</span>
+<span class="sd">    MTURK_KEYWORDS : str</span>
+<span class="sd">        Keywords for MTurk HIT. (default is &#39;audio, sound, music, listening, research&#39;)</span>
+<span class="sd">    MTURK_ASSIGNMENT_DURATION_IN_SECONDS : int</span>
+<span class="sd">        Accepted MTurk assignments must be completed within this duration or they will be released to other workers</span>
+<span class="sd">        (default is 60 * 30, i.e. 30 minutes)</span>
+<span class="sd">    MTURK_LIFETIME_IN_SECONDS : int</span>
+<span class="sd">        HITs expire (no one can accept them) after this duration since being posted.</span>
+<span class="sd">        (default is 60 * 60 * 24 * 7, i.e 1 week)</span>
+<span class="sd">    ACCEPTABLE_BROWSERS : list of str</span>
+<span class="sd">        The set of acceptable browsers. set as None to disable browser rejection. (default is [&#39;chrome&#39;,])</span>
+<span class="sd">    BEGIN_BUTTON_ENABLED : bool</span>
+<span class="sd">        If true, participants will have to click a button that launches a new window. This is useful in order to</span>
+<span class="sd">        delay condition assignment until the user is engaged in the task, and allows a new window to be launched</span>
+<span class="sd">        that is bigger than the Mechanical Turk frame for instance. (default is True)</span>
+<span class="sd">    POPUP_WIDTH : int</span>
+<span class="sd">        The width of the window launched when participants press the &quot;begin button&quot; the task. (default is 1200)</span>
+<span class="sd">    POPUP_HEIGHT : int</span>
+<span class="sd">        The height of the window launched when participants press the &quot;begin button&quot; the task. (default is 1200)</span>
+<span class="sd">    TEST_TIMEOUT_SEC : float</span>
+<span class="sd">        The participant must spend at least this amount of time on the evaluation task before submission.</span>
+<span class="sd">        (default is 60.)</span>
+<span class="sd">    REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS : bool</span>
+<span class="sd">        If True, the participant must listen to all of the training sounds before proceeding to the evaluation task.</span>
+<span class="sd">        (default is True)</span>
+<span class="sd">    REFERENCES : tuple of tuple of str</span>
+<span class="sd">        The reference stimuli in the evaluation task.</span>
+<span class="sd">        (default is ((&#39;Reference&#39;, &#39;The reference signal to which test signals are compared.&#39;),))</span>
+<span class="sd">    PREVIEW_HTML : str</span>
+<span class="sd">        The HTML content of the preview page. This will be the same for all conditions, regardless of test since</span>
+<span class="sd">        conditions are assigned on the fly (so we can have complete control over condition assignment).</span>
+<span class="sd">        (default is None)</span>
+<span class="sd">    MIN_RATING_VALUE : int</span>
+<span class="sd">        The minimum rating value on the MUSHRA slider. (default is 0)</span>
+<span class="sd">    MAX_RATING_VALUE : int</span>
+<span class="sd">        The maximum rating value on the MUSHRA slider. (default is 99)</span>
+<span class="sd">    DEFAULT_RATING_VALUE : int</span>
+<span class="sd">        The default rating value on the MUSHRA slider. (default is 50)</span>
+<span class="sd">    TESTS : list of dict</span>
+<span class="sd">        The test and condition-specific configuration variables. The dicts are of the form::</span>
+
+<span class="sd">            {&#39;test_config_variables&#39; :</span>
+<span class="sd">                {&#39;test_title&#39; : &#39;...&#39;, # The test title that is displayed on the evaluation page</span>
+<span class="sd">                 &#39;first_task_introduction_html&#39; : &#39;...&#39;,  # Content of the intro page the first time they do a task</span>
+<span class="sd">                 &#39;introduction_html&#39; : &#39;...&#39;, # Content of the intro page (after the first time they perform the task)</span>
+<span class="sd">                 &#39;training_instructions_html&#39; : &#39;...&#39;, # The HTML content of the training instructions</span>
+<span class="sd">                 &#39;evaluation_instructions_html&#39; : &#39;...&#39;}, # The HTML content of the evaluation instructions</span>
+<span class="sd">                 &#39;reference_example_dict&#39; :</span>
+<span class="sd">                    {&#39;&lt;reference_name}&#39;: url_for(&#39;static&#39;, filename=&#39;audio/&lt;reference_filename&gt;.wav&#39;), ... },</span>
+<span class="sd">                 &#39;quality_example_dict&#39; :</span>
+<span class="sd">                    {&#39;&lt;example_type0&gt;&#39;: [url_for(&#39;static&#39;, filename=&#39;audio/&lt;example0_filename&gt;.wav&#39;),</span>
+<span class="sd">                                       url_for(&#39;static&#39;, filename=&#39;audio/&lt;example1_filename&gt;.wav&#39;),],</span>
+<span class="sd">                     &#39;&lt;example_type1&gt;&#39;: [url_for(&#39;static&#39;, filename=&#39;audio/&lt;example3_filename&gt;),]}},</span>
+<span class="sd">             &#39;conditions&#39; :</span>
+<span class="sd">                [{&#39;reference_files&#39;: [(&lt;reference_name&gt;, &#39;&lt;reference_filename&gt;.wav&#39;),],</span>
+<span class="sd">                  &#39;stimulus_files&#39;: [(&#39;S1&#39;, &#39;&lt;S1_filename&gt;.wav&#39;),</span>
+<span class="sd">                                    (&#39;S2&#39;, &#39;&lt;S2_filename&gt;.wav&#39;),]},]}</span>
+
+<span class="sd">        (default is [])</span>
+
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    For testing, add:</span>
+
+<span class="sd">        0.0.0.0     caqe.local</span>
+
+<span class="sd">    to /etc/hosts</span>
+<span class="sd">    We need to set the SERVER_NAME to resolve `url_for` definitions when constructing the database, but we can&#39;t simply</span>
+<span class="sd">    use `localhost` because the secure sessions are not compatible with that.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># BACKEND VARIABLES</span>
+    <span class="n">TESTING</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="n">CSRF_SECRET_KEY</span>
+    <span class="n">CSRF_SESSION_KEY</span> <span class="o">=</span> <span class="n">SESSION_KEY</span>
+    <span class="n">CSRF_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;DATABASE_URL&#39;</span><span class="p">,</span> <span class="s1">&#39;sqlite:////</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~/caqe.db&#39;</span><span class="p">))</span>
+    <span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">PREFERRED_URL_SCHEME</span> <span class="o">=</span> <span class="s1">&#39;https&#39;</span>
+    <span class="n">AUDIO_FILE_DIRECTORY</span> <span class="o">=</span> <span class="s1">&#39;static/audio&#39;</span>
+    <span class="n">ENCRYPT_AUDIO_STIMULI_URLS</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># TESTING VARIABLES</span>
+    <span class="n">TEST_TYPE</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">ANONYMOUS_PARTICIPANTS_ENABLED</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">IP_COLLECTION_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">OBTAIN_CONSENT</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">PRE_TEST_SURVEY_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">PRE_TEST_SURVEY_INCLUSION_CRITERIA</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;int(survey[&#39;age&#39;]) &gt;= 18&quot;</span><span class="p">,</span>
+                                          <span class="s2">&quot;survey[&#39;hearing_disorder&#39;] == &#39;No&#39;&quot;</span><span class="p">]</span>
+    <span class="n">POST_TEST_SURVEY_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">HEARING_RESPONSE_ESTIMATION_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">CONDITIONS_PER_EVALUATION</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">TRIALS_PER_CONDITION</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">LIMIT_SUBJECT_TO_ONE_TASK_TYPE</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">TEST_CONDITION_ORDER_RANDOMIZED</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">STIMULUS_ORDER_RANDOMIZED</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># HEARING SCREENING VARIABLES</span>
+    <span class="n">HEARING_SCREENING_TEST_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">HEARING_TEST_EXPIRATION_HOURS</span> <span class="o">=</span> <span class="mi">24</span>
+    <span class="n">MAX_HEARING_TEST_ATTEMPTS</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">HEARING_TEST_REJECTION_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># HEARING RESPONSE ESTIMATION VARIABLES</span>
+    <span class="n">HEARING_RESPONSE_NOPTIONS</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># MECHANICAL TURK VARIABLES</span>
+    <span class="n">MTURK_HOST</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MTURK_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;mechanicalturk.sandbox.amazonaws.com&#39;</span><span class="p">)</span>
+    <span class="n">MTURK_QUESTION_URL</span> <span class="o">=</span> <span class="s1">&#39;https://</span><span class="si">%s</span><span class="s1">/mturk&#39;</span> <span class="o">%</span> <span class="n">SERVER_NAME</span>
+    <span class="n">MTURK_REWARD</span> <span class="o">=</span> <span class="mf">0.50</span>
+    <span class="n">MTURK_NUMBER_HITS_APPROVED_REQUIREMENT</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT</span> <span class="o">=</span> <span class="mi">97</span>
+    <span class="n">MTURK_TITLE</span> <span class="o">=</span> <span class="s1">&#39;Critical audio listening task. Listen to audio recordings and rate them on various &#39;</span> \
+                  <span class="s1">&#39;scales of quality.&#39;</span>
+    <span class="n">MTURK_DESCRIPTION</span> <span class="o">=</span> <span class="s1">&#39;This listening test aims to rate the quality of a set of signals in comparison to a reference &#39;</span> \
+                        <span class="s1">&#39;signal. Note that while the maximum number assignments a worker can do is 10, it</span><span class="se">\&#39;</span><span class="s1">s possible that &#39;</span> \
+                        <span class="s1">&#39;fewer than 10 may be available to you. **CHROME ONLY** **BONUS AVAILABLE**&#39;</span>
+    <span class="n">MTURK_KEYWORDS</span> <span class="o">=</span> <span class="s1">&#39;audio, sound, music, listening, research&#39;</span>
+    <span class="n">MTURK_ASSIGNMENT_DURATION_IN_SECONDS</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">30</span>
+    <span class="n">MTURK_LIFETIME_IN_SECONDS</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span>
+    <span class="n">MTURK_MAX_ASSIGNMENTS</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="n">MTURK_AUTO_APPROVAL_DELAY_IN_SECONDS</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">1</span>  <span class="c1"># 1 day</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># FRONT-END VARIABLES</span>
+    <span class="n">ACCEPTABLE_BROWSERS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chrome&#39;</span><span class="p">]</span>
+    <span class="n">BEGIN_BUTTON_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">POPUP_WIDTH</span> <span class="o">=</span> <span class="mi">1200</span>
+    <span class="n">POPUP_HEIGHT</span> <span class="o">=</span> <span class="mi">1200</span>
+    <span class="n">TEST_TIMEOUT_SEC</span> <span class="o">=</span> <span class="mf">60.</span>
+    <span class="n">REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">REFERENCES</span> <span class="o">=</span> <span class="p">((</span><span class="s1">&#39;Reference&#39;</span><span class="p">,</span> <span class="s1">&#39;The reference signal to which test signals are compared.&#39;</span><span class="p">),)</span>
+    <span class="n">PREVIEW_HTML</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">MIN_RATING_VALUE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">MAX_RATING_VALUE</span> <span class="o">=</span> <span class="mi">99</span>
+    <span class="n">DEFAULT_RATING_VALUE</span> <span class="o">=</span> <span class="mi">50</span>
+
+    <span class="c1"># ---------------------------------------------------------------------------------------------</span>
+    <span class="c1"># DEFAULT CONDITION AND TEST-SPECIFIC VARIABLES</span>
+    <span class="c1">#   (These will be configured for each condition and saved in the database)</span>
+    <span class="n">TESTS</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="TestingOverrideConfig"><a class="viewcode-back" href="../../source/caqe.configuration.html#caqe.configuration.TestingOverrideConfig">[docs]</a><span class="k">class</span> <span class="nc">TestingOverrideConfig</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Override config for testing.</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    To enable these parameters set environment variable `APP_MODE` to &#39;PRODUCTION&#39;. In Linux:</span>
+
+<span class="sd">        $ export APP_MODE=TESTING</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TESTING</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite://&#39;</span>
+    <span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="s1">&#39;caqe.local:5000&#39;</span>
+    <span class="n">PREFERRED_URL_SCHEME</span> <span class="o">=</span> <span class="s1">&#39;http&#39;</span></div>
+
+
+<div class="viewcode-block" id="DevelopmentOverrideConfig"><a class="viewcode-back" href="../../source/caqe.configuration.html#caqe.configuration.DevelopmentOverrideConfig">[docs]</a><span class="k">class</span> <span class="nc">DevelopmentOverrideConfig</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Override config for development.</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    To enable these parameters set environment variable `APP_MODE` to &#39;PRODUCTION&#39;. In Linux:</span>
+
+<span class="sd">        $ export APP_MODE=DEVELOPMENT</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="s1">&#39;caqe.local:5000&#39;</span>
+    <span class="n">HEARING_TEST_REJECTION_ENABLED</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">PREFERRED_URL_SCHEME</span> <span class="o">=</span> <span class="s1">&#39;http&#39;</span></div>
+
+
+<div class="viewcode-block" id="ProductionOverrideConfig"><a class="viewcode-back" href="../../source/caqe.configuration.html#caqe.configuration.ProductionOverrideConfig">[docs]</a><span class="k">class</span> <span class="nc">ProductionOverrideConfig</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Override config for production.</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    To enable these parameters set environment variable `APP_MODE` to &#39;PRODUCTION&#39;. In Linux:</span>
+
+<span class="sd">        $ export APP_MODE=PRODUCTION</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">TESTING</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Copyright (c) 2016 Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
