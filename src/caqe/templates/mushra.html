@@ -152,16 +152,16 @@
         var PARTICIPANT_ID = '{{ participant_id }}';
 
         var config = {
-            "minRatingValue": {{ test.min_rating_value }},
-            "maxRatingValue": {{ test.max_rating_value }},
-            "defaultRatingValue": {{ test.default_rating_value }},
-            "testTimeoutSec": {{ test.test_timeout_sec }},
+            "minRatingValue": {{ config.MIN_RATING_VALUE }},
+            "maxRatingValue": {{ config.MAX_RATING_VALUE }},
+            "defaultRatingValue": {{ config.DEFAULT_RATING_VALUE }},
+            "testTimeoutSec": {{ config.TEST_TIMEOUT_SEC }},
             "references": {
-                {% for reference in test.references %}
+                {% for reference in config.REFERENCES %}
                     "{{ reference[0] }}": "{{ reference[1] }}",
                 {% endfor %}
             },
-            "requireListeningToAllTrainingSounds": {{ ['false','true'][test.require_listening_to_all_training_sounds] }},
+            "requireListeningToAllTrainingSounds": {{ ['false','true'][config.REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS] }},
             "referenceExampleDict": {
                 {% for key, value in test.reference_example_dict.iteritems() %}
                     "{{ key }}": "{{ value }}",

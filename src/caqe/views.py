@@ -12,15 +12,15 @@ import datetime
 import functools
 
 from flask import request, render_template, flash, redirect, session, make_response, send_from_directory, \
-    safe_join
+    safe_join, url_for
 
 import experiment
 
 from caqe import app
 from caqe import db
-from models import Participant, Trial, Condition
-from settings import *
-from caqe import utilities
+from .models import Participant, Trial, Condition
+import caqe.utilities as utilities
+import caqe.flask_configurations as flask_configurations
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +49,10 @@ def nocache(view):
 def strip_query_from_url(url):
     """
     Return the a URL without the query, which may be simply used for cache busting.
+
+    Parameters
+    ----------
+    url : str
 
     Returns
     -------
@@ -104,6 +108,10 @@ def internal_server_error(e):
     """
     500 Internal Server Error page
 
+    Parameters
+    ----------
+    e : Exception
+
     Returns
     -------
     flask.Response
@@ -116,6 +124,10 @@ def internal_server_error(e):
 def page_not_found(e):
     """
     404 Page Not Found page
+
+    Parameters
+    ----------
+    e : Exception
 
     Returns
     -------
@@ -140,14 +152,17 @@ def audio(audio_file_key):
     -------
     flask.Response
     """
-    audio_file_dict = utilities.decrypt_data(str(audio_file_key))
+    if app.config['ENCRYPT_AUDIO_STIMULI_URLS']:
+        audio_file_dict = utilities.decrypt_data(str(audio_file_key))
 
-    # can also assert that this file is for this specific participant and condition
-    assert (audio_file_dict['p_id'] == session['participant_id'])
-    assert (audio_file_dict['c_id'] in session['condition_ids'])
+        # can also assert that this file is for this specific participant and condition
+        assert (audio_file_dict['p_id'] == session['participant_id'])
+        assert (audio_file_dict['c_id'] in session['condition_ids'])
+        filename = audio_file_dict['URL']
+    else:
+        filename = audio_file_key
 
-    return send_from_directory(safe_join(app.root_path, AUDIO_FILE_DIRECTORY),
-                               audio_file_dict['URL'])
+    return send_from_directory(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename)
 
 
 @app.route('/anonymous')
@@ -162,7 +177,7 @@ def anonymous():
     """
     preview = int(request.args.get('preview', 0))
 
-    if not CONFIGURATION['anonymous_participants_enabled']:
+    if not app.config['ANONYMOUS_PARTICIPANTS_ENABLED']:
         logger.info('Anonymous participant attempted access, but anonymous participants is disabled.')
         return render_template('sorry.html', message='This experiment is currently closed to anonymous participants.')
 
@@ -174,7 +189,7 @@ def anonymous():
                             crowd_assignment_id=None,
                             crowd_assignment_type=None,
                             _external=True,
-                            _scheme=URL_SCHEME))
+                            _scheme=app.config['URL_SCHEME']))
 
 
 @app.route('/mturk', methods=['GET'])
@@ -210,7 +225,7 @@ def mturk():
                             crowd_assignment_type=crowd_assignment_type,
                             preview=preview,
                             _external=True,
-                            _scheme=URL_SCHEME))
+                            _scheme=app.config['URL_SCHEME']))
 
 
 @app.route('/begin/<platform>/<crowd_worker_id>', methods=['GET'])
@@ -234,7 +249,7 @@ def begin(platform, crowd_worker_id):
 
     # check browser
     browser = request.user_agent.browser
-    if CONFIGURATION['acceptable_browsers'] is not None and browser not in CONFIGURATION['acceptable_browsers']:
+    if app.confg['ACCEPTABLE_BROWSERS'] is not None and browser not in app.config['ACCEPTABLE_BROWSERS']:
         return render_template('sorry.html', message='We\'re sorry, but your web browser is not supported. Please try '
                                                      'again using <a href="http://www.google.com/chrome" '
                                                      'target="_blank">Chrome</a>.')
@@ -249,10 +264,10 @@ def begin(platform, crowd_worker_id):
     if preview:
         return render_template('preview.html',
                                link="",
-                               preview_html=CONFIGURATION['preview_html'],
+                               preview_html=app.config['PREVIEW_HTML'],
                                **request.args)
 
-    if CONFIGURATION['begin_button_enabled']:
+    if app.config['BEGIN_BUTTON_ENABLED']:
         if platform == 'mturk':
             print 'mturk'
             return render_template('mturk/begin.html',
@@ -260,10 +275,10 @@ def begin(platform, crowd_worker_id):
                                                 participant_type=platform,
                                                 crowd_worker_id=crowd_worker_id,
                                                 _external=True,
-                                                _scheme=URL_SCHEME,
+                                                _scheme=app.config['URL_SCHEME'],
                                                 **request.args),
-                                   width=CONFIGURATION['popup_width'],
-                                   height=CONFIGURATION['popup_height'],
+                                   width=app.config['POPUP_WIDTH'],
+                                   height=app.config['POPUP_HEIGHT'],
                                    worker_id=crowd_worker_id,
                                    assignment_id=request.args.get('assignment_id'),
                                    hit_id=request.args.get('assignment_type'),
@@ -275,17 +290,17 @@ def begin(platform, crowd_worker_id):
                                                 participant_type=platform,
                                                 crowd_worker_id=crowd_worker_id,
                                                 _external=True,
-                                                _scheme=URL_SCHEME,
+                                                _scheme=app.config['URL_SCHEME'],
                                                 **request.args),
-                                   width=CONFIGURATION['popup_width'],
-                                   height=CONFIGURATION['popup_height'],
+                                   width=app.config['POPUP_WIDTH'],
+                                   height=app.config['POPUP_HEIGHT'],
                                    **request.args)
     else:
         return redirect(url_for('create_participant',
                                 participant_type=platform,
                                 crowd_worker_id=crowd_worker_id,
                                 _external=True,
-                                _scheme=URL_SCHEME,
+                                _scheme=app.config['URL_SCHEME'],
                                 **request.args))
 
 
@@ -351,22 +366,22 @@ def pre_evaluation_tasks():
     if session['condition_ids'] is None or len(session['condition_ids']) == 0:
         return render_template('sorry.html', message='We\'re sorry, but there are no more tasks available for you.')
 
-    if CONFIGURATION['obtain_consent'] and not participant.gave_consent:
-        return redirect(url_for('consent', _external=True, scheme=URL_SCHEME))
+    if app.config['OBTAIN_CONSENT'] and not participant.gave_consent:
+        return redirect(url_for('consent', _external=True, scheme=app.config['URL_SCHEME']))
 
-    if CONFIGURATION['hearing_screening_test_enabled'] and (not participant.has_passed_hearing_test_recently()):
-        return redirect(url_for('hearing_test', _external=True, scheme=URL_SCHEME))
+    if app.config['HEARING_SCREENING_TEST_ENABLED'] and (not participant.has_passed_hearing_test_recently()):
+        return redirect(url_for('hearing_test', _external=True, scheme=app.config['URL_SCHEME']))
 
-    if CONFIGURATION['pre_test_survey_enabled']:
+    if app.config['PRE_TEST_SURVEY_ENABLED']:
         if participant.pre_test_survey is None:
-            return redirect(url_for('pre_test_survey', _external=True, scheme=URL_SCHEME))
+            return redirect(url_for('pre_test_survey', _external=True, scheme=app.config['URL_SCHEME']))
         if not experiment.is_pre_test_survey_valid(json.loads(participant.pre_test_survey),
-                                                   CONFIGURATION['pre_test_survey_inclusion_criteria']):
+                                                   app.config['PRE_TEST_SURVEY_INCLUSION_CRITERIA']):
             return render_template('sorry.html',
                                    message='Unfortunately, you do not meet the inclusion criteria for this study. '
                                            'Sorry.')
 
-    return redirect(url_for('evaluation', _external=True, _scheme=URL_SCHEME))
+    return redirect(url_for('evaluation', _external=True, _scheme=app.config['URL_SCHEME']))
 
 
 @app.route('/consent', methods=['GET', 'POST'])
@@ -407,7 +422,7 @@ def pre_test_survey():
         participant = get_current_participant(session)
         participant.pre_test_survey = json.dumps(request.form)
         db.session.commit()
-        if experiment.is_pre_test_survey_valid(request.form, CONFIGURATION['pre_test_survey_inclusion_criteria']):
+        if experiment.is_pre_test_survey_valid(request.form, app.config['PRE_TEST_SURVEY_INCLUSION_CRITERIA']):
             return pre_evaluation_tasks()
         else:
             return render_template('sorry.html',
@@ -434,16 +449,16 @@ def hearing_test():
     participant = get_current_participant(session)
 
     if request.method == 'GET':
-        if participant.hearing_test_attempts >= CONFIGURATION['max_hearing_test_attempts']:
+        if participant.hearing_test_attempts >= app.config['MAX_HEARING_TEST_ATTEMPTS']:
             logger.info('Max hearing test attempts reached - %r' % participant)
             return render_template('sorry.html', message='Sorry. You have exceed the number of allowed attempts. '
                                                          'Please try again tomorrow.')
 
         while True:
-            hearing_test_audio_index1 = random.randint(MIN_HEARING_TEST_AUDIO_INDEX,
-                                                       MAX_HEARING_TEST_AUDIO_INDEX)
-            hearing_test_audio_index2 = random.randint(MIN_HEARING_TEST_AUDIO_INDEX,
-                                                       MAX_HEARING_TEST_AUDIO_INDEX)
+            hearing_test_audio_index1 = random.randint(flask_configurations.MIN_HEARING_TEST_AUDIO_INDEX,
+                                                       flask_configurations.MAX_HEARING_TEST_AUDIO_INDEX)
+            hearing_test_audio_index2 = random.randint(flask_configurations.MIN_HEARING_TEST_AUDIO_INDEX,
+                                                       flask_configurations.MAX_HEARING_TEST_AUDIO_INDEX)
             if hearing_test_audio_index1 != hearing_test_audio_index2:
                 # encrypt the data so that someone can't figure out the pattern on the client side
                 logger.info('Hearing test indices %d and %d assigned to %r' %
@@ -463,9 +478,11 @@ def hearing_test():
             logger.error("Invalid state - %r" % e)
 
         if (int(request.form['audiofile1_tones']) ==
-                (int(utilities.decrypt_data(hearing_test_audio_index1)) / HEARING_TEST_AUDIO_FILES_PER_TONES)) \
+                (int(utilities.decrypt_data(hearing_test_audio_index1)) /
+                     flask_configurations.HEARING_TEST_AUDIO_FILES_PER_TONES)) \
                 and (int(request.form['audiofile2_tones']) ==
-                         (int(utilities.decrypt_data(hearing_test_audio_index2)) / HEARING_TEST_AUDIO_FILES_PER_TONES)):
+                         (int(utilities.decrypt_data(hearing_test_audio_index2)) /
+                              flask_configurations.HEARING_TEST_AUDIO_FILES_PER_TONES)):
             logger.info('Hearing test passed - %r' % participant)
             participant.set_passed_hearing_test(True)
             db.session.commit()
@@ -475,16 +492,16 @@ def hearing_test():
             participant.set_passed_hearing_test(False)
             db.session.commit()
 
-            if participant.hearing_test_attempts < CONFIGURATION['max_hearing_test_attempts']:
+            if participant.hearing_test_attempts < app.config['MAX_HEARING_TEST_ATTEMPTS']:
                 flash('You answered incorrectly. If you are unable to pass this test, it is likely that your output '
                       'device (e.g. your headphones) is not producing the full range of frequencies required for this '
                       'task. Try using better headphones.', 'danger')
             else:
-                if not CONFIGURATION['hearing_test_rejection_enabled']:
+                if not app.config['HEARING_TEST_REJECTION_ENABLED']:
                     # They attempted, but they failed, but pass them through since rejection is not enabled
                     logger.info('Hearing test rejection enabled. Passing failed participant to evaluation.')
                     return pre_evaluation_tasks()
-            return redirect(url_for('hearing_test', _method='GET', _external=True, _scheme=URL_SCHEME))
+            return redirect(url_for('hearing_test', _method='GET', _external=True, _scheme=app.config['URL_SCHEME']))
 
 
 @app.route('/hearing_test/audio/<example_num>.wav')
@@ -507,8 +524,8 @@ def hearing_test_audio(example_num):
         file_path = 'hearing_test_audio/1000Hz.wav'
     else:
         hearing_test_audio_index = int(utilities.decrypt_data(session['hearing_test_audio_index%s' % example_num]))
-        num_tones = hearing_test_audio_index / HEARING_TEST_AUDIO_FILES_PER_TONES
-        file_num = hearing_test_audio_index % HEARING_TEST_AUDIO_FILES_PER_TONES
+        num_tones = hearing_test_audio_index / flask_configurations.HEARING_TEST_AUDIO_FILES_PER_TONES
+        file_num = hearing_test_audio_index % flask_configurations.HEARING_TEST_AUDIO_FILES_PER_TONES
         logger.info('hearing_test %s - %d %d' % (example_num, num_tones, file_num))
         file_path = 'hearing_test_audio/tones%d_%d.wav' % (num_tones, file_num)
     with open(file_path, 'rb') as f:
@@ -546,7 +563,8 @@ def evaluation():
                 condition_id = int(cd['conditionID'])
 
                 # decrypt audio stimuli
-                cd = experiment.decrypt_audio_stimuli(cd)
+                if app.config['ENCRYPT_AUDIO_STIMULI_URLS']:
+                    cd = experiment.decrypt_audio_stimuli(cd)
 
                 # create database object
                 trial = Trial(participant_id, condition_id, json.dumps(cd), json.dumps(crowd_data),
@@ -574,8 +592,10 @@ def evaluation():
                                    participant_id=participant.id,
                                    first_evaluation=participant.trials.count() == 0,
                                    test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True,
-                                                                      _scheme=URL_SCHEME),
-                                   submission_url=url_for('evaluation', _external=True, _scheme=URL_SCHEME))
+                                                                      _scheme=app.config['URL_SCHEME']),
+                                   submission_url=url_for('evaluation',
+                                                          _external=True,
+                                                          _scheme=app.config['URL_SCHEME']))
         elif test_config['test']['test_type'] == 'pairwise':
             test_config['conditions'] = experiment.generate_comparison_pairs(test_config['conditions'])
 
@@ -584,18 +604,24 @@ def evaluation():
                                    conditions=test_config['conditions'],
                                    participant_id=participant.id,
                                    first_evaluation=participant.trials.count() == 0,
-                                   test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True,
-                                                                      _scheme=URL_SCHEME),
-                                   submission_url=url_for('evaluation', _external=True, _scheme=URL_SCHEME))
+                                   test_complete_redirect_url=url_for('post_evaluation_tasks',
+                                                                      _external=True,
+                                                                      _scheme=app.config['URL_SCHEME']),
+                                   submission_url=url_for('evaluation',
+                                                          _external=True,
+                                                          _scheme=app.config['URL_SCHEME']))
         else:
             return render_template('%s.html' % test_config['test']['test_type'],
                                    test=test_config['test'],
                                    conditions=test_config['conditions'],
                                    participant_id=participant.id,
                                    first_evaluation=participant.trials.count() == 0,
-                                   test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True,
-                                                                      _scheme=URL_SCHEME),
-                                   submission_url=url_for('evaluation', _external=True, _scheme=URL_SCHEME))
+                                   test_complete_redirect_url=url_for('post_evaluation_tasks',
+                                                                      _external=True,
+                                                                      _scheme=app.config['URL_SCHEME']),
+                                   submission_url=url_for('evaluation',
+                                                          _external=True,
+                                                          _scheme=app.config['URL_SCHEME']))
 
 
 @app.route('/post_evaluation_tasks')
@@ -614,17 +640,21 @@ def post_evaluation_tasks():
 
     participant = get_current_participant(session)
 
-    if CONFIGURATION['hearing_response_estimation_enabled'] and participant.hearing_response_estimation is None:
-        return redirect(url_for('hearing_response_estimation', _external=True, scheme=URL_SCHEME))
+    if app.config['HEARING_RESPONSE_ESTIMATION_ENABLED'] and participant.hearing_response_estimation is None:
+        return redirect(url_for('hearing_response_estimation',
+                                _external=True,
+                                scheme=app.config['URL_SCHEME']))
 
-    if CONFIGURATION['post_test_survey_enabled'] and participant.post_test_survey is None:
-        return redirect(url_for('post_test_survey', _external=True, scheme=URL_SCHEME))
+    if app.config['POST_TEST_SURVEY_ENABLED'] and participant.post_test_survey is None:
+        return redirect(url_for('post_test_survey',
+                                _external=True,
+                                scheme=app.config['URL_SCHEME']))
 
     platform = session.get('platform', None)
     return redirect(url_for('end',
                             platform=platform,
                             _external=True,
-                            _scheme=URL_SCHEME))
+                            _scheme=app.config['URL_SCHEME']))
 
 
 @app.route('/hearing_response_estimation', methods=['GET', 'POST'])
@@ -646,17 +676,17 @@ def hearing_response_estimation():
         hearing_response_file_path = url_for('static',
                                              filename='audio/hearing_response_stimuli/',
                                              _external=True,
-                                             _scheme=URL_SCHEME)
+                                             _scheme=app.config['URL_SCHEME'])
 
         hearing_response_file_path = strip_query_from_url(hearing_response_file_path)
 
-        freq_seq = range(CONFIGURATION['hearing_response_nfreqs'])
+        freq_seq = range(flask_configurations.HEARING_RESPONSE_NFREQS)
         random.shuffle(freq_seq)
 
         hearing_response_ids = []
         hearing_response_files = []
         for f in freq_seq:
-            hearing_response_id = '%d_%d' % (f, random.randint(0, CONFIGURATION['hearing_response_nadd']))
+            hearing_response_id = '%d_%d' % (f, random.randint(0, flask_configurations.HEARING_RESPONSE_NADD))
             hearing_response_file = '%s%s.wav' % (hearing_response_file_path, hearing_response_id)
             hearing_response_ids.append(hearing_response_id)
             hearing_response_files.append(hearing_response_file)
@@ -664,7 +694,7 @@ def hearing_response_estimation():
         return render_template('hearing_response_estimation.html',
                                hearing_response_ids=hearing_response_ids,
                                hearing_response_files=hearing_response_files,
-                               n_options=CONFIGURATION['n_options'])
+                               n_options=app.config['HEARING_RESPONSE_NOPTIONS'])
 
 
 @app.route('/post_test_survey', methods=['GET', 'POST'])
@@ -723,14 +753,14 @@ def mturk_debug():
     if preview:
         return render_template('mturk_debug.html',
                                url='/mturk?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&workerId=debugNQFUCL',
-                               frame_height=MTURK_DEBUG_FRAME_HEIGHT)
+                               frame_height=flask_configurations.MTURK_DEBUG_FRAME_HEIGHT)
     else:
         return render_template('mturk_debug.html',
                                url='/mturk?assignmentId=123RVWYBAZW00EXAMPLE456RVWYBAZW00EXAMPLE&'
                                    'hitId=123RVWYBAZW00EXAMPLE&'
                                    'turkSubmitTo=https://workersandbox.mturk.com&'
                                    'workerId=debugNQFUCL',
-                               frame_height=MTURK_DEBUG_FRAME_HEIGHT)
+                               frame_height=flask_configurations.MTURK_DEBUG_FRAME_HEIGHT)
 
 
 @app.route('/admin/stats')

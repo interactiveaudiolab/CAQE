@@ -24,7 +24,7 @@ Getting Started
 
 
 Testing Configurations
---------------
+----------------------
 .. toctree::
     :maxdepth: 2
 

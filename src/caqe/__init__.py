@@ -7,8 +7,7 @@ from flask_bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug.contrib.fixers import ProxyFix
 
-from settings import SQLALCHEMY_DATABASE_URI
-import caqe.flask_configurations
+import caqe.flask_configurations as flask_configurations
 
 __version__ = '0.1.1a1'
 __title__ = 'CAQE'
@@ -21,13 +20,19 @@ __copyright__ = 'Copyright (c) 2016 Mark Cartwright'
 
 app = Flask('caqe')
 
-if os.getenv('FLASK_CONF') == 'DEV':
-    print 'DEV'
-    app.config.from_object('caqe.flask_configurations.Development')
-elif os.getenv('FLASK_CONF') == 'TESTING':
-    app.config.from_object('caqe.flask_configurations.Testing')
-else:
-    app.config.from_object('caqe.flask_configurations.Production')
+app.config.from_object('caqe.flask_configurations.BaseConfig')
+app.config.from_pyfile(os.getenv('CAQE_CONFIG', '../test_configurations/general_mushra.cfg'))
+
+# Override variables based on APP_MODE
+if flask_configurations.APP_MODE == 'DEVELOPMENT':
+    print 'APP_MODE = DEVELOPMENT'
+    app.config.from_object('caqe.flask_configurations.DevelopmentOverrideConfig')
+elif flask_configurations.APP_MODE == 'TESTING':
+    print 'APP_MODE = TESTING'
+    app.config.from_object('caqe.flask_configurations.TestingOverrideConfig')
+elif flask_configurations.APP_MODE == 'PRODUCTION':
+    print 'APP_MODE = PRODUCTION'
+    app.config.from_object('caqe.flask_configurations.ProductionOverrideConfig')
     # On heroku, we must do a proxy fix, this enables to get the correct IP address from REMOTE_ADDR
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
@@ -54,6 +59,7 @@ def hashed_url_for_static_file(endpoint, values):
 
             values[param_name] = static_file_hash(os.path.join(static_folder, filename))
 
+
 def static_file_hash(filename):
     return int(os.stat(filename).st_mtime) # or app.config['last_build_timestamp'] or md5(filename) or etc...
 
@@ -61,11 +67,12 @@ def static_file_hash(filename):
 @app.before_first_request
 def setup_logging():
     if not app.debug:
-        streamHandler = logging.StreamHandler()
+        stream_handler = logging.StreamHandler()
         formatter = logging.Formatter('%(levelname)-8s: %(module)s:%(funcName)s - %(message)s')
-        streamHandler.setFormatter(formatter)
+        stream_handler.setFormatter(formatter)
 
-        app.logger.addHandler(streamHandler)
+        app.logger.addHandler(stream_handler)
         app.logger.setLevel(logging.INFO)
+
 
 import caqe.views

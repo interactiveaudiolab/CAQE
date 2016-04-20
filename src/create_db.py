@@ -10,6 +10,6 @@ db.drop_all()
 db.create_all()
 
 import caqe
-import caqe.settings
+import caqe.experiment as experiment
 with caqe.app.app_context():
-    caqe.settings.insert_tests_and_conditions()
+    experiment.insert_tests_and_conditions()

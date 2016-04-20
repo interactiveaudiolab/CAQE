@@ -12,13 +12,59 @@ import itertools
 
 from sqlalchemy import func
 
-from settings import *
-import utilities
+import caqe.utilities as utilities
 
-from models import Condition, Participant, Trial
+from .models import Condition, Participant, Trial, Test
 from caqe import db
+from caqe import app
 
 logger = logging.getLogger(__name__)
+
+
+# Configure and insert conditions
+def insert_tests_and_conditions(config=None):
+    """
+    This is where you configure and define the listening test. If you need to change HTML content based on
+    the testing condition, you configure it here as well, overriding the default values in `CONFIGURATION`.
+    Running this doctest initializes the development database.
+
+    Parameters
+    ----------
+    config : flask.Config
+        The application configuration
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    To call this you need the application context, e.g.:
+
+    >>> import os
+    >>> os.environ['FLASK_CONF'] = 'DEV' # for testing the Development configuration
+    >>> from caqe import db
+    DEV
+    >>> db.drop_all()
+    >>> db.create_all()
+    >>> import caqe
+    >>> import caqe.experiment
+    >>> with caqe.app.app_context():
+    ...     caqe.experiment.insert_tests_and_conditions()
+    """
+    if config is None:
+        config = app.config
+        
+    for test_dict in config['tests']:
+        test = Test(json.dumps(test_dict['test_config_variables']))
+        db.session.add(test)
+
+        for condition_dict in test_dict['conditions']:
+            c = Condition(test_id=test.id, data=json.dumps(condition_dict))
+            db.session.add(c)
+
+    # commit tests and conditions
+    db.session.commit()
 
 
 def get_available_conditions(limit_to_condition_ids=None):
@@ -36,7 +82,7 @@ def get_available_conditions(limit_to_condition_ids=None):
         The available conditions
     """
     finished_conditions = db.session.query(Trial.condition_id).filter(Trial.participant_passed_hearing_test == True). \
-        group_by(Trial.condition_id).having(func.count('*') >= CONFIGURATION['trials_per_condition']).subquery()
+        group_by(Trial.condition_id).having(func.count('*') >= app.config['TRIALS_PER_CONDITION']).subquery()
 
     conditions = db.session.query(Condition).filter(Condition.id.notin_(finished_conditions))
 
@@ -92,7 +138,7 @@ def assign_conditions(participant, limit_to_condition_ids=None):
         logger.info('No hits left for %r' % participant)
         return None
 
-    if CONFIGURATION['limit_subject_to_one_task_type']:
+    if app.config['LIMIT_SUBJECT_TO_ONE_TASK_TYPE']:
         previous_trial = participant.trials.filter(Trial.datetime_completed > datetime.datetime(2015, 5, 25)).first()
         try:
             if previous_trial.condition.test_id != conditions[0].test_id:
@@ -103,22 +149,22 @@ def assign_conditions(participant, limit_to_condition_ids=None):
             # no previous trials
             pass
 
-    if CONFIGURATION['test_condition_order_randomized']:  # i.e. randomize the condition order within a test
+    if app.config['TEST_CONDITION_ORDER_RANDOMIZED']:  # i.e. randomize the condition order within a test
         # determine what test we are on
         current_test_id = conditions[0].test_id
 
         # randomize the order of the conditions within that test
         condition_ids = [c.id for c in conditions if c.test_id == current_test_id]
         random.shuffle(condition_ids)
-        condition_ids = condition_ids[:CONFIGURATION['conditions_per_evaluation']]
+        condition_ids = condition_ids[:app.config['CONDITIONS_PER_EVALUATION']]
 
         # if there are not enough conditions left from this test, add more from the next.
-        if len(condition_ids) < CONFIGURATION['conditions_per_evaluation']:
+        if len(condition_ids) < app.config['CONDITIONS_PER_EVALUATION']:
             more_cids = [c.id for c in conditions if c.test_id == current_test_id + 1]
             random.shuffle(more_cids)
-            condition_ids += more_cids[:(CONFIGURATION['conditions_per_evaluation'] - len(condition_ids))]
+            condition_ids += more_cids[:(app.config['CONDITIONS_PER_EVALUATION'] - len(condition_ids))]
     else:
-        condition_ids = [c.id for c in conditions[:CONFIGURATION['conditions_per_evaluation']]]
+        condition_ids = [c.id for c in conditions[:app.config['CONDITIONS_PER_EVALUATION']]]
 
     logger.info('Participant %r assigned conditions: %r' % (participant, condition_ids))
     return condition_ids
@@ -153,14 +199,14 @@ def get_test_configurations(condition_ids, participant_id):
                            'conditions': []}
 
         condition_data = json.loads(condition.data)
-        # make sure that condition_id is added to the conditions dict
-        if CONFIGURATION['encrypt_audio_stimuli_urls']:
+        if app.config['ENCRYPT_AUDIO_STIMULI_URLS']:
             condition_data['reference_files'] = encrypt_audio_stimuli(condition_data['reference_files'],
                                                                       participant_id,
                                                                       condition.id)
             condition_data['stimulus_files'] = encrypt_audio_stimuli(condition_data['stimulus_files'],
                                                                      participant_id,
                                                                      condition.id)
+        # make sure that condition_id is added to the conditions dict
         test_config['conditions'].append(dict({'id': condition.id}, **condition_data))
     test_configurations.append(test_config)
 
@@ -232,7 +278,7 @@ def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_id):
 
     non_references = [a for a in audio_stimuli if a[0][0] == 'S']
 
-    if CONFIGURATION['stimulus_order_randomized']:
+    if app.config['STIMULUS_ORDER_RANDOMIZED']:
         random.shuffle(non_references)
 
     for k, a in enumerate(non_references):
@@ -265,8 +311,6 @@ def decrypt_audio_stimuli(condition_data):
         encrypted_data = encrypted_data[:-4]
         return utilities.decrypt_data(str(encrypted_data))
 
-    if not CONFIGURATION['encrypt_audio_stimuli_urls']:
-        return condition_data
     encrypted_filenames = condition_data['stimulusFiles']
     decrypted_filenames = {}
     translation = {}
@@ -279,9 +323,9 @@ def decrypt_audio_stimuli(condition_data):
 
     condition_data['stimulusFiles'] = decrypted_filenames
 
-    if CONFIGURATION['test_type'] == 'mushra':
+    if app.config['TEST_TYPE'] == 'mushra':
         condition_data['ratings'] = dict([(translation[k], v) for k, v in condition_data['ratings'].items()])
-    elif CONFIGURATION['test_type'] == 'pairwise':
+    elif app.config['TEST_TYPE'] == 'pairwise':
         ratings_dict = {}
         for k, v in condition_data['ratings'].items():
             ratings_dict[k] = {'stimuli': [translation[v['stimuli'][0]],

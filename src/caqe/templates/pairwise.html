@@ -99,13 +99,13 @@
         var PARTICIPANT_ID = '{{ participant_id }}';
 
         var config = {
-            "testTimeoutSec": {{ test.test_timeout_sec }},
+            "testTimeoutSec": {{ config.TEST_TIMEOUT_SEC }},
             "references": {
-                {% for reference in test.references %}
+                {% for reference in config.REFERENCES %}
                     "{{ reference[0] }}": "{{ reference[1] }}",
                 {% endfor %}
             },
-            "requireListeningToAllTrainingSounds": {{ ['false','true'][test.require_listening_to_all_training_sounds] }},
+            "requireListeningToAllTrainingSounds": {{ ['false','true'][config.REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS] }},
             "referenceExampleDict": {
                 {% for key, value in test.reference_example_dict.iteritems() %}
                     "{{ key }}": "{{ value }}",

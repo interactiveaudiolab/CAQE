@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Generates `secret_keys.py` which contains the crypto keys for sessions and CSRF.
+Generates `secret_keys.py` which contains the crypto keys for sessions and CSRF. Run on the command line, e.g.:
+
+    $ python generate_key_file.py
+
 """
 
 import random

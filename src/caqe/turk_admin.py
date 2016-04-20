@@ -4,17 +4,17 @@
 Amazon Mechanical Turk administration. Use this module to post, approve, expire, and bonus HITs.
 """
 import json
-import settings
-import models
-import numpy as np
+import datetime
 
+import numpy as np
 from boto.mturk.connection import MTurkConnection, MTurkRequestError
 from boto.mturk.qualification import Qualifications, NumberHitsApprovedRequirement, \
     PercentAssignmentsApprovedRequirement
 from boto.mturk.price import Price
 from boto.mturk.question import ExternalQuestion
 
-import datetime
+import caqe.models as models
+from caqe import app
 
 try:
     from secret_keys import AWS_ACCESS_KEY_ID, AWS_SECRET_KEY
@@ -26,14 +26,22 @@ except ImportError:
 
 
 def turk_connect():
+    """
+    Connect to Mechanical Turk and return a connection. This uses `AWS_ACCESS_KEY_ID` and `AWS_SECRET_KEY` from
+    `secret_keys.py` (you must put these in yourself).
+
+    Returns
+    -------
+    boto.MTurkConnection
+    """
     return MTurkConnection(aws_access_key_id=AWS_ACCESS_KEY_ID,
                            aws_secret_access_key=AWS_SECRET_KEY,
-                           host=settings.MTURK_HOST)
+                           host=app.config['MTURK_HOST'])
 
 
 def calculate_tsr(ratings, stimuli=('S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8')):
     """
-    Calculate the Transitivity Satisfaction Rate for a group of ratings.
+    Calculate the Transitivity Satisfaction Rate (TSR) for a group of ratings.
 
     Parameters
     ----------
@@ -74,7 +82,7 @@ class TurkAdmin(object):
     def __init__(self):
         self.connection = turk_connect()
         self._hit_type_id = None
-        print settings.MTURK_HOST
+        print app.config['MTURK_HOST']
 
         self.all_hit_types = [self.hit_type_id, ]
 
@@ -93,17 +101,17 @@ class TurkAdmin(object):
         None
         """
         if configuration is None:
-            configuration = settings.CONFIGURATION
+            configuration = app.config
 
         if hit_type_id is None:
             hit_type_id = self.hit_type_id
-        question = ExternalQuestion(configuration['question_url'],
-                                    frame_height=configuration['mturk_frame_height'])
+        question = ExternalQuestion(configuration['MTURK_QUESTION_URL'],
+                                    frame_height=configuration['MTURK_FRAME_HEIGHT'])
         for _i in range(num_hits):
             self.connection.create_hit(hit_type=hit_type_id,
                                        question=question,
-                                       lifetime=configuration['lifetimeInSeconds'],
-                                       max_assignments=configuration['maxAssignments'], )
+                                       lifetime=configuration['MTURK_LIFETIME_IN_SECONDS'],
+                                       max_assignments=configuration['MTURK_MAX_ASSIGNMENTS'], )
 
     def register_hit(self, configuration=None):
         """
@@ -119,21 +127,21 @@ class TurkAdmin(object):
             The HITTypeId which is how you refer to your newly registered hit with Amazon
         """
         if configuration is None:
-            configuration = settings.CONFIGURATION
+            configuration = app.config
 
         qualifications = Qualifications()
         qualifications.add(NumberHitsApprovedRequirement('GreaterThanOrEqualTo',
-                                                         configuration['number_hits_approved_requirement']))
+                                                         configuration['MTURK_NUMBER_HITS_APPROVED_REQUIREMENT']))
         qualifications.add(PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo',
                                                                  configuration[
-                                                                     'percent_assignments_approved_requirement']))
+                                                                     'MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT']))
 
-        hit_type = self.connection.register_hit_type(configuration['title'],
-                                                     configuration['description'],
-                                                     Price(configuration['reward']),
-                                                     configuration['assignmentDurationInSeconds'],
-                                                     configuration['keywords'],
-                                                     configuration['autoApprovalDelayInSeconds'],
+        hit_type = self.connection.register_hit_type(configuration['MTURK_TITLE'],
+                                                     configuration['MTURK_DESCRIPTION'],
+                                                     Price(configuration['MTURK_REWARD']),
+                                                     configuration['MTURK_ASSIGNMENT_DURATION_IN_SECONDS'],
+                                                     configuration['MTURK_KEYWORDS'],
+                                                     configuration['MTURK_AUTO_APPROVAL_DELAY_IN_SECONDS'],
                                                      qualifications)
         return hit_type[0].HITTypeId
 
