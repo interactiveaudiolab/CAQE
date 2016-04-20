@@ -7,7 +7,7 @@ from flask_bootstrap import Bootstrap
 from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug.contrib.fixers import ProxyFix
 
-import caqe.flask_configurations as flask_configurations
+import caqe.configuration as configuration
 
 __version__ = '0.1.1a1'
 __title__ = 'CAQE'
@@ -20,19 +20,19 @@ __copyright__ = 'Copyright (c) 2016 Mark Cartwright'
 
 app = Flask('caqe')
 
-app.config.from_object('caqe.flask_configurations.BaseConfig')
+app.config.from_object('caqe.configuration.BaseConfig')
 app.config.from_pyfile(os.getenv('CAQE_CONFIG', '../test_configurations/general_mushra.cfg'))
 
 # Override variables based on APP_MODE
-if flask_configurations.APP_MODE == 'DEVELOPMENT':
+if configuration.APP_MODE == 'DEVELOPMENT':
     print 'APP_MODE = DEVELOPMENT'
-    app.config.from_object('caqe.flask_configurations.DevelopmentOverrideConfig')
-elif flask_configurations.APP_MODE == 'TESTING':
+    app.config.from_object('caqe.configuration.DevelopmentOverrideConfig')
+elif configuration.APP_MODE == 'TESTING':
     print 'APP_MODE = TESTING'
-    app.config.from_object('caqe.flask_configurations.TestingOverrideConfig')
-elif flask_configurations.APP_MODE == 'PRODUCTION':
+    app.config.from_object('caqe.configuration.TestingOverrideConfig')
+elif configuration.APP_MODE == 'PRODUCTION':
     print 'APP_MODE = PRODUCTION'
-    app.config.from_object('caqe.flask_configurations.ProductionOverrideConfig')
+    app.config.from_object('caqe.configuration.ProductionOverrideConfig')
     # On heroku, we must do a proxy fix, this enables to get the correct IP address from REMOTE_ADDR
     app.wsgi_app = ProxyFix(app.wsgi_app)
 

@@ -20,7 +20,7 @@ from caqe import app
 from caqe import db
 from .models import Participant, Trial, Condition
 import caqe.utilities as utilities
-import caqe.flask_configurations as flask_configurations
+import caqe.configuration as configuration
 
 logger = logging.getLogger(__name__)
 
@@ -455,10 +455,10 @@ def hearing_test():
                                                          'Please try again tomorrow.')
 
         while True:
-            hearing_test_audio_index1 = random.randint(flask_configurations.MIN_HEARING_TEST_AUDIO_INDEX,
-                                                       flask_configurations.MAX_HEARING_TEST_AUDIO_INDEX)
-            hearing_test_audio_index2 = random.randint(flask_configurations.MIN_HEARING_TEST_AUDIO_INDEX,
-                                                       flask_configurations.MAX_HEARING_TEST_AUDIO_INDEX)
+            hearing_test_audio_index1 = random.randint(configuration.MIN_HEARING_TEST_AUDIO_INDEX,
+                                                       configuration.MAX_HEARING_TEST_AUDIO_INDEX)
+            hearing_test_audio_index2 = random.randint(configuration.MIN_HEARING_TEST_AUDIO_INDEX,
+                                                       configuration.MAX_HEARING_TEST_AUDIO_INDEX)
             if hearing_test_audio_index1 != hearing_test_audio_index2:
                 # encrypt the data so that someone can't figure out the pattern on the client side
                 logger.info('Hearing test indices %d and %d assigned to %r' %
@@ -479,10 +479,10 @@ def hearing_test():
 
         if (int(request.form['audiofile1_tones']) ==
                 (int(utilities.decrypt_data(hearing_test_audio_index1)) /
-                     flask_configurations.HEARING_TEST_AUDIO_FILES_PER_TONES)) \
+                     configuration.HEARING_TEST_AUDIO_FILES_PER_TONES)) \
                 and (int(request.form['audiofile2_tones']) ==
                          (int(utilities.decrypt_data(hearing_test_audio_index2)) /
-                              flask_configurations.HEARING_TEST_AUDIO_FILES_PER_TONES)):
+                              configuration.HEARING_TEST_AUDIO_FILES_PER_TONES)):
             logger.info('Hearing test passed - %r' % participant)
             participant.set_passed_hearing_test(True)
             db.session.commit()
@@ -524,8 +524,8 @@ def hearing_test_audio(example_num):
         file_path = 'hearing_test_audio/1000Hz.wav'
     else:
         hearing_test_audio_index = int(utilities.decrypt_data(session['hearing_test_audio_index%s' % example_num]))
-        num_tones = hearing_test_audio_index / flask_configurations.HEARING_TEST_AUDIO_FILES_PER_TONES
-        file_num = hearing_test_audio_index % flask_configurations.HEARING_TEST_AUDIO_FILES_PER_TONES
+        num_tones = hearing_test_audio_index / configuration.HEARING_TEST_AUDIO_FILES_PER_TONES
+        file_num = hearing_test_audio_index % configuration.HEARING_TEST_AUDIO_FILES_PER_TONES
         logger.info('hearing_test %s - %d %d' % (example_num, num_tones, file_num))
         file_path = 'hearing_test_audio/tones%d_%d.wav' % (num_tones, file_num)
     with open(file_path, 'rb') as f:
@@ -680,13 +680,13 @@ def hearing_response_estimation():
 
         hearing_response_file_path = strip_query_from_url(hearing_response_file_path)
 
-        freq_seq = range(flask_configurations.HEARING_RESPONSE_NFREQS)
+        freq_seq = range(configuration.HEARING_RESPONSE_NFREQS)
         random.shuffle(freq_seq)
 
         hearing_response_ids = []
         hearing_response_files = []
         for f in freq_seq:
-            hearing_response_id = '%d_%d' % (f, random.randint(0, flask_configurations.HEARING_RESPONSE_NADD))
+            hearing_response_id = '%d_%d' % (f, random.randint(0, configuration.HEARING_RESPONSE_NADD))
             hearing_response_file = '%s%s.wav' % (hearing_response_file_path, hearing_response_id)
             hearing_response_ids.append(hearing_response_id)
             hearing_response_files.append(hearing_response_file)
@@ -753,14 +753,14 @@ def mturk_debug():
     if preview:
         return render_template('mturk_debug.html',
                                url='/mturk?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&workerId=debugNQFUCL',
-                               frame_height=flask_configurations.MTURK_DEBUG_FRAME_HEIGHT)
+                               frame_height=configuration.MTURK_DEBUG_FRAME_HEIGHT)
     else:
         return render_template('mturk_debug.html',
                                url='/mturk?assignmentId=123RVWYBAZW00EXAMPLE456RVWYBAZW00EXAMPLE&'
                                    'hitId=123RVWYBAZW00EXAMPLE&'
                                    'turkSubmitTo=https://workersandbox.mturk.com&'
                                    'workerId=debugNQFUCL',
-                               frame_height=flask_configurations.MTURK_DEBUG_FRAME_HEIGHT)
+                               frame_height=configuration.MTURK_DEBUG_FRAME_HEIGHT)
 
 
 @app.route('/admin/stats')
