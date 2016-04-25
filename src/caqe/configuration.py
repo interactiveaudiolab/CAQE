@@ -162,9 +162,6 @@ class BaseConfig(object):
     REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS : bool
         If True, the participant must listen to all of the training sounds before proceeding to the evaluation task.
         (default is True)
-    REFERENCES : tuple of tuple of str
-        The reference stimuli in the evaluation task.
-        (default is (('Reference', 'The reference signal to which test signals are compared.'),))
     PREVIEW_HTML : str
         The HTML content of the preview page. This will be the same for all conditions, regardless of test since
         conditions are assigned on the fly (so we can have complete control over condition assignment).
@@ -184,6 +181,7 @@ class BaseConfig(object):
                  'introduction_html' : '...', # Content of the intro page (after the first time they perform the task)
                  'training_instructions_html' : '...', # The HTML content of the training instructions
                  'evaluation_instructions_html' : '...'}, # The HTML content of the evaluation instructions
+                 'references' : (('<reference_name>', '<reference_description>'),), # Reference names and descriptions
                  'reference_example_dict' :
                     {'<reference_name}': url_for('static', filename='audio/<reference_filename>.wav'), ... },
                  'quality_example_dict' :
@@ -275,7 +273,6 @@ class BaseConfig(object):
     POPUP_HEIGHT = 1200
     TEST_TIMEOUT_SEC = 60.
     REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS = True
-    REFERENCES = (('Reference', 'The reference signal to which test signals are compared.'),)
     PREVIEW_HTML = None
     MIN_RATING_VALUE = 0
     MAX_RATING_VALUE = 99

@@ -101,7 +101,7 @@
         var config = {
             "testTimeoutSec": {{ config.TEST_TIMEOUT_SEC }},
             "references": {
-                {% for reference in config.REFERENCES %}
+                {% for reference in test.references %}
                     "{{ reference[0] }}": "{{ reference[1] }}",
                 {% endfor %}
             },
