@@ -189,7 +189,7 @@ def anonymous():
                             crowd_assignment_id=None,
                             crowd_assignment_type=None,
                             _external=True,
-                            _scheme=app.config['URL_SCHEME']))
+                            _scheme=app.config['PREFERRED_URL_SCHEME']))
 
 
 @app.route('/mturk', methods=['GET'])
@@ -225,7 +225,7 @@ def mturk():
                             crowd_assignment_type=crowd_assignment_type,
                             preview=preview,
                             _external=True,
-                            _scheme=app.config['URL_SCHEME']))
+                            _scheme=app.config['PREFERRED_URL_SCHEME']))
 
 
 @app.route('/begin/<platform>/<crowd_worker_id>', methods=['GET'])
@@ -249,7 +249,7 @@ def begin(platform, crowd_worker_id):
 
     # check browser
     browser = request.user_agent.browser
-    if app.confg['ACCEPTABLE_BROWSERS'] is not None and browser not in app.config['ACCEPTABLE_BROWSERS']:
+    if app.config['ACCEPTABLE_BROWSERS'] is not None and browser not in app.config['ACCEPTABLE_BROWSERS']:
         return render_template('sorry.html', message='We\'re sorry, but your web browser is not supported. Please try '
                                                      'again using <a href="http://www.google.com/chrome" '
                                                      'target="_blank">Chrome</a>.')
@@ -275,7 +275,7 @@ def begin(platform, crowd_worker_id):
                                                 participant_type=platform,
                                                 crowd_worker_id=crowd_worker_id,
                                                 _external=True,
-                                                _scheme=app.config['URL_SCHEME'],
+                                                _scheme=app.config['PREFERRED_URL_SCHEME'],
                                                 **request.args),
                                    width=app.config['POPUP_WIDTH'],
                                    height=app.config['POPUP_HEIGHT'],
@@ -290,7 +290,7 @@ def begin(platform, crowd_worker_id):
                                                 participant_type=platform,
                                                 crowd_worker_id=crowd_worker_id,
                                                 _external=True,
-                                                _scheme=app.config['URL_SCHEME'],
+                                                _scheme=app.config['PREFERRED_URL_SCHEME'],
                                                 **request.args),
                                    width=app.config['POPUP_WIDTH'],
                                    height=app.config['POPUP_HEIGHT'],
@@ -300,7 +300,7 @@ def begin(platform, crowd_worker_id):
                                 participant_type=platform,
                                 crowd_worker_id=crowd_worker_id,
                                 _external=True,
-                                _scheme=app.config['URL_SCHEME'],
+                                _scheme=app.config['PREFERRED_URL_SCHEME'],
                                 **request.args))
 
 
@@ -367,21 +367,21 @@ def pre_evaluation_tasks():
         return render_template('sorry.html', message='We\'re sorry, but there are no more tasks available for you.')
 
     if app.config['OBTAIN_CONSENT'] and not participant.gave_consent:
-        return redirect(url_for('consent', _external=True, scheme=app.config['URL_SCHEME']))
+        return redirect(url_for('consent', _external=True, scheme=app.config['PREFERRED_URL_SCHEME']))
 
     if app.config['HEARING_SCREENING_TEST_ENABLED'] and (not participant.has_passed_hearing_test_recently()):
-        return redirect(url_for('hearing_test', _external=True, scheme=app.config['URL_SCHEME']))
+        return redirect(url_for('hearing_test', _external=True, scheme=app.config['PREFERRED_URL_SCHEME']))
 
     if app.config['PRE_TEST_SURVEY_ENABLED']:
         if participant.pre_test_survey is None:
-            return redirect(url_for('pre_test_survey', _external=True, scheme=app.config['URL_SCHEME']))
+            return redirect(url_for('pre_test_survey', _external=True, scheme=app.config['PREFERRED_URL_SCHEME']))
         if not experiment.is_pre_test_survey_valid(json.loads(participant.pre_test_survey),
                                                    app.config['PRE_TEST_SURVEY_INCLUSION_CRITERIA']):
             return render_template('sorry.html',
                                    message='Unfortunately, you do not meet the inclusion criteria for this study. '
                                            'Sorry.')
 
-    return redirect(url_for('evaluation', _external=True, _scheme=app.config['URL_SCHEME']))
+    return redirect(url_for('evaluation', _external=True, _scheme=app.config['PREFERRED_URL_SCHEME']))
 
 
 @app.route('/consent', methods=['GET', 'POST'])
@@ -501,7 +501,7 @@ def hearing_test():
                     # They attempted, but they failed, but pass them through since rejection is not enabled
                     logger.info('Hearing test rejection enabled. Passing failed participant to evaluation.')
                     return pre_evaluation_tasks()
-            return redirect(url_for('hearing_test', _method='GET', _external=True, _scheme=app.config['URL_SCHEME']))
+            return redirect(url_for('hearing_test', _method='GET', _external=True, _scheme=app.config['PREFERRED_URL_SCHEME']))
 
 
 @app.route('/hearing_test/audio/<example_num>.wav')
@@ -592,10 +592,10 @@ def evaluation():
                                    participant_id=participant.id,
                                    first_evaluation=participant.trials.count() == 0,
                                    test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True,
-                                                                      _scheme=app.config['URL_SCHEME']),
+                                                                      _scheme=app.config['PREFERRED_URL_SCHEME']),
                                    submission_url=url_for('evaluation',
                                                           _external=True,
-                                                          _scheme=app.config['URL_SCHEME']))
+                                                          _scheme=app.config['PREFERRED_URL_SCHEME']))
         elif test_config['test']['test_type'] == 'pairwise':
             test_config['conditions'] = experiment.generate_comparison_pairs(test_config['conditions'])
 
@@ -606,10 +606,10 @@ def evaluation():
                                    first_evaluation=participant.trials.count() == 0,
                                    test_complete_redirect_url=url_for('post_evaluation_tasks',
                                                                       _external=True,
-                                                                      _scheme=app.config['URL_SCHEME']),
+                                                                      _scheme=app.config['PREFERRED_URL_SCHEME']),
                                    submission_url=url_for('evaluation',
                                                           _external=True,
-                                                          _scheme=app.config['URL_SCHEME']))
+                                                          _scheme=app.config['PREFERRED_URL_SCHEME']))
         else:
             return render_template('%s.html' % test_config['test']['test_type'],
                                    test=test_config['test'],
@@ -618,10 +618,10 @@ def evaluation():
                                    first_evaluation=participant.trials.count() == 0,
                                    test_complete_redirect_url=url_for('post_evaluation_tasks',
                                                                       _external=True,
-                                                                      _scheme=app.config['URL_SCHEME']),
+                                                                      _scheme=app.config['PREFERRED_URL_SCHEME']),
                                    submission_url=url_for('evaluation',
                                                           _external=True,
-                                                          _scheme=app.config['URL_SCHEME']))
+                                                          _scheme=app.config['PREFERRED_URL_SCHEME']))
 
 
 @app.route('/post_evaluation_tasks')
@@ -643,18 +643,18 @@ def post_evaluation_tasks():
     if app.config['HEARING_RESPONSE_ESTIMATION_ENABLED'] and participant.hearing_response_estimation is None:
         return redirect(url_for('hearing_response_estimation',
                                 _external=True,
-                                scheme=app.config['URL_SCHEME']))
+                                scheme=app.config['PREFERRED_URL_SCHEME']))
 
     if app.config['POST_TEST_SURVEY_ENABLED'] and participant.post_test_survey is None:
         return redirect(url_for('post_test_survey',
                                 _external=True,
-                                scheme=app.config['URL_SCHEME']))
+                                scheme=app.config['PREFERRED_URL_SCHEME']))
 
     platform = session.get('platform', None)
     return redirect(url_for('end',
                             platform=platform,
                             _external=True,
-                            _scheme=app.config['URL_SCHEME']))
+                            _scheme=app.config['PREFERRED_URL_SCHEME']))
 
 
 @app.route('/hearing_response_estimation', methods=['GET', 'POST'])
@@ -676,7 +676,7 @@ def hearing_response_estimation():
         hearing_response_file_path = url_for('static',
                                              filename='audio/hearing_response_stimuli/',
                                              _external=True,
-                                             _scheme=app.config['URL_SCHEME'])
+                                             _scheme=app.config['PREFERRED_URL_SCHEME'])
 
         hearing_response_file_path = strip_query_from_url(hearing_response_file_path)
 
