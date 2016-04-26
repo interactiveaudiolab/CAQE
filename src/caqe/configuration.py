@@ -11,7 +11,8 @@ A app configuration defines the user-tunable parameters of the application and a
 * Which components of the evaluation are active (e.g. pre-test survey, post-test survey, hearing screening, etc.)
 
 This subpackage contains a base configuration which contains overridable defaults, as well as pre-defined testing
-configurations for common audio quality evaluation scenarios.
+configurations for common audio quality evaluation scenarios. Make sure that before you run a test that you at least
+change the stimuli and the ``SERVER_ADDRESS`` variable.
 
 .. seealso:: :doc:`../test_configurations`
 """
@@ -65,7 +66,7 @@ class BaseConfig(object):
         using environment variable 'CSRF_SESSION_KEY'. (see Flask docs)
     CSRF_ENABLED : bool
         Enable/disable protection against *Cross-site Request Forgery (CSRF)* (see Flask docs) (default is True)
-    SERVER_NAME : str
+    SERVER_ADDRESS : str
         The name and port number of the server (e.g.: 'caqe.local:5000') (see Flask docs) (default is None)
     SQLALCHEMY_DATABASE_URI : str
         The database URI that should be used for the connection (see Flask-SQLAlchemy docs). Examples:
@@ -123,7 +124,7 @@ class BaseConfig(object):
         variable (so, it can be easily modified when deploying and testing using Heroku).
         Can be set via environment variable 'MTURK_HOST'. (default is 'mechanicalturk.sandbox.amazonaws.com')
     MTURK_QUESTION_URL : str
-        Entry point URL. (default is 'https://%s/mturk' % SERVER_NAME)
+        Entry point URL. (default is 'https://%s/mturk' % SERVER_ADDRESS)
     MTURK_REWARD : float
         This is the reward given to each worker for an approved assignment (in USD)
         (note that Amazon takes their Mechanical Turk Fee on top of this. See https://requester.mturk.com/pricing)
@@ -200,12 +201,12 @@ class BaseConfig(object):
 
     Note
     ----
-    For testing, add:
+    For testing, add: ::
 
         0.0.0.0     caqe.local
 
     to /etc/hosts
-    We need to set the SERVER_NAME to resolve `url_for` definitions when constructing the database, but we can't simply
+    We need to set the SERVER_ADDRESS to resolve ``url_for`` definitions when constructing the database, but we can't simply
     use `localhost` because the secure sessions are not compatible with that.
     """
     # ---------------------------------------------------------------------------------------------
@@ -216,7 +217,7 @@ class BaseConfig(object):
     CSRF_SESSION_KEY = SESSION_KEY
     CSRF_ENABLED = True
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:////%s' % os.path.expanduser('~/caqe.db'))
-    SERVER_NAME = None
+    SERVER_ADDRESS = 'caqe.local:5000'
     PREFERRED_URL_SCHEME = 'https'
     AUDIO_FILE_DIRECTORY = 'static/audio'
     ENCRYPT_AUDIO_STIMULI_URLS = True
@@ -252,7 +253,7 @@ class BaseConfig(object):
     # ---------------------------------------------------------------------------------------------
     # MECHANICAL TURK VARIABLES
     MTURK_HOST = os.getenv('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
-    MTURK_QUESTION_URL = 'https://%s/mturk' % SERVER_NAME
+    MTURK_QUESTION_URL = 'https://%s/mturk' % SERVER_ADDRESS
     MTURK_REWARD = 0.50
     MTURK_NUMBER_HITS_APPROVED_REQUIREMENT = 1000
     MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT = 97
@@ -300,7 +301,8 @@ class TestingOverrideConfig(object):
     TESTING = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
-    SERVER_NAME = 'caqe.local:5000'
+    SERVER_ADDRESS = 'caqe.local:5000'
+    MTURK_QUESTION_URL = 'https://%s/mturk' % SERVER_ADDRESS
     PREFERRED_URL_SCHEME = 'http'
 
 
@@ -316,9 +318,9 @@ class DevelopmentOverrideConfig(object):
 
     """
     DEBUG = True
-    SERVER_NAME = 'caqe.local:5000'
+    SERVER_ADDRESS = 'caqe.local:5000'
+    MTURK_QUESTION_URL = 'https://%s/mturk' % SERVER_ADDRESS
     HEARING_TEST_REJECTION_ENABLED = False
-    PREFERRED_URL_SCHEME = 'http'
 
 
 class ProductionOverrideConfig(object):
