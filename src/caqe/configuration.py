@@ -12,6 +12,8 @@ A app configuration defines the user-tunable parameters of the application and a
 
 This subpackage contains a base configuration which contains overridable defaults, as well as pre-defined testing
 configurations for common audio quality evaluation scenarios.
+
+.. seealso:: :doc:`../test_configurations`
 """
 
 import os
@@ -290,7 +292,7 @@ class TestingOverrideConfig(object):
 
     Note
     ----
-    To enable these parameters set environment variable `APP_MODE` to 'PRODUCTION'. In Linux:
+    To enable these parameters set environment variable ``APP_MODE`` to 'TESTING'. In Linux: ::
 
         $ export APP_MODE=TESTING
 
@@ -308,7 +310,7 @@ class DevelopmentOverrideConfig(object):
 
     Note
     ----
-    To enable these parameters set environment variable `APP_MODE` to 'PRODUCTION'. In Linux:
+    To enable these parameters set environment variable ``APP_MODE`` to 'DEVELOPMENT'. In Linux: ::
 
         $ export APP_MODE=DEVELOPMENT
 
@@ -325,7 +327,7 @@ class ProductionOverrideConfig(object):
 
     Note
     ----
-    To enable these parameters set environment variable `APP_MODE` to 'PRODUCTION'. In Linux:
+    To enable these parameters set environment variable ``APP_MODE`` to 'PRODUCTION'. In Linux: ::
 
         $ export APP_MODE=PRODUCTION
 

@@ -19,8 +19,8 @@ Getting Started
 .. toctree::
     :maxdepth: 1
 
-    installation
-    deployment
+    local_development
+    local_deployment
 
 
 Testing Configurations
@@ -28,7 +28,7 @@ Testing Configurations
 .. toctree::
     :maxdepth: 2
 
-    Testing Configurations </source/caqe.test_configurations>
+    test_configurations
 
 
 Package Documentation
@@ -37,6 +37,7 @@ Package Documentation
    :maxdepth: 2
 
    CAQE Package </source/caqe>
+   Scripts </source/scripts>
 
 
 Troubleshooting

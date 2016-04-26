@@ -42,20 +42,20 @@ def insert_tests_and_conditions(config=None):
     To call this you need the application context, e.g.:
 
     >>> import os
-    >>> os.environ['FLASK_CONF'] = 'DEV' # for testing the Development configuration
+    >>> os.environ['APP_MODE'] = 'DEVELOPMENT' # for testing the Development configuration
     >>> from caqe import db
-    DEV
+    APP_MODE=DEVELOPMENT
     >>> db.drop_all()
     >>> db.create_all()
     >>> import caqe
-    >>> import caqe.experiment
+    >>> import caqe.experiment as experiment
     >>> with caqe.app.app_context():
-    ...     caqe.experiment.insert_tests_and_conditions()
+    ...     experiment.insert_tests_and_conditions()
     """
     if config is None:
         config = app.config
         
-    for test_dict in config['tests']:
+    for test_dict in config['TESTS']:
         test = Test(json.dumps(test_dict['test_config_variables']))
         db.session.add(test)
 

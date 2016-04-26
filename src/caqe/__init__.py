@@ -25,13 +25,13 @@ app.config.from_pyfile(os.getenv('CAQE_CONFIG', '../test_configurations/general_
 
 # Override variables based on APP_MODE
 if configuration.APP_MODE == 'DEVELOPMENT':
-    print 'APP_MODE = DEVELOPMENT'
+    print 'APP_MODE=DEVELOPMENT'
     app.config.from_object('caqe.configuration.DevelopmentOverrideConfig')
 elif configuration.APP_MODE == 'TESTING':
-    print 'APP_MODE = TESTING'
+    print 'APP_MODE=TESTING'
     app.config.from_object('caqe.configuration.TestingOverrideConfig')
 elif configuration.APP_MODE == 'PRODUCTION':
-    print 'APP_MODE = PRODUCTION'
+    print 'APP_MODE=PRODUCTION'
     app.config.from_object('caqe.configuration.ProductionOverrideConfig')
     # On heroku, we must do a proxy fix, this enables to get the correct IP address from REMOTE_ADDR
     app.wsgi_app = ProxyFix(app.wsgi_app)
