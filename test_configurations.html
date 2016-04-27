@@ -82,14 +82,27 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Test Configurations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Test Configurations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-overall-quality-test-configurations">General Overall Quality Test Configurations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#general-mushra">General MUSHRA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#general-pairwise">General Pairwise</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#source-separation-test-configurations">Source Separation Test Configurations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#source-separation-mushra">Source Separation MUSHRA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#source-separation-pairwise">Source Separation Pairwise</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="source/caqe.html">CAQE Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/scripts.html">Scripts</a></li>
 </ul>
 
             
@@ -134,8 +147,87 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-test_configurations">
-<span id="test-configurations"></span><h1>Test Configurations<a class="headerlink" href="#module-test_configurations" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="test-configurations">
+<h1>Test Configurations<a class="headerlink" href="#test-configurations" title="Permalink to this headline">¶</a></h1>
+<p>Before running a CAQE test, the configuration variables must be set. These variables define the stimuli, quality scales, Mechanical Turk variables, instructions, etc.</p>
+<p>The CAQE configuration variables are set in three stages:</p>
+<p><strong>Stage 1:</strong> The base configuration is set as defined in <a class="reference internal" href="source/caqe.configuration.html#caqe.configuration.BaseConfig" title="caqe.configuration.BaseConfig"><code class="xref py py-class docutils literal"><span class="pre">caqe.configuration.BaseConfig</span></code></a></p>
+<p><strong>Stage 2:</strong> CAQE reads in the configuration file whose path is set by the environment variables <code class="docutils literal"><span class="pre">CAQE_CONFIG</span></code>. Any uppercase variables (e.g. <code class="docutils literal"><span class="pre">TEST_TYPE='mushra'</span></code>) in the file will be added to the configuration (and override any existing variables of the same name). If the <code class="docutils literal"><span class="pre">CAQE_CONFIG</span></code> variable is not set, then by default CAQE will read in the <a class="reference internal" href="#general-mushra-label"><span class="std std-ref">General MUSHRA</span></a> configuration.</p>
+<p><strong>Stage 3:</strong> Lastly, another environment variable, <code class="docutils literal"><span class="pre">APP_MODE</span></code>, may be set to override configuration variables for development, testing, or production. See <a class="reference internal" href="source/caqe.configuration.html#caqe.configuration.DevelopmentOverrideConfig" title="caqe.configuration.DevelopmentOverrideConfig"><code class="xref py py-class docutils literal"><span class="pre">caqe.configuration.DevelopmentOverrideConfig</span></code></a>, <a class="reference internal" href="source/caqe.configuration.html#caqe.configuration.TestingOverrideConfig" title="caqe.configuration.TestingOverrideConfig"><code class="xref py py-class docutils literal"><span class="pre">caqe.configuration.TestingOverrideConfig</span></code></a>, and <a class="reference internal" href="source/caqe.configuration.html#caqe.configuration.ProductionOverrideConfig" title="caqe.configuration.ProductionOverrideConfig"><code class="xref py py-class docutils literal"><span class="pre">caqe.configuration.ProductionOverrideConfig</span></code></a>.</p>
+<p>Therefore, to configure your test, use a pre-defined configuration as a guide to make your own configuration file. Place this file in the <code class="docutils literal"><span class="pre">src/test_configurations</span></code> directory and set the environment variable to the filename. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export CAQE_CONFIG=&#39;your_caqe_config.cfg&#39;
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>All audio stimulus files should be placed in <code class="docutils literal"><span class="pre">src/caqe/static/audio</span></code>. They should all be in WAV format. In addition, all files for a particular condition should be of the exact same length and sample rate.</p>
+<p>Lastly, whenever your configuration is updated, the database should be recreated:</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span>$ python create_db.py
+</pre></div>
+</div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="source/caqe.configuration.html"><span class="doc">caqe.configuration module</span></a> for more information on the configuration variables.</p>
+</div>
+<div class="section" id="general-overall-quality-test-configurations">
+<h2>General Overall Quality Test Configurations<a class="headerlink" href="#general-overall-quality-test-configurations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="general-mushra">
+<span id="general-mushra-label"></span><h3>General MUSHRA<a class="headerlink" href="#general-mushra" title="Permalink to this headline">¶</a></h3>
+<p>File: <code class="docutils literal"><span class="pre">general_mushra.cfg</span></code></p>
+<p>A general MUSHRA (MUltiple Stimulus Hidden Reference and Anchor) configuration for evaluating overall quality
+of a set of audio stimuli.</p>
+<p>To activate:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export CAQE_CONFIG=&#39;../test_configurations/general_mushra.cfg&#39;
+</pre></div>
+</div>
+</div>
+<div class="section" id="general-pairwise">
+<h3>General Pairwise<a class="headerlink" href="#general-pairwise" title="Permalink to this headline">¶</a></h3>
+<p>File: <code class="docutils literal"><span class="pre">general_pairwise.cfg</span></code></p>
+<p>A general pairwise (e.g. A is better than B) configuration for evaluating overall quality
+of a set of audio stimuli.</p>
+<p>To activate:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export CAQE_CONFIG=&#39;../test_configurations/general_pairwise.cfg&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="source-separation-test-configurations">
+<h2>Source Separation Test Configurations<a class="headerlink" href="#source-separation-test-configurations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="source-separation-mushra">
+<h3>Source Separation MUSHRA<a class="headerlink" href="#source-separation-mushra" title="Permalink to this headline">¶</a></h3>
+<p>File: <code class="docutils literal"><span class="pre">sourceseparation_mushra.cfg</span></code></p>
+<p>A MUSHRA (MUltiple Stimulus Hidden Reference and Anchor) configuration for evaluating output quality of audio source
+separation algorithms on 4 different quality scales:</p>
+<ol class="arabic simple">
+<li>Preservation of the Target Sound</li>
+<li>Suppression of Other Sounds</li>
+<li>Absence of Additional Artificial Noise</li>
+<li>Lack of Distortions to the Target Sound</li>
+</ol>
+<p>To activate:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export CAQE_CONFIG=&#39;../test_configurations/sourceseparation_mushra.cfg&#39;
+</pre></div>
+</div>
+</div>
+<div class="section" id="source-separation-pairwise">
+<h3>Source Separation Pairwise<a class="headerlink" href="#source-separation-pairwise" title="Permalink to this headline">¶</a></h3>
+<p>File: <code class="docutils literal"><span class="pre">sourceseparation_pairwise.cfg</span></code></p>
+<p>A pairwise (e.g. A is better than B configuration for evaluating output quality of audio source
+separation algorithms on 4 different quality scales:</p>
+<ol class="arabic simple">
+<li>Preservation of the Target Sound</li>
+<li>Suppression of Other Sounds</li>
+<li>Absence of Additional Artificial Noise</li>
+<li>Lack of Distortions to the Target Sound</li>
+</ol>
+<p>To activate:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export CAQE_CONFIG=&#39;../test_configurations/sourceseparation_pairwise.cfg&#39;
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 
 

@@ -83,7 +83,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
 </ul>
 <ul>
@@ -93,13 +93,13 @@
 <li class="toctree-l1 current"><a class="reference internal" href="caqe.html">CAQE Package</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">caqe.experiment module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.configuration.html">caqe.configuration module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caqe.generate_key_file.html">caqe.generate_key_file module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.models.html">caqe.models module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.turk_admin.html">caqe.turk_admin module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.utilities.html">caqe.utilities module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.views.html">caqe.views module</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
 </ul>
 
             
@@ -304,15 +304,15 @@ Running this doctest initializes the development database.</p>
 <p class="rubric">Examples</p>
 <p>To call this you need the application context, e.g.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;FLASK_CONF&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DEV&#39;</span> <span class="c1"># for testing the Development configuration</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;APP_MODE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DEVELOPMENT&#39;</span> <span class="c1"># for testing the Development configuration</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">caqe</span> <span class="k">import</span> <span class="n">db</span>
-<span class="go">DEV</span>
+<span class="go">APP_MODE=DEVELOPMENT</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">drop_all</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">create_all</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">caqe</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">caqe.experiment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">caqe.experiment</span> <span class="k">as</span> <span class="nn">experiment</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">caqe</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="n">caqe</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">insert_tests_and_conditions</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="n">experiment</span><span class="o">.</span><span class="n">insert_tests_and_conditions</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>

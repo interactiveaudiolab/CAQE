@@ -81,7 +81,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
 </ul>
 <ul>
@@ -89,6 +89,7 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="source/caqe.html">CAQE Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/scripts.html">Scripts</a></li>
 </ul>
 
             
@@ -235,10 +236,6 @@
   </dt>
 
       
-  <dt><a href="source/caqe.generate_key_file.html#module-caqe.generate_key_file">caqe.generate_key_file (module)</a>
-  </dt>
-
-      
   <dt><a href="source/caqe.models.html#module-caqe.models">caqe.models (module)</a>
   </dt>
 
@@ -258,18 +255,22 @@
   <dt><a href="source/caqe.models.html#caqe.models.Condition">Condition (class in caqe.models)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="source/caqe.models.html#caqe.models.Trial.condition_id">condition_id (caqe.models.Trial attribute)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="source/caqe.configuration.html#caqe.configuration.BaseConfig.CONDITIONS_PER_EVALUATION">CONDITIONS_PER_EVALUATION (caqe.configuration.BaseConfig attribute)</a>
   </dt>
 
       
   <dt><a href="source/caqe.views.html#caqe.views.consent">consent() (in module caqe.views)</a>
+  </dt>
+
+      
+  <dt><a href="source/create_db.html#module-create_db">create_db (module)</a>
   </dt>
 
       
@@ -427,6 +428,10 @@
   </dt>
 
       
+  <dt><a href="source/generate_key_file.html#module-generate_key_file">generate_key_file (module)</a>
+  </dt>
+
+      
   <dt><a href="source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.get_all_assignments">get_all_assignments() (caqe.turk_admin.TurkAdmin method)</a>
   </dt>
 
@@ -438,12 +443,12 @@
   <dt><a href="source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.get_assignments_to_review">get_assignments_to_review() (caqe.turk_admin.TurkAdmin method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="source/caqe.experiment.html#caqe.experiment.get_available_conditions">get_available_conditions() (in module caqe.experiment)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.get_completion_times">get_completion_times() (caqe.turk_admin.TurkAdmin method)</a>
   </dt>
@@ -646,6 +651,16 @@
   <dt><a href="source/caqe.configuration.html#caqe.configuration.BaseConfig.MTURK_QUESTION_URL">MTURK_QUESTION_URL (caqe.configuration.BaseConfig attribute)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="source/caqe.configuration.html#caqe.configuration.DevelopmentOverrideConfig.MTURK_QUESTION_URL">(caqe.configuration.DevelopmentOverrideConfig attribute)</a>
+  </dt>
+
+        
+  <dt><a href="source/caqe.configuration.html#caqe.configuration.TestingOverrideConfig.MTURK_QUESTION_URL">(caqe.configuration.TestingOverrideConfig attribute)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="source/caqe.configuration.html#caqe.configuration.BaseConfig.MTURK_REWARD">MTURK_REWARD (caqe.configuration.BaseConfig attribute)</a>
   </dt>
@@ -756,10 +771,6 @@
 
       <dd><dl>
         
-  <dt><a href="source/caqe.configuration.html#caqe.configuration.DevelopmentOverrideConfig.PREFERRED_URL_SCHEME">(caqe.configuration.DevelopmentOverrideConfig attribute)</a>
-  </dt>
-
-        
   <dt><a href="source/caqe.configuration.html#caqe.configuration.TestingOverrideConfig.PREFERRED_URL_SCHEME">(caqe.configuration.TestingOverrideConfig attribute)</a>
   </dt>
 
@@ -778,10 +789,6 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
-      
-  <dt><a href="source/caqe.configuration.html#caqe.configuration.BaseConfig.REFERENCES">REFERENCES (caqe.configuration.BaseConfig attribute)</a>
-  </dt>
-
       
   <dt><a href="source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.register_hit">register_hit() (caqe.turk_admin.TurkAdmin method)</a>
   </dt>
@@ -803,16 +810,16 @@
   </dt>
 
       
-  <dt><a href="source/caqe.configuration.html#caqe.configuration.BaseConfig.SERVER_NAME">SERVER_NAME (caqe.configuration.BaseConfig attribute)</a>
+  <dt><a href="source/caqe.configuration.html#caqe.configuration.BaseConfig.SERVER_ADDRESS">SERVER_ADDRESS (caqe.configuration.BaseConfig attribute)</a>
   </dt>
 
       <dd><dl>
         
-  <dt><a href="source/caqe.configuration.html#caqe.configuration.DevelopmentOverrideConfig.SERVER_NAME">(caqe.configuration.DevelopmentOverrideConfig attribute)</a>
+  <dt><a href="source/caqe.configuration.html#caqe.configuration.DevelopmentOverrideConfig.SERVER_ADDRESS">(caqe.configuration.DevelopmentOverrideConfig attribute)</a>
   </dt>
 
         
-  <dt><a href="source/caqe.configuration.html#caqe.configuration.TestingOverrideConfig.SERVER_NAME">(caqe.configuration.TestingOverrideConfig attribute)</a>
+  <dt><a href="source/caqe.configuration.html#caqe.configuration.TestingOverrideConfig.SERVER_ADDRESS">(caqe.configuration.TestingOverrideConfig attribute)</a>
   </dt>
 
       </dl></dd>
@@ -856,10 +863,6 @@
 
       
   <dt><a href="source/caqe.configuration.html#caqe.configuration.BaseConfig.TEST_CONDITION_ORDER_RANDOMIZED">TEST_CONDITION_ORDER_RANDOMIZED (caqe.configuration.BaseConfig attribute)</a>
-  </dt>
-
-      
-  <dt><a href="test_configurations.html#module-test_configurations">test_configurations (module)</a>
   </dt>
 
       

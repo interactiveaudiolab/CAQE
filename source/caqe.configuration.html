@@ -32,7 +32,7 @@
   
     <link rel="top" title="CAQE 0.1.1a1 documentation" href="../index.html"/>
         <link rel="up" title="caqe package" href="caqe.html"/>
-        <link rel="next" title="caqe.generate_key_file module" href="caqe.generate_key_file.html"/>
+        <link rel="next" title="caqe.models module" href="caqe.models.html"/>
         <link rel="prev" title="caqe.experiment module" href="caqe.experiment.html"/> 
 
   
@@ -83,7 +83,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
 </ul>
 <ul>
@@ -93,13 +93,13 @@
 <li class="toctree-l1 current"><a class="reference internal" href="caqe.html">CAQE Package</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="caqe.experiment.html">caqe.experiment module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">caqe.configuration module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caqe.generate_key_file.html">caqe.generate_key_file module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.models.html">caqe.models module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.turk_admin.html">caqe.turk_admin module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.utilities.html">caqe.utilities module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caqe.views.html">caqe.views module</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="scripts.html">Scripts</a></li>
 </ul>
 
             
@@ -158,7 +158,12 @@
 <li>Which components of the evaluation are active (e.g. pre-test survey, post-test survey, hearing screening, etc.)</li>
 </ul>
 <p>This subpackage contains a base configuration which contains overridable defaults, as well as pre-defined testing
-configurations for common audio quality evaluation scenarios.</p>
+configurations for common audio quality evaluation scenarios. Make sure that before you run a test that you at least
+change the stimuli and the <code class="docutils literal"><span class="pre">SERVER_ADDRESS</span></code> variable.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../test_configurations.html"><span class="doc">Test Configurations</span></a></p>
+</div>
 <dl class="class">
 <dt id="caqe.configuration.BaseConfig">
 <em class="property">class </em><code class="descclassname">caqe.configuration.</code><code class="descname">BaseConfig</code><a class="reference internal" href="../_modules/caqe/configuration.html#BaseConfig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.configuration.BaseConfig" title="Permalink to this definition">¶</a></dt>
@@ -198,9 +203,10 @@ using environment variable &#8216;CSRF_SESSION_KEY&#8217;. (see Flask docs)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="caqe.configuration.BaseConfig.SERVER_NAME">
-<code class="descname">SERVER_NAME</code><a class="headerlink" href="#caqe.configuration.BaseConfig.SERVER_NAME" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> &#8211; The name and port number of the server (e.g.: &#8216;caqe.local:5000&#8217;) (see Flask docs) (default is None)</p>
+<dt id="caqe.configuration.BaseConfig.SERVER_ADDRESS">
+<code class="descname">SERVER_ADDRESS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.SERVER_ADDRESS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em> &#8211; The name and port number of the server. Do not include &#8216;http&#8217;. (e.g.: &#8216;caqe.local:5000&#8217;) (see Flask docs)
+Can be set via environment variable &#8216;SERVER_ADDRESS&#8217;. (default is &#8216;caqe.local:5000&#8217;)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -353,7 +359,7 @@ Can be set via environment variable &#8216;MTURK_HOST&#8217;. (default is &#8216
 <dl class="attribute">
 <dt id="caqe.configuration.BaseConfig.MTURK_QUESTION_URL">
 <code class="descname">MTURK_QUESTION_URL</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_QUESTION_URL" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> &#8211; Entry point URL. (default is &#8216;<a class="reference external" href="https://%s/mturk">https://%s/mturk</a>&#8216; % SERVER_NAME)</p>
+<dd><p><em>str</em> &#8211; Entry point URL. (default is &#8216;<a class="reference external" href="https://%s/mturk">https://%s/mturk</a>&#8216; % SERVER_ADDRESS)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -453,13 +459,6 @@ that is bigger than the Mechanical Turk frame for instance. (default is True)</p
 </dd></dl>
 
 <dl class="attribute">
-<dt id="caqe.configuration.BaseConfig.REFERENCES">
-<code class="descname">REFERENCES</code><a class="headerlink" href="#caqe.configuration.BaseConfig.REFERENCES" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple of tuple of str</em> &#8211; The reference stimuli in the evaluation task.
-(default is ((&#8216;Reference&#8217;, &#8216;The reference signal to which test signals are compared.&#8217;),))</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="caqe.configuration.BaseConfig.PREVIEW_HTML">
 <code class="descname">PREVIEW_HTML</code><a class="headerlink" href="#caqe.configuration.BaseConfig.PREVIEW_HTML" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>str</em> &#8211; The HTML content of the preview page. This will be the same for all conditions, regardless of test since
@@ -495,6 +494,7 @@ conditions are assigned on the fly (so we can have complete control over conditi
      <span class="s1">&#39;introduction_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># Content of the intro page (after the first time they perform the task)</span>
      <span class="s1">&#39;training_instructions_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># The HTML content of the training instructions</span>
      <span class="s1">&#39;evaluation_instructions_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">},</span> <span class="c1"># The HTML content of the evaluation instructions</span>
+     <span class="s1">&#39;references&#39;</span> <span class="p">:</span> <span class="p">((</span><span class="s1">&#39;&lt;reference_name&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;reference_description&gt;&#39;</span><span class="p">),),</span> <span class="c1"># Reference names and descriptions</span>
      <span class="s1">&#39;reference_example_dict&#39;</span> <span class="p">:</span>
         <span class="p">{</span><span class="s1">&#39;&lt;reference_name}&#39;</span><span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/&lt;reference_filename&gt;.wav&#39;</span><span class="p">),</span> <span class="o">...</span> <span class="p">},</span>
      <span class="s1">&#39;quality_example_dict&#39;</span> <span class="p">:</span>
@@ -513,10 +513,11 @@ conditions are assigned on the fly (so we can have complete control over conditi
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>For testing, add:</p>
-<blockquote>
-<div>0.0.0.0     caqe.local</div></blockquote>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span>     <span class="n">caqe</span><span class="o">.</span><span class="n">local</span>
+</pre></div>
+</div>
 <p class="last">to /etc/hosts
-We need to set the SERVER_NAME to resolve <cite>url_for</cite> definitions when constructing the database, but we can&#8217;t simply
+We need to set the SERVER_ADDRESS to resolve <code class="docutils literal"><span class="pre">url_for</span></code> definitions when constructing the database, but we can&#8217;t simply
 use <cite>localhost</cite> because the secure sessions are not compatible with that.</p>
 </div>
 </dd></dl>
@@ -528,13 +529,19 @@ use <cite>localhost</cite> because the secure sessions are not compatible with t
 <p>Override config for testing.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>To enable these parameters set environment variable <cite>APP_MODE</cite> to &#8216;PRODUCTION&#8217;. In Linux:</p>
-<blockquote class="last">
-<div>$ export APP_MODE=TESTING</div></blockquote>
+<p>To enable these parameters set environment variable <code class="docutils literal"><span class="pre">APP_MODE</span></code> to &#8216;TESTING&#8217;. In Linux:</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span>$ export APP_MODE=TESTING
+</pre></div>
+</div>
 </div>
 <dl class="attribute">
 <dt id="caqe.configuration.TestingOverrideConfig.DEBUG">
 <code class="descname">DEBUG</code><em class="property"> = True</em><a class="headerlink" href="#caqe.configuration.TestingOverrideConfig.DEBUG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.TestingOverrideConfig.MTURK_QUESTION_URL">
+<code class="descname">MTURK_QUESTION_URL</code><em class="property"> = 'https://caqe.local:5000/mturk'</em><a class="headerlink" href="#caqe.configuration.TestingOverrideConfig.MTURK_QUESTION_URL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -543,8 +550,8 @@ use <cite>localhost</cite> because the secure sessions are not compatible with t
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="caqe.configuration.TestingOverrideConfig.SERVER_NAME">
-<code class="descname">SERVER_NAME</code><em class="property"> = 'caqe.local:5000'</em><a class="headerlink" href="#caqe.configuration.TestingOverrideConfig.SERVER_NAME" title="Permalink to this definition">¶</a></dt>
+<dt id="caqe.configuration.TestingOverrideConfig.SERVER_ADDRESS">
+<code class="descname">SERVER_ADDRESS</code><em class="property"> = 'caqe.local:5000'</em><a class="headerlink" href="#caqe.configuration.TestingOverrideConfig.SERVER_ADDRESS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -566,9 +573,10 @@ use <cite>localhost</cite> because the secure sessions are not compatible with t
 <p>Override config for development.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>To enable these parameters set environment variable <cite>APP_MODE</cite> to &#8216;PRODUCTION&#8217;. In Linux:</p>
-<blockquote class="last">
-<div>$ export APP_MODE=DEVELOPMENT</div></blockquote>
+<p>To enable these parameters set environment variable <code class="docutils literal"><span class="pre">APP_MODE</span></code> to &#8216;DEVELOPMENT&#8217;. In Linux:</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span>$ export APP_MODE=DEVELOPMENT
+</pre></div>
+</div>
 </div>
 <dl class="attribute">
 <dt id="caqe.configuration.DevelopmentOverrideConfig.DEBUG">
@@ -581,13 +589,13 @@ use <cite>localhost</cite> because the secure sessions are not compatible with t
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="caqe.configuration.DevelopmentOverrideConfig.PREFERRED_URL_SCHEME">
-<code class="descname">PREFERRED_URL_SCHEME</code><em class="property"> = 'http'</em><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig.PREFERRED_URL_SCHEME" title="Permalink to this definition">¶</a></dt>
+<dt id="caqe.configuration.DevelopmentOverrideConfig.MTURK_QUESTION_URL">
+<code class="descname">MTURK_QUESTION_URL</code><em class="property"> = 'https://caqe.local:5000/mturk'</em><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig.MTURK_QUESTION_URL" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="caqe.configuration.DevelopmentOverrideConfig.SERVER_NAME">
-<code class="descname">SERVER_NAME</code><em class="property"> = 'caqe.local:5000'</em><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig.SERVER_NAME" title="Permalink to this definition">¶</a></dt>
+<dt id="caqe.configuration.DevelopmentOverrideConfig.SERVER_ADDRESS">
+<code class="descname">SERVER_ADDRESS</code><em class="property"> = 'caqe.local:5000'</em><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig.SERVER_ADDRESS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -599,9 +607,10 @@ use <cite>localhost</cite> because the secure sessions are not compatible with t
 <p>Override config for production.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>To enable these parameters set environment variable <cite>APP_MODE</cite> to &#8216;PRODUCTION&#8217;. In Linux:</p>
-<blockquote class="last">
-<div>$ export APP_MODE=PRODUCTION</div></blockquote>
+<p>To enable these parameters set environment variable <code class="docutils literal"><span class="pre">APP_MODE</span></code> to &#8216;PRODUCTION&#8217;. In Linux:</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span>$ export APP_MODE=PRODUCTION
+</pre></div>
+</div>
 </div>
 <dl class="attribute">
 <dt id="caqe.configuration.ProductionOverrideConfig.DEBUG">
@@ -624,7 +633,7 @@ use <cite>localhost</cite> because the secure sessions are not compatible with t
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="caqe.generate_key_file.html" class="btn btn-neutral float-right" title="caqe.generate_key_file module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="caqe.models.html" class="btn btn-neutral float-right" title="caqe.models module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="caqe.experiment.html" class="btn btn-neutral" title="caqe.experiment module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

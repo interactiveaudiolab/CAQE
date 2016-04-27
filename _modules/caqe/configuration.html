@@ -81,7 +81,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
 </ul>
 <ul>
@@ -89,6 +89,7 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../source/caqe.html">CAQE Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/scripts.html">Scripts</a></li>
 </ul>
 
             
@@ -147,7 +148,10 @@
 <span class="sd">* Which components of the evaluation are active (e.g. pre-test survey, post-test survey, hearing screening, etc.)</span>
 
 <span class="sd">This subpackage contains a base configuration which contains overridable defaults, as well as pre-defined testing</span>
-<span class="sd">configurations for common audio quality evaluation scenarios.</span>
+<span class="sd">configurations for common audio quality evaluation scenarios. Make sure that before you run a test that you at least</span>
+<span class="sd">change the stimuli and the ``SERVER_ADDRESS`` variable.</span>
+
+<span class="sd">.. seealso:: :doc:`../test_configurations`</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -199,8 +203,9 @@
 <span class="sd">        using environment variable &#39;CSRF_SESSION_KEY&#39;. (see Flask docs)</span>
 <span class="sd">    CSRF_ENABLED : bool</span>
 <span class="sd">        Enable/disable protection against *Cross-site Request Forgery (CSRF)* (see Flask docs) (default is True)</span>
-<span class="sd">    SERVER_NAME : str</span>
-<span class="sd">        The name and port number of the server (e.g.: &#39;caqe.local:5000&#39;) (see Flask docs) (default is None)</span>
+<span class="sd">    SERVER_ADDRESS : str</span>
+<span class="sd">        The name and port number of the server. Do not include &#39;http&#39;. (e.g.: &#39;caqe.local:5000&#39;) (see Flask docs)</span>
+<span class="sd">        Can be set via environment variable &#39;SERVER_ADDRESS&#39;. (default is &#39;caqe.local:5000&#39;)</span>
 <span class="sd">    SQLALCHEMY_DATABASE_URI : str</span>
 <span class="sd">        The database URI that should be used for the connection (see Flask-SQLAlchemy docs). Examples:</span>
 <span class="sd">        * sqlite:////tmp/test.db</span>
@@ -257,7 +262,7 @@
 <span class="sd">        variable (so, it can be easily modified when deploying and testing using Heroku).</span>
 <span class="sd">        Can be set via environment variable &#39;MTURK_HOST&#39;. (default is &#39;mechanicalturk.sandbox.amazonaws.com&#39;)</span>
 <span class="sd">    MTURK_QUESTION_URL : str</span>
-<span class="sd">        Entry point URL. (default is &#39;https://%s/mturk&#39; % SERVER_NAME)</span>
+<span class="sd">        Entry point URL. (default is &#39;https://%s/mturk&#39; % SERVER_ADDRESS)</span>
 <span class="sd">    MTURK_REWARD : float</span>
 <span class="sd">        This is the reward given to each worker for an approved assignment (in USD)</span>
 <span class="sd">        (note that Amazon takes their Mechanical Turk Fee on top of this. See https://requester.mturk.com/pricing)</span>
@@ -298,9 +303,6 @@
 <span class="sd">    REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS : bool</span>
 <span class="sd">        If True, the participant must listen to all of the training sounds before proceeding to the evaluation task.</span>
 <span class="sd">        (default is True)</span>
-<span class="sd">    REFERENCES : tuple of tuple of str</span>
-<span class="sd">        The reference stimuli in the evaluation task.</span>
-<span class="sd">        (default is ((&#39;Reference&#39;, &#39;The reference signal to which test signals are compared.&#39;),))</span>
 <span class="sd">    PREVIEW_HTML : str</span>
 <span class="sd">        The HTML content of the preview page. This will be the same for all conditions, regardless of test since</span>
 <span class="sd">        conditions are assigned on the fly (so we can have complete control over condition assignment).</span>
@@ -320,6 +322,7 @@
 <span class="sd">                 &#39;introduction_html&#39; : &#39;...&#39;, # Content of the intro page (after the first time they perform the task)</span>
 <span class="sd">                 &#39;training_instructions_html&#39; : &#39;...&#39;, # The HTML content of the training instructions</span>
 <span class="sd">                 &#39;evaluation_instructions_html&#39; : &#39;...&#39;}, # The HTML content of the evaluation instructions</span>
+<span class="sd">                 &#39;references&#39; : ((&#39;&lt;reference_name&gt;&#39;, &#39;&lt;reference_description&gt;&#39;),), # Reference names and descriptions</span>
 <span class="sd">                 &#39;reference_example_dict&#39; :</span>
 <span class="sd">                    {&#39;&lt;reference_name}&#39;: url_for(&#39;static&#39;, filename=&#39;audio/&lt;reference_filename&gt;.wav&#39;), ... },</span>
 <span class="sd">                 &#39;quality_example_dict&#39; :</span>
@@ -336,12 +339,12 @@
 
 <span class="sd">    Note</span>
 <span class="sd">    ----</span>
-<span class="sd">    For testing, add:</span>
+<span class="sd">    For testing, add: ::</span>
 
 <span class="sd">        0.0.0.0     caqe.local</span>
 
 <span class="sd">    to /etc/hosts</span>
-<span class="sd">    We need to set the SERVER_NAME to resolve `url_for` definitions when constructing the database, but we can&#39;t simply</span>
+<span class="sd">    We need to set the SERVER_ADDRESS to resolve ``url_for`` definitions when constructing the database, but we can&#39;t simply</span>
 <span class="sd">    use `localhost` because the secure sessions are not compatible with that.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># ---------------------------------------------------------------------------------------------</span>
@@ -352,7 +355,7 @@
     <span class="n">CSRF_SESSION_KEY</span> <span class="o">=</span> <span class="n">SESSION_KEY</span>
     <span class="n">CSRF_ENABLED</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;DATABASE_URL&#39;</span><span class="p">,</span> <span class="s1">&#39;sqlite:////</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~/caqe.db&#39;</span><span class="p">))</span>
-    <span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">SERVER_ADDRESS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;SERVER_ADDRESS&#39;</span><span class="p">,</span> <span class="s1">&#39;caqe.local:5000&#39;</span><span class="p">)</span>
     <span class="n">PREFERRED_URL_SCHEME</span> <span class="o">=</span> <span class="s1">&#39;https&#39;</span>
     <span class="n">AUDIO_FILE_DIRECTORY</span> <span class="o">=</span> <span class="s1">&#39;static/audio&#39;</span>
     <span class="n">ENCRYPT_AUDIO_STIMULI_URLS</span> <span class="o">=</span> <span class="bp">True</span>
@@ -388,7 +391,7 @@
     <span class="c1"># ---------------------------------------------------------------------------------------------</span>
     <span class="c1"># MECHANICAL TURK VARIABLES</span>
     <span class="n">MTURK_HOST</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;MTURK_HOST&#39;</span><span class="p">,</span> <span class="s1">&#39;mechanicalturk.sandbox.amazonaws.com&#39;</span><span class="p">)</span>
-    <span class="n">MTURK_QUESTION_URL</span> <span class="o">=</span> <span class="s1">&#39;https://</span><span class="si">%s</span><span class="s1">/mturk&#39;</span> <span class="o">%</span> <span class="n">SERVER_NAME</span>
+    <span class="n">MTURK_QUESTION_URL</span> <span class="o">=</span> <span class="s1">&#39;https://</span><span class="si">%s</span><span class="s1">/mturk&#39;</span> <span class="o">%</span> <span class="n">SERVER_ADDRESS</span>
     <span class="n">MTURK_REWARD</span> <span class="o">=</span> <span class="mf">0.50</span>
     <span class="n">MTURK_NUMBER_HITS_APPROVED_REQUIREMENT</span> <span class="o">=</span> <span class="mi">1000</span>
     <span class="n">MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT</span> <span class="o">=</span> <span class="mi">97</span>
@@ -411,7 +414,6 @@
     <span class="n">POPUP_HEIGHT</span> <span class="o">=</span> <span class="mi">1200</span>
     <span class="n">TEST_TIMEOUT_SEC</span> <span class="o">=</span> <span class="mf">60.</span>
     <span class="n">REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">REFERENCES</span> <span class="o">=</span> <span class="p">((</span><span class="s1">&#39;Reference&#39;</span><span class="p">,</span> <span class="s1">&#39;The reference signal to which test signals are compared.&#39;</span><span class="p">),)</span>
     <span class="n">PREVIEW_HTML</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">MIN_RATING_VALUE</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">MAX_RATING_VALUE</span> <span class="o">=</span> <span class="mi">99</span>
@@ -429,7 +431,7 @@
 
 <span class="sd">    Note</span>
 <span class="sd">    ----</span>
-<span class="sd">    To enable these parameters set environment variable `APP_MODE` to &#39;PRODUCTION&#39;. In Linux:</span>
+<span class="sd">    To enable these parameters set environment variable ``APP_MODE`` to &#39;TESTING&#39;. In Linux: ::</span>
 
 <span class="sd">        $ export APP_MODE=TESTING</span>
 
@@ -437,7 +439,8 @@
     <span class="n">TESTING</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;sqlite://&#39;</span>
-    <span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="s1">&#39;caqe.local:5000&#39;</span>
+    <span class="n">SERVER_ADDRESS</span> <span class="o">=</span> <span class="s1">&#39;caqe.local:5000&#39;</span>
+    <span class="n">MTURK_QUESTION_URL</span> <span class="o">=</span> <span class="s1">&#39;https://</span><span class="si">%s</span><span class="s1">/mturk&#39;</span> <span class="o">%</span> <span class="n">SERVER_ADDRESS</span>
     <span class="n">PREFERRED_URL_SCHEME</span> <span class="o">=</span> <span class="s1">&#39;http&#39;</span></div>
 
 
@@ -447,15 +450,15 @@
 
 <span class="sd">    Note</span>
 <span class="sd">    ----</span>
-<span class="sd">    To enable these parameters set environment variable `APP_MODE` to &#39;PRODUCTION&#39;. In Linux:</span>
+<span class="sd">    To enable these parameters set environment variable ``APP_MODE`` to &#39;DEVELOPMENT&#39;. In Linux: ::</span>
 
 <span class="sd">        $ export APP_MODE=DEVELOPMENT</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">SERVER_NAME</span> <span class="o">=</span> <span class="s1">&#39;caqe.local:5000&#39;</span>
-    <span class="n">HEARING_TEST_REJECTION_ENABLED</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="n">PREFERRED_URL_SCHEME</span> <span class="o">=</span> <span class="s1">&#39;http&#39;</span></div>
+    <span class="n">SERVER_ADDRESS</span> <span class="o">=</span> <span class="s1">&#39;caqe.local:5000&#39;</span>
+    <span class="n">MTURK_QUESTION_URL</span> <span class="o">=</span> <span class="s1">&#39;https://</span><span class="si">%s</span><span class="s1">/mturk&#39;</span> <span class="o">%</span> <span class="n">SERVER_ADDRESS</span>
+    <span class="n">HEARING_TEST_REJECTION_ENABLED</span> <span class="o">=</span> <span class="bp">False</span></div>
 
 
 <div class="viewcode-block" id="ProductionOverrideConfig"><a class="viewcode-back" href="../../source/caqe.configuration.html#caqe.configuration.ProductionOverrideConfig">[docs]</a><span class="k">class</span> <span class="nc">ProductionOverrideConfig</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -464,7 +467,7 @@
 
 <span class="sd">    Note</span>
 <span class="sd">    ----</span>
-<span class="sd">    To enable these parameters set environment variable `APP_MODE` to &#39;PRODUCTION&#39;. In Linux:</span>
+<span class="sd">    To enable these parameters set environment variable ``APP_MODE`` to &#39;PRODUCTION&#39;. In Linux: ::</span>
 
 <span class="sd">        $ export APP_MODE=PRODUCTION</span>
 

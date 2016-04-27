@@ -32,7 +32,7 @@
   
     <link rel="top" title="CAQE 0.1.1a1 documentation" href="index.html"/>
         <link rel="next" title="Test Configurations" href="test_configurations.html"/>
-        <link rel="prev" title="Installation" href="installation.html"/> 
+        <link rel="prev" title="Development" href="development.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -82,14 +82,18 @@
             
             
                 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#deploying-on-heroku">Deploying on Heroku</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="test_configurations.html">Test Configurations</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="source/caqe.html">CAQE Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/scripts.html">Scripts</a></li>
 </ul>
 
             
@@ -136,6 +140,88 @@
             
   <div class="section" id="deployment">
 <h1>Deployment<a class="headerlink" href="#deployment" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="deploying-on-heroku">
+<h2>Deploying on Heroku<a class="headerlink" href="#deploying-on-heroku" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://www.heroku.com">Heroku</a> is a cloud hosting service. This enables you to deploy a web app to a server without having a server of your own or knowing much about server administration. After you have a Heroku account and the local Heroku tools installed, deployment is as simple as pushing a Git repository to Heroku and setting a few environment variables.</p>
+<p>Steps for deployment are as follows:</p>
+<ol class="arabic">
+<li><p class="first">If you haven&#8217;t already, follow the instructions <a class="reference internal" href="development.html"><span class="doc">Development</span></a> to download and configure CAQE.</p>
+</li>
+<li><p class="first"><a class="reference external" href="https://signup.heroku.com/dc">Sign up for a Heroku account</a></p>
+</li>
+<li><p class="first"><a class="reference external" href="https://toolbelt.heroku.com/debian">Download the Heroku Toolbelt</a></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+</pre></div>
+</div>
+</li>
+<li><p class="first">Login to Heroku using your credentials:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku login
+</pre></div>
+</div>
+</li>
+<li><p class="first">While in the directory of your CAQE repository, link the repository with Heroku by running the following command, changing the optional <code class="docutils literal"><span class="pre">&lt;your-caqe-app&gt;</span></code> parameter to whatever you want your subdomain to be. Without this parameter, a random subdomain is generated.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku create &lt;your-caqe-app&gt;
+</pre></div>
+</div>
+</li>
+<li><p class="first">After running the command, make note of the server address.</p>
+</li>
+<li><p class="first">Make sure your audio stimulus files are in the <code class="docutils literal"><span class="pre">src/caqe/static/audio</span></code> directory and your configuration file is in <code class="docutils literal"><span class="pre">test_configurations</span></code>. Add the files to your git repository and commit the changes, e.g.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ git add .
+$ git commit -m &#39;Configured CAQE for comparing the output of Robust PCA and REPET&#39;
+</pre></div>
+</div>
+</li>
+<li><p class="first">Push your repository to Heroku.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ git push heroku master
+</pre></div>
+</div>
+</li>
+<li><p class="first">Set your secret key environment variables. You can set the environment variables in Heroku with the <code class="docutils literal"><span class="pre">heroku</span> <span class="pre">config:set</span></code> command. Use this command to set environment variables to the secret keys in <code class="docutils literal"><span class="pre">secret_keys.py</span></code> (generated from <code class="docutils literal"><span class="pre">generate_key_file.py</span></code>)::</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku config:set SESSION_KEY=&#39;DcE34cFEDEB37131df97EeF5BB56AfCF&#39;
+$ heroku config:set CSRF_SECRET_KEY=&#39;E7a1989EbaaeF60cEab4Cb9534851e42&#39;
+</pre></div>
+</div>
+</li>
+<li><p class="first">Then set your configuration variables, specifying your config filename and the server address, e.g.::</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku config:set CAQE_CONFIG=&#39;&lt;your-caqe-config&gt;.cfg&#39;
+$ heroku config:set APP_MODE=&#39;PRODUCTION&#39;
+$ heroku config:set SERVER_ADDRESS=&#39;&lt;your-caqe-app&gt;.herokuapp.com&#39;
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now that our variables are set. Let&#8217;s set and create the database. First we have to enable Postgresql on Heroku. <a class="reference external" href="https://devcenter.heroku.com/articles/heroku-postgres-plans">There are a number of different plans</a>, but most likely the <cite>heroku-dev</cite> plan will be enough for us:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku addons:create heroku-postgresql:hobby-dev
+</pre></div>
+</div>
+</li>
+<li><p class="first">Double check the command completed. If it did, the following command will not have output::</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku pg:wait
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create and initialize the database.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku run python src/create_db.py
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now, ensure that at least one instance of the app is running::</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku ps:scale web=1
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Though when you actually start collecting data with your CAQE app, we recommend increasing the number of instances to at least 2.</p>
+</div>
+</li>
+<li><p class="first">To test how your evaluation will appear to a Mechanical Turk worker, go to <a class="reference external" href="http://your-caqe-app.herokuapps.com/mturk_debug">http://your-caqe-app.herokuapps.com/mturk_debug</a></p>
+</li>
+</ol>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="https://devcenter.heroku.com/articles/getting-started-with-python#introduction">Getting Started on Heroku with Python</a></p>
+</div>
+</div>
 </div>
 
 
@@ -148,7 +234,7 @@
         <a href="test_configurations.html" class="btn btn-neutral float-right" title="Test Configurations" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="development.html" class="btn btn-neutral" title="Development" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

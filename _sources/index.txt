@@ -19,7 +19,7 @@ Getting Started
 .. toctree::
     :maxdepth: 1
 
-    installation
+    development
     deployment
 
 
@@ -37,6 +37,7 @@ Package Documentation
    :maxdepth: 2
 
    CAQE Package </source/caqe>
+   Scripts </source/scripts>
 
 
 Troubleshooting

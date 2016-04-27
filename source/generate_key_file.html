@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; CAQE 0.1.1a1 documentation</title>
+  <title>generate_key_file script &mdash; CAQE 0.1.1a1 documentation</title>
   
 
   
@@ -24,18 +24,19 @@
 
   
   
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   
 
   
 
   
-    <link rel="top" title="CAQE 0.1.1a1 documentation" href="index.html"/>
-        <link rel="next" title="Deployment" href="deployment.html"/>
-        <link rel="prev" title="CAQE" href="index.html"/> 
+    <link rel="top" title="CAQE 0.1.1a1 documentation" href="../index.html"/>
+        <link rel="up" title="Scripts" href="scripts.html"/>
+        <link rel="next" title="create_db script" href="create_db.html"/>
+        <link rel="prev" title="Scripts" href="scripts.html"/> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> CAQE
+            <a href="../index.html" class="icon icon-home"> CAQE
           
 
           
@@ -67,7 +68,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -81,15 +82,20 @@
           
             
             
-                <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="test_configurations.html">Test Configurations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../test_configurations.html">Test Configurations</a></li>
 </ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="source/caqe.html">CAQE Package</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="caqe.html">CAQE Package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="scripts.html">Scripts</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">generate_key_file script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_db.html">create_db script</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -103,7 +109,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">CAQE</a>
+        <a href="../index.html">CAQE</a>
       </nav>
 
 
@@ -118,13 +124,15 @@
 
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
+    <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Installation</li>
+          <li><a href="scripts.html">Scripts</a> &raquo;</li>
+      
+    <li>generate_key_file script</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/installation.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/source/generate_key_file.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -134,8 +142,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-generate_key_file">
+<span id="generate-key-file-script"></span><h1>generate_key_file script<a class="headerlink" href="#module-generate_key_file" title="Permalink to this headline">¶</a></h1>
+<p>Generates <code class="docutils literal"><span class="pre">secret_keys.py</span></code> which contains the crypto keys for sessions and CSRF.</p>
+<p>Run on the command line, e.g.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python generate_key_file.py
+</pre></div>
+</div>
 </div>
 
 
@@ -145,10 +158,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="deployment.html" class="btn btn-neutral float-right" title="Deployment" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="create_db.html" class="btn btn-neutral float-right" title="create_db script" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="CAQE" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="scripts.html" class="btn btn-neutral" title="Scripts" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -178,23 +191,23 @@
 
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
+            URL_ROOT:'../',
             VERSION:'0.1.1a1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
         };
     </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
       <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
   
   
-    <script type="text/javascript" src="_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
   
 
   

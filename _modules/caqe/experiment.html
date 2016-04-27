@@ -81,7 +81,7 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
 </ul>
 <ul>
@@ -89,6 +89,7 @@
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../source/caqe.html">CAQE Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/scripts.html">Scripts</a></li>
 </ul>
 
             
@@ -178,20 +179,20 @@
 <span class="sd">    To call this you need the application context, e.g.:</span>
 
 <span class="sd">    &gt;&gt;&gt; import os</span>
-<span class="sd">    &gt;&gt;&gt; os.environ[&#39;FLASK_CONF&#39;] = &#39;DEV&#39; # for testing the Development configuration</span>
+<span class="sd">    &gt;&gt;&gt; os.environ[&#39;APP_MODE&#39;] = &#39;DEVELOPMENT&#39; # for testing the Development configuration</span>
 <span class="sd">    &gt;&gt;&gt; from caqe import db</span>
-<span class="sd">    DEV</span>
+<span class="sd">    APP_MODE=DEVELOPMENT</span>
 <span class="sd">    &gt;&gt;&gt; db.drop_all()</span>
 <span class="sd">    &gt;&gt;&gt; db.create_all()</span>
 <span class="sd">    &gt;&gt;&gt; import caqe</span>
-<span class="sd">    &gt;&gt;&gt; import caqe.experiment</span>
+<span class="sd">    &gt;&gt;&gt; import caqe.experiment as experiment</span>
 <span class="sd">    &gt;&gt;&gt; with caqe.app.app_context():</span>
-<span class="sd">    ...     caqe.experiment.insert_tests_and_conditions()</span>
+<span class="sd">    ...     experiment.insert_tests_and_conditions()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span>
         
-    <span class="k">for</span> <span class="n">test_dict</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;tests&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">test_dict</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;TESTS&#39;</span><span class="p">]:</span>
         <span class="n">test</span> <span class="o">=</span> <span class="n">Test</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">test_dict</span><span class="p">[</span><span class="s1">&#39;test_config_variables&#39;</span><span class="p">]))</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
 
