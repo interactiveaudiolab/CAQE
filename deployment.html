@@ -172,18 +172,18 @@ $ git commit -m &#39;Configured CAQE for comparing the output of Robust PCA and 
 </pre></div>
 </div>
 </li>
-<li><p class="first">Push your repository to Heroku.:</p>
+<li><p class="first">Push your repository to Heroku.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ git push heroku master
 </pre></div>
 </div>
 </li>
-<li><p class="first">Set your secret key environment variables. You can set the environment variables in Heroku with the <code class="docutils literal"><span class="pre">heroku</span> <span class="pre">config:set</span></code> command. Use this command to set environment variables to the secret keys in <code class="docutils literal"><span class="pre">secret_keys.py</span></code> (generated from <code class="docutils literal"><span class="pre">generate_key_file.py</span></code>)::</p>
+<li><p class="first">Set your secret key environment variables. You can set the environment variables in Heroku with the <code class="docutils literal"><span class="pre">heroku</span> <span class="pre">config:set</span></code> command. Use this command to set environment variables to the secret keys in <code class="docutils literal"><span class="pre">secret_keys.py</span></code> (generated from <code class="docutils literal"><span class="pre">generate_key_file.py</span></code>):</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku config:set SESSION_KEY=&#39;DcE34cFEDEB37131df97EeF5BB56AfCF&#39;
 $ heroku config:set CSRF_SECRET_KEY=&#39;E7a1989EbaaeF60cEab4Cb9534851e42&#39;
 </pre></div>
 </div>
 </li>
-<li><p class="first">Then set your configuration variables, specifying your config filename and the server address, e.g.::</p>
+<li><p class="first">Then set your configuration variables, specifying your config filename and the server address, e.g.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku config:set CAQE_CONFIG=&#39;&lt;your-caqe-config&gt;.cfg&#39;
 $ heroku config:set APP_MODE=&#39;PRODUCTION&#39;
 $ heroku config:set SERVER_ADDRESS=&#39;&lt;your-caqe-app&gt;.herokuapp.com&#39;
@@ -195,17 +195,17 @@ $ heroku config:set SERVER_ADDRESS=&#39;&lt;your-caqe-app&gt;.herokuapp.com&#39;
 </pre></div>
 </div>
 </li>
-<li><p class="first">Double check the command completed. If it did, the following command will not have output::</p>
+<li><p class="first">Double check the command completed. If it did, the following command will not have output:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku pg:wait
 </pre></div>
 </div>
 </li>
-<li><p class="first">Create and initialize the database.:</p>
+<li><p class="first">Create and initialize the database.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku run python src/create_db.py
 </pre></div>
 </div>
 </li>
-<li><p class="first">Now, ensure that at least one instance of the app is running::</p>
+<li><p class="first">Now, ensure that at least one instance of the app is running:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku ps:scale web=1
 </pre></div>
 </div>

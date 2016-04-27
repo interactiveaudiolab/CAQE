@@ -32,16 +32,16 @@ Steps for deployment are as follows:
     $ git add .
     $ git commit -m 'Configured CAQE for comparing the output of Robust PCA and REPET'
 
-#. Push your repository to Heroku.::
+#. Push your repository to Heroku. ::
 
     $ git push heroku master
 
-#. Set your secret key environment variables. You can set the environment variables in Heroku with the ``heroku config:set`` command. Use this command to set environment variables to the secret keys in ``secret_keys.py`` (generated from ``generate_key_file.py``):::
+#. Set your secret key environment variables. You can set the environment variables in Heroku with the ``heroku config:set`` command. Use this command to set environment variables to the secret keys in ``secret_keys.py`` (generated from ``generate_key_file.py``): ::
 
     $ heroku config:set SESSION_KEY='DcE34cFEDEB37131df97EeF5BB56AfCF'
     $ heroku config:set CSRF_SECRET_KEY='E7a1989EbaaeF60cEab4Cb9534851e42'
 
-#. Then set your configuration variables, specifying your config filename and the server address, e.g.:::
+#. Then set your configuration variables, specifying your config filename and the server address, e.g.: ::
 
     $ heroku config:set CAQE_CONFIG='<your-caqe-config>.cfg'
     $ heroku config:set APP_MODE='PRODUCTION'
@@ -51,15 +51,15 @@ Steps for deployment are as follows:
 
     $ heroku addons:create heroku-postgresql:hobby-dev
 
-#. Double check the command completed. If it did, the following command will not have output:::
+#. Double check the command completed. If it did, the following command will not have output: ::
 
     $ heroku pg:wait
 
-#. Create and initialize the database.::
+#. Create and initialize the database. ::
 
     $ heroku run python src/create_db.py
 
-#. Now, ensure that at least one instance of the app is running:::
+#. Now, ensure that at least one instance of the app is running: ::
 
     $ heroku ps:scale web=1
 
