@@ -19,8 +19,8 @@ Getting Started
 .. toctree::
     :maxdepth: 1
 
-    local_development
-    local_deployment
+    development
+    deployment
 
 
 Testing Configurations

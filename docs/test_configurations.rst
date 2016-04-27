@@ -16,14 +16,19 @@ the :ref:`general-mushra-label` configuration.
 development, testing, or production. See :py:class:`caqe.configuration.DevelopmentOverrideConfig`, \
 :py:class:`caqe.configuration.TestingOverrideConfig`, and :py:class:`caqe.configuration.ProductionOverrideConfig`.
 
-Therefore, to configure your test, use a pre-defined configuration as a guide to make your own configuration file, and \
-then set the environment variable to the files location. The location should either be an absolutely path or \
-a path relative to ``caqe.__init__.py``. For example: ::
+Therefore, to configure your test, use a pre-defined configuration as a guide to make your own configuration file. \
+Place this file in the ``src/test_configurations`` directory and set the environment variable to the filename. For example: ::
 
-    $ export CAQE_CONFIG='/home/your_username/your_caqe_config.cfg'
+    $ export CAQE_CONFIG='your_caqe_config.cfg'
+
+.. note:: All audio stimulus files should be placed in ``src/caqe/static/audio``. They should all be in WAV format. \
+    In addition, all files for a particular condition should be of the exact same length and sample rate.
+
+    Lastly, whenever your configuration is updated, the database should be recreated::
+
+        $ python create_db.py
 
 .. seealso:: :doc:`/source/caqe.configuration` for more information on the configuration variables.
-
 
 General Overall Quality Test Configurations
 -------------------------------------------
