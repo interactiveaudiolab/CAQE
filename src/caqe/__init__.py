@@ -21,7 +21,7 @@ __copyright__ = 'Copyright (c) 2016 Mark Cartwright'
 app = Flask('caqe')
 
 app.config.from_object('caqe.configuration.BaseConfig')
-app.config.from_pyfile(os.getenv('CAQE_CONFIG', '../test_configurations/general_mushra.cfg'))
+app.config.from_pyfile('../test_configurations/' + os.getenv('CAQE_CONFIG', 'general_mushra.cfg'))
 
 # Override variables based on APP_MODE
 if configuration.APP_MODE == 'DEVELOPMENT':

@@ -67,7 +67,8 @@ class BaseConfig(object):
     CSRF_ENABLED : bool
         Enable/disable protection against *Cross-site Request Forgery (CSRF)* (see Flask docs) (default is True)
     SERVER_ADDRESS : str
-        The name and port number of the server (e.g.: 'caqe.local:5000') (see Flask docs) (default is None)
+        The name and port number of the server. Do not include 'http'. (e.g.: 'caqe.local:5000') (see Flask docs)
+        Can be set via environment variable 'SERVER_ADDRESS'. (default is 'caqe.local:5000')
     SQLALCHEMY_DATABASE_URI : str
         The database URI that should be used for the connection (see Flask-SQLAlchemy docs). Examples:
         * sqlite:////tmp/test.db
@@ -217,7 +218,7 @@ class BaseConfig(object):
     CSRF_SESSION_KEY = SESSION_KEY
     CSRF_ENABLED = True
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:////%s' % os.path.expanduser('~/caqe.db'))
-    SERVER_ADDRESS = 'caqe.local:5000'
+    SERVER_ADDRESS = os.getenv('SERVER_ADDRESS', 'caqe.local:5000')
     PREFERRED_URL_SCHEME = 'https'
     AUDIO_FILE_DIRECTORY = 'static/audio'
     ENCRYPT_AUDIO_STIMULI_URLS = True
