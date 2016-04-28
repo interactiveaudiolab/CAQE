@@ -4,7 +4,7 @@ The following installation instructions are for Ubuntu.
 
 #. Install dependencies if they are not already installed. (for platforms other than Ubuntu, follow the `installation instructions <https://pip.pypa.io/en/stable/installing/>`_)::
 
-    $ sudo apt-get install git python-pip python-dev postgresql postgresql-server-dev-9.3
+    $ sudo apt-get install git python-pip python-dev postgresql postgresql-server-dev-all
 
 #. Clone or download the CAQE repository from Github: http://github.com/mcartwright/CAQE , e.g. ::
 

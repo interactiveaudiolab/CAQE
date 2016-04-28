@@ -228,7 +228,7 @@ class BaseConfig(object):
     TEST_TYPE = None
     ANONYMOUS_PARTICIPANTS_ENABLED = False
     IP_COLLECTION_ENABLED = True
-    OBTAIN_CONSENT = True
+    OBTAIN_CONSENT = False
     PRE_TEST_SURVEY_ENABLED = True
     PRE_TEST_SURVEY_INCLUSION_CRITERIA = ["int(survey['age']) >= 18",
                                           "survey['hearing_disorder'] == 'No'"]
@@ -322,6 +322,7 @@ class DevelopmentOverrideConfig(object):
     SERVER_ADDRESS = 'caqe.local:5000'
     MTURK_QUESTION_URL = 'https://%s/mturk' % SERVER_ADDRESS
     HEARING_TEST_REJECTION_ENABLED = False
+    PREFERRED_URL_SCHEME = 'http'
 
 
 class ProductionOverrideConfig(object):
