@@ -65,6 +65,6 @@ Steps for deployment are as follows:
 
    .. note:: Though when you actually start collecting data with your CAQE app, we recommend increasing the number of instances to at least 2.
 
-#. To test how your evaluation will appear to a Mechanical Turk worker, go to http://your-caqe-app.herokuapps.com/mturk_debug
+#. To test how your evaluation will appear to a Mechanical Turk worker, go to http://your-caqe-app.herokuapp.com/mturk_debug
 
 .. seealso:: `Getting Started on Heroku with Python <https://devcenter.heroku.com/articles/getting-started-with-python#introduction>`_
