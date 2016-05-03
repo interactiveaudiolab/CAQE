@@ -205,7 +205,6 @@ def mturk():
     -------
     flask.Response
     """
-    print request.args
     if request.args['assignmentId'] == 'ASSIGNMENT_ID_NOT_AVAILABLE':
         preview = 1
         submission_url = None
@@ -272,7 +271,6 @@ def begin(platform, crowd_worker_id):
 
     if app.config['BEGIN_BUTTON_ENABLED']:
         if platform == 'mturk':
-            print 'mturk'
             return render_template('mturk/begin.html',
                                    link=url_for('create_participant',
                                                 participant_type=platform,
@@ -283,11 +281,10 @@ def begin(platform, crowd_worker_id):
                                    width=app.config['POPUP_WIDTH'],
                                    height=app.config['POPUP_HEIGHT'],
                                    worker_id=crowd_worker_id,
-                                   assignment_id=request.args.get('assignment_id'),
-                                   hit_id=request.args.get('assignment_type'),
+                                   assignment_id=request.args.get('crowd_assignment_id'),
+                                   hit_id=request.args.get('crowd_assignment_type'),
                                    **request.args)
         else:
-            'else'
             return render_template('begin.html',
                                    link=url_for('create_participant',
                                                 participant_type=platform,
