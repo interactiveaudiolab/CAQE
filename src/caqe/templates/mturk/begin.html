@@ -2,10 +2,10 @@
 
 {% block body_content %}
 {{ super() }}
-<form class="form-horizontal" role="form" method="post" action="{{ turk_submit_to }}" id="submit_turk" name="submit_turk">
-    <input type="hidden" name="assignmentId" value="{{ assignment_id }}">
-    <input type="hidden" name="workerId" value="{{ worker_id }}">
-    <input type="hidden" name="hitId" value="{{ hit_id }}">
+<form class="form-horizontal" role="form" method="post" action="{{ submission_url }}" id="submit_turk" name="submit_turk">
+    <input type="hidden" name="assignmentId" value="{{ crowd_assignment_id }}">
+    <input type="hidden" name="workerId" value="{{ crowd_worker_id }}">
+    <input type="hidden" name="hitId" value="{{ crowd_assignment_type }}">
 </form>
 {% endblock body_content %}
 
