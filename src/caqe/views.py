@@ -281,9 +281,6 @@ def begin(platform, crowd_worker_id):
                                    width=app.config['POPUP_WIDTH'],
                                    height=app.config['POPUP_HEIGHT'],
                                    crowd_worker_id=crowd_worker_id,
-                                   crowd_assignment_id=request.args.get('crowd_assignment_id'),
-                                   crowd_assignment_type=request.args.get('crowd_assignment_type'),
-                                   submission_url=request.args.get('submission_url'),
                                    **request.args)
         else:
             return render_template('begin.html',
