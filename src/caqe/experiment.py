@@ -56,15 +56,20 @@ def insert_tests_and_conditions(config=None):
         config = app.config
         
     for test_dict in config['TESTS']:
-        test = Test(json.dumps(test_dict['test_config_variables']))
+        # store app config variables as well for reference
+        test_config = copy.deepcopy(config)
+        del test_config['TESTS']
+        del test_config['PERMANENT_SESSION_LIFETIME']
+        test_config.update(test_dict['test_config_variables'])
+        test = Test(json.dumps(test_config))
         db.session.add(test)
+        db.session.commit()
 
         for condition_dict in test_dict['conditions']:
             c = Condition(test_id=test.id, data=json.dumps(condition_dict))
             db.session.add(c)
+            db.session.commit()
 
-    # commit tests and conditions
-    db.session.commit()
 
 
 def get_available_conditions(limit_to_condition_ids=None):

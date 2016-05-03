@@ -153,14 +153,17 @@ def audio(audio_file_key):
     flask.Response
     """
     if app.config['ENCRYPT_AUDIO_STIMULI_URLS']:
-        audio_file_dict = utilities.decrypt_data(str(audio_file_key))
+        try:
+            audio_file_dict = utilities.decrypt_data(str(audio_file_key))
 
-        # can also assert that this file is for this specific participant and condition
-        assert (audio_file_dict['p_id'] == session['participant_id'])
-        assert (audio_file_dict['c_id'] in session['condition_ids'])
-        filename = audio_file_dict['URL']
+            # can also assert that this file is for this specific participant and condition
+            assert (audio_file_dict['p_id'] == session['participant_id'])
+            assert (audio_file_dict['c_id'] in session['condition_ids'])
+            filename = audio_file_dict['URL']
+        except (ValueError, TypeError):
+            filename = audio_file_key + '.wav'
     else:
-        filename = audio_file_key
+        filename = audio_file_key + '.wav'
 
     return send_from_directory(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename)
 
@@ -585,7 +588,7 @@ def evaluation():
             test_configurations) == 1, "`test_configuration` has length greater than 1. This is not supported for now."
         test_config = test_configurations[0]
 
-        if test_config['test']['test_type'] == 'mushra':
+        if app.config['TEST_TYPE'] == 'mushra':
             return render_template('mushra.html',
                                    test=test_config['test'],
                                    conditions=test_config['conditions'],
@@ -596,7 +599,7 @@ def evaluation():
                                    submission_url=url_for('evaluation',
                                                           _external=True,
                                                           _scheme=app.config['PREFERRED_URL_SCHEME']))
-        elif test_config['test']['test_type'] == 'pairwise':
+        elif app.config['TEST_TYPE'] == 'pairwise':
             test_config['conditions'] = experiment.generate_comparison_pairs(test_config['conditions'])
 
             return render_template('pairwise.html',
