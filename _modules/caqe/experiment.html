@@ -83,6 +83,8 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../recruiting_on_amt.html">Running the Evaluation on Amazon&#8217;s Mechanical Turk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_analysis.html">Downloading and Analyzing Data</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../test_configurations.html">Test Configurations</a></li>
@@ -193,15 +195,20 @@
         <span class="n">config</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span>
         
     <span class="k">for</span> <span class="n">test_dict</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;TESTS&#39;</span><span class="p">]:</span>
-        <span class="n">test</span> <span class="o">=</span> <span class="n">Test</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">test_dict</span><span class="p">[</span><span class="s1">&#39;test_config_variables&#39;</span><span class="p">]))</span>
+        <span class="c1"># store app config variables as well for reference</span>
+        <span class="n">test_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">test_config</span><span class="p">[</span><span class="s1">&#39;TESTS&#39;</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">test_config</span><span class="p">[</span><span class="s1">&#39;PERMANENT_SESSION_LIFETIME&#39;</span><span class="p">]</span>
+        <span class="n">test_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test_dict</span><span class="p">[</span><span class="s1">&#39;test_config_variables&#39;</span><span class="p">])</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">Test</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">test_config</span><span class="p">))</span>
         <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">condition_dict</span> <span class="ow">in</span> <span class="n">test_dict</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]:</span>
             <span class="n">c</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="n">test_id</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">condition_dict</span><span class="p">))</span>
             <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
-    <span class="c1"># commit tests and conditions</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="get_available_conditions"><a class="viewcode-back" href="../../source/caqe.experiment.html#caqe.experiment.get_available_conditions">[docs]</a><span class="k">def</span> <span class="nf">get_available_conditions</span><span class="p">(</span><span class="n">limit_to_condition_ids</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>

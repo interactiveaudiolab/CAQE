@@ -85,6 +85,8 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recruiting_on_amt.html">Running the Evaluation on Amazon&#8217;s Mechanical Turk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_analysis.html">Downloading and Analyzing Data</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../test_configurations.html">Test Configurations</a></li>
@@ -392,16 +394,16 @@ Default is None.</td>
 
 <dl class="method">
 <dt id="caqe.turk_admin.TurkAdmin.give_bonus_to_all_first_completed_trials">
-<code class="descname">give_bonus_to_all_first_completed_trials</code><span class="sig-paren">(</span><em>price=0.3</em>, <em>reason=None</em>, <em>calculate_amt_only=False</em>, <em>already_bonused_ids=set([])</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.give_bonus_to_all_first_completed_trials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.give_bonus_to_all_first_completed_trials" title="Permalink to this definition">¶</a></dt>
+<code class="descname">give_bonus_to_all_first_completed_trials</code><span class="sig-paren">(</span><em>price=0.3</em>, <em>calculate_amt_only=False</em>, <em>reason=None</em>, <em>already_bonused_ids=set([])</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.give_bonus_to_all_first_completed_trials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.give_bonus_to_all_first_completed_trials" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grant bonuses for the first completed trial for each participant.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>price</strong> (<em>float, optional</em>) &#8211; The bonus amount to grant in dollars. Default is 30 cents.</li>
-<li><strong>reason</strong> (<em>str, optional</em>) &#8211; The message to send the workers when they receive the bonus</li>
+<li><strong>price</strong> (<em>float, optional</em>) &#8211; The bonus amount to grant in dollars. Default is defined by the CAQE configuration.</li>
 <li><strong>calculate_amt_only</strong> (<em>bool, optional</em>) &#8211; Only calculate the amount of the bonus, do not actual pay out the bonus.</li>
+<li><strong>reason</strong> (<em>str, optional</em>) &#8211; The message to send the workers when they receive the bonus</li>
 <li><strong>already_bonused_ids</strong> (<em>set, optional</em>) &#8211; Set of participant ids that have already been bonused</li>
 </ul>
 </td>
@@ -420,7 +422,7 @@ when submitting the assignment)</li>
 
 <dl class="method">
 <dt id="caqe.turk_admin.TurkAdmin.give_consistency_bonus">
-<code class="descname">give_consistency_bonus</code><span class="sig-paren">(</span><em>max_price=0.25</em>, <em>threshold=0.7</em>, <em>reason=None</em>, <em>calculate_amt_only=False</em>, <em>already_bonused_ids=set([])</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.give_consistency_bonus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.give_consistency_bonus" title="Permalink to this definition">¶</a></dt>
+<code class="descname">give_consistency_bonus</code><span class="sig-paren">(</span><em>max_price=0.25</em>, <em>threshold=0.7</em>, <em>calculate_amt_only=False</em>, <em>reason=None</em>, <em>already_bonused_ids=set([])</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/turk_admin.html#TurkAdmin.give_consistency_bonus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.turk_admin.TurkAdmin.give_consistency_bonus" title="Permalink to this definition">¶</a></dt>
 <dd><p>Grant bonuses based on ratings consistency. Bonus calculated by</p>
 <div class="math">
 \[((consistency - threshold) / (1.0 - threshold)) * max\_price * (consistency &gt; threshold))\]</div>
@@ -429,10 +431,10 @@ when submitting the assignment)</li>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>max_price</strong> (<em>float, optional</em>) &#8211; The maximum bonus amount to grant in dollars. Default is 25 cents.</li>
-<li><strong>threshold</strong> (<em>bool</em>) &#8211; Consistency must exceed this value before a bonus is paid out.</li>
-<li><strong>reason</strong> (<em>str, optional</em>) &#8211; The message to send the workers when they receive the bonus</li>
+<li><strong>max_price</strong> (<em>float, optional</em>) &#8211; The maximum bonus amount to grant in dollars. Default is defined by the CAQE configuration.</li>
+<li><strong>threshold</strong> (<em>bool</em>) &#8211; Consistency must exceed this value before a bonus is paid out. Default is defined by the CAQE configuration.</li>
 <li><strong>calculate_amt_only</strong> (<em>bool, optional</em>) &#8211; Only calculate the amount of the bonus, do not actual pay out the bonus.</li>
+<li><strong>reason</strong> (<em>str, optional</em>) &#8211; The message to send the workers when they receive the bonus</li>
 <li><strong>already_bonused_ids</strong> (<em>set, optional</em>) &#8211; Set of participant ids that have already been bonused</li>
 </ul>
 </td>

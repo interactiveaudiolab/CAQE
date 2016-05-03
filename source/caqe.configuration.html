@@ -85,6 +85,8 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recruiting_on_amt.html">Running the Evaluation on Amazon&#8217;s Mechanical Turk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_analysis.html">Downloading and Analyzing Data</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../test_configurations.html">Test Configurations</a></li>
@@ -371,6 +373,28 @@ Can be set via environment variable &#8216;MTURK_HOST&#8217;. (default is &#8216
 </dd></dl>
 
 <dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_FIRST_HIT_BONUS">
+<code class="descname">MTURK_FIRST_HIT_BONUS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_FIRST_HIT_BONUS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; The default bonus reward in USD that is optionally given (using <code class="docutils literal"><span class="pre">turk_admin_cli.py</span></code>) to participants that
+completed the first assignment, which may have additional testing (e.g. survey, hearing tests, etc.)
+(default is 0.30)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_MAX_CONSISTENCY_BONUS">
+<code class="descname">MTURK_MAX_CONSISTENCY_BONUS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_MAX_CONSISTENCY_BONUS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; The defualt maximum bonus reward in USD for pairwise consistency. This optional bonus is given using
+<code class="docutils literal"><span class="pre">turk_admin_cli.py</span></code>. (default is 0.25)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.BaseConfig.MTURK_MIN_CONSISTENCY_THRESHOLD_FOR_BONUS">
+<code class="descname">MTURK_MIN_CONSISTENCY_THRESHOLD_FOR_BONUS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_MIN_CONSISTENCY_THRESHOLD_FOR_BONUS" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em> &#8211; The minimum pairwise consistency required to receive the optional bonus (given through <code class="docutils literal"><span class="pre">turk_admin_cli.py</span></code>.)
+(default is 0.7)</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="caqe.configuration.BaseConfig.MTURK_NUMBER_HITS_APPROVED_REQUIREMENT">
 <code class="descname">MTURK_NUMBER_HITS_APPROVED_REQUIREMENT</code><a class="headerlink" href="#caqe.configuration.BaseConfig.MTURK_NUMBER_HITS_APPROVED_REQUIREMENT" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>int</em> &#8211; MTurk worker must have this many approved HITs to accept task. (default is 1000)</p>
@@ -591,6 +615,11 @@ use <cite>localhost</cite> because the secure sessions are not compatible with t
 <dl class="attribute">
 <dt id="caqe.configuration.DevelopmentOverrideConfig.MTURK_QUESTION_URL">
 <code class="descname">MTURK_QUESTION_URL</code><em class="property"> = 'https://caqe.local:5000/mturk'</em><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig.MTURK_QUESTION_URL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.configuration.DevelopmentOverrideConfig.PREFERRED_URL_SCHEME">
+<code class="descname">PREFERRED_URL_SCHEME</code><em class="property"> = 'http'</em><a class="headerlink" href="#caqe.configuration.DevelopmentOverrideConfig.PREFERRED_URL_SCHEME" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">

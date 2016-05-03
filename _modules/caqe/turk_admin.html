@@ -83,6 +83,8 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../deployment.html">Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../recruiting_on_amt.html">Running the Evaluation on Amazon&#8217;s Mechanical Turk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data_analysis.html">Downloading and Analyzing Data</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../test_configurations.html">Test Configurations</a></li>
@@ -501,9 +503,9 @@
         <span class="k">return</span> <span class="n">times</span></div>
 
 <div class="viewcode-block" id="TurkAdmin.give_bonus_to_all_first_completed_trials"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.give_bonus_to_all_first_completed_trials">[docs]</a>    <span class="k">def</span> <span class="nf">give_bonus_to_all_first_completed_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                                                 <span class="n">price</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span>
-                                                 <span class="n">reason</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                                 <span class="n">price</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MTURK_FIRST_HIT_BONUS&#39;</span><span class="p">],</span>
                                                  <span class="n">calculate_amt_only</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                                                 <span class="n">reason</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                                                  <span class="n">already_bonused_ids</span><span class="o">=</span><span class="nb">set</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Grant bonuses for the first completed trial for each participant.</span>
@@ -511,11 +513,11 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        price : float, optional</span>
-<span class="sd">            The bonus amount to grant in dollars. Default is 30 cents.</span>
-<span class="sd">        reason : str, optional</span>
-<span class="sd">            The message to send the workers when they receive the bonus</span>
+<span class="sd">            The bonus amount to grant in dollars. Default is defined by the CAQE configuration.</span>
 <span class="sd">        calculate_amt_only : bool, optional</span>
 <span class="sd">            Only calculate the amount of the bonus, do not actual pay out the bonus.</span>
+<span class="sd">        reason : str, optional</span>
+<span class="sd">            The message to send the workers when they receive the bonus</span>
 <span class="sd">        already_bonused_ids : set, optional</span>
 <span class="sd">            Set of participant ids that have already been bonused</span>
 
@@ -561,10 +563,10 @@
         <span class="k">return</span> <span class="n">total_bonus</span><span class="p">,</span> <span class="n">participants_wo_valid_asgnmts</span></div>
 
 <div class="viewcode-block" id="TurkAdmin.give_consistency_bonus"><a class="viewcode-back" href="../../source/caqe.turk_admin.html#caqe.turk_admin.TurkAdmin.give_consistency_bonus">[docs]</a>    <span class="k">def</span> <span class="nf">give_consistency_bonus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                               <span class="n">max_price</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
-                               <span class="n">threshold</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
-                               <span class="n">reason</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                               <span class="n">max_price</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MTURK_MAX_CONSISTENCY_BONUS&#39;</span><span class="p">],</span>
+                               <span class="n">threshold</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MTURK_MIN_CONSISTENCY_THRESHOLD_FOR_BONUS&#39;</span><span class="p">],</span>
                                <span class="n">calculate_amt_only</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                               <span class="n">reason</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                                <span class="n">already_bonused_ids</span><span class="o">=</span><span class="nb">set</span><span class="p">()):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Grant bonuses based on ratings consistency. Bonus calculated by</span>
@@ -574,13 +576,13 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        max_price : float, optional</span>
-<span class="sd">            The maximum bonus amount to grant in dollars. Default is 25 cents.</span>
+<span class="sd">            The maximum bonus amount to grant in dollars. Default is defined by the CAQE configuration.</span>
 <span class="sd">        threshold : bool</span>
-<span class="sd">            Consistency must exceed this value before a bonus is paid out.</span>
-<span class="sd">        reason : str, optional</span>
-<span class="sd">            The message to send the workers when they receive the bonus</span>
+<span class="sd">            Consistency must exceed this value before a bonus is paid out. Default is defined by the CAQE configuration.</span>
 <span class="sd">        calculate_amt_only : bool, optional</span>
 <span class="sd">            Only calculate the amount of the bonus, do not actual pay out the bonus.</span>
+<span class="sd">        reason : str, optional</span>
+<span class="sd">            The message to send the workers when they receive the bonus</span>
 <span class="sd">        already_bonused_ids : set, optional</span>
 <span class="sd">            Set of participant ids that have already been bonused</span>
 

@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="CAQE 0.1.1a1 documentation" href="index.html"/>
-        <link rel="next" title="Test Configurations" href="test_configurations.html"/>
+        <link rel="next" title="Running the Evaluation on Amazon’s Mechanical Turk" href="recruiting_on_amt.html"/>
         <link rel="prev" title="Development" href="development.html"/> 
 
   
@@ -87,6 +87,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#deploying-on-heroku">Deploying on Heroku</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="recruiting_on_amt.html">Running the Evaluation on Amazon&#8217;s Mechanical Turk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_analysis.html">Downloading and Analyzing Data</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="test_configurations.html">Test Configurations</a></li>
@@ -159,7 +161,7 @@
 </pre></div>
 </div>
 </li>
-<li><p class="first">While in the directory of your CAQE repository, link the repository with Heroku by running the following command, changing the optional <code class="docutils literal"><span class="pre">&lt;your-caqe-app&gt;</span></code> parameter to your desired subdomain (without this parameter, a random subdomain is generated.):</p>
+<li><p class="first"><strong>While in the root directory of your CAQE repository</strong>, link the repository with Heroku by running the following command, changing the optional <code class="docutils literal"><span class="pre">&lt;your-caqe-app&gt;</span></code> parameter to your desired subdomain (without this parameter, a random subdomain is generated.):</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku create &lt;your-caqe-app&gt;
 </pre></div>
 </div>
@@ -178,8 +180,8 @@ $ git commit -m &#39;Configured CAQE for comparing the output of Robust PCA and 
 </div>
 </li>
 <li><p class="first">Set your secret key environment variables. You can set the environment variables in Heroku with the <code class="docutils literal"><span class="pre">heroku</span> <span class="pre">config:set</span></code> command. Use this command to set environment variables to the secret keys in <code class="docutils literal"><span class="pre">secret_keys.py</span></code> (generated from <code class="docutils literal"><span class="pre">generate_key_file.py</span></code>):</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku config:set SESSION_KEY=&#39;DcE34cFEDEB37131df97EeF5BB56AfCF&#39;
-$ heroku config:set CSRF_SECRET_KEY=&#39;E7a1989EbaaeF60cEab4Cb9534851e42&#39;
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku config:set SESSION_KEY=&#39;&lt;your-session-key&gt;&#39;
+$ heroku config:set CSRF_SECRET_KEY=&#39;&lt;your-csrf-secret-key&gt;&#39;
 </pre></div>
 </div>
 </li>
@@ -214,7 +216,7 @@ $ heroku config:set SERVER_ADDRESS=&#39;&lt;your-caqe-app&gt;.herokuapp.com&#39;
 <p class="last">Though when you actually start collecting data with your CAQE app, we recommend increasing the number of instances to at least 2.</p>
 </div>
 </li>
-<li><p class="first">To test how your evaluation will appear to a Mechanical Turk worker, go to <a class="reference external" href="http://your-caqe-app.herokuapps.com/mturk_debug">http://your-caqe-app.herokuapps.com/mturk_debug</a></p>
+<li><p class="first">To test how your evaluation will appear to a Mechanical Turk worker, go to <a class="reference external" href="http://your-caqe-app.herokuapp.com/mturk_debug">http://your-caqe-app.herokuapp.com/mturk_debug</a></p>
 </li>
 </ol>
 <div class="admonition seealso">
@@ -231,7 +233,7 @@ $ heroku config:set SERVER_ADDRESS=&#39;&lt;your-caqe-app&gt;.herokuapp.com&#39;
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="test_configurations.html" class="btn btn-neutral float-right" title="Test Configurations" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="recruiting_on_amt.html" class="btn btn-neutral float-right" title="Running the Evaluation on Amazon’s Mechanical Turk" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="development.html" class="btn btn-neutral" title="Development" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
