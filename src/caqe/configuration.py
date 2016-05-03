@@ -130,6 +130,16 @@ class BaseConfig(object):
         This is the reward given to each worker for an approved assignment (in USD)
         (note that Amazon takes their Mechanical Turk Fee on top of this. See https://requester.mturk.com/pricing)
         (default is 0.50)
+    MTURK_FIRST_HIT_BONUS : float
+        The default bonus reward in USD that is optionally given (using ``turk_admin_cli.py``) to participants that
+        completed the first assignment, which may have additional testing (e.g. survey, hearing tests, etc.)
+        (default is 0.30)
+    MTURK_MAX_CONSISTENCY_BONUS : float
+        The defualt maximum bonus reward in USD for pairwise consistency. This optional bonus is given using
+        ``turk_admin_cli.py``. (default is 0.25)
+    MTURK_MIN_CONSISTENCY_THRESHOLD_FOR_BONUS : float
+        The minimum pairwise consistency required to receive the optional bonus (given through ``turk_admin_cli.py``.)
+        (default is 0.7)
     MTURK_NUMBER_HITS_APPROVED_REQUIREMENT : int
         MTurk worker must have this many approved HITs to accept task. (default is 1000)
     MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT : int
@@ -256,6 +266,9 @@ class BaseConfig(object):
     MTURK_HOST = os.getenv('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
     MTURK_QUESTION_URL = 'https://%s/mturk' % SERVER_ADDRESS
     MTURK_REWARD = 0.50
+    MTURK_FIRST_HIT_BONUS = 0.30
+    MTURK_MAX_CONSISTENCY_BONUS = 0.25
+    MTURK_MIN_CONSISTENCY_THRESHOLD_FOR_BONUS = 0.7
     MTURK_NUMBER_HITS_APPROVED_REQUIREMENT = 1000
     MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT = 97
     MTURK_TITLE = 'Critical audio listening task. Listen to audio recordings and rate them on various ' \
@@ -338,4 +351,5 @@ class ProductionOverrideConfig(object):
     """
     TESTING = False
     DEBUG = False
+    
 

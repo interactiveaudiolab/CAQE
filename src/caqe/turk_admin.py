@@ -364,9 +364,9 @@ class TurkAdmin(object):
         return times
 
     def give_bonus_to_all_first_completed_trials(self,
-                                                 price=0.30,
-                                                 reason=None,
+                                                 price=app.config['MTURK_FIRST_HIT_BONUS'],
                                                  calculate_amt_only=False,
+                                                 reason=None,
                                                  already_bonused_ids=set()):
         """
         Grant bonuses for the first completed trial for each participant.
@@ -374,11 +374,11 @@ class TurkAdmin(object):
         Parameters
         ----------
         price : float, optional
-            The bonus amount to grant in dollars. Default is 30 cents.
-        reason : str, optional
-            The message to send the workers when they receive the bonus
+            The bonus amount to grant in dollars. Default is defined by the CAQE configuration.
         calculate_amt_only : bool, optional
             Only calculate the amount of the bonus, do not actual pay out the bonus.
+        reason : str, optional
+            The message to send the workers when they receive the bonus
         already_bonused_ids : set, optional
             Set of participant ids that have already been bonused
 
@@ -424,10 +424,10 @@ class TurkAdmin(object):
         return total_bonus, participants_wo_valid_asgnmts
 
     def give_consistency_bonus(self,
-                               max_price=0.25,
-                               threshold=0.7,
-                               reason=None,
+                               max_price=app.config['MTURK_MAX_CONSISTENCY_BONUS'],
+                               threshold=app.config['MTURK_MIN_CONSISTENCY_THRESHOLD_FOR_BONUS'],
                                calculate_amt_only=False,
+                               reason=None,
                                already_bonused_ids=set()):
         """
         Grant bonuses based on ratings consistency. Bonus calculated by
@@ -437,13 +437,13 @@ class TurkAdmin(object):
         Parameters
         ----------
         max_price : float, optional
-            The maximum bonus amount to grant in dollars. Default is 25 cents.
+            The maximum bonus amount to grant in dollars. Default is defined by the CAQE configuration.
         threshold : bool
-            Consistency must exceed this value before a bonus is paid out.
-        reason : str, optional
-            The message to send the workers when they receive the bonus
+            Consistency must exceed this value before a bonus is paid out. Default is defined by the CAQE configuration.
         calculate_amt_only : bool, optional
             Only calculate the amount of the bonus, do not actual pay out the bonus.
+        reason : str, optional
+            The message to send the workers when they receive the bonus
         already_bonused_ids : set, optional
             Set of participant ids that have already been bonused
 
