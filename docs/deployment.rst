@@ -38,8 +38,8 @@ Steps for deployment are as follows:
 
 #. Set your secret key environment variables. You can set the environment variables in Heroku with the ``heroku config:set`` command. Use this command to set environment variables to the secret keys in ``secret_keys.py`` (generated from ``generate_key_file.py``): ::
 
-    $ heroku config:set SESSION_KEY='DcE34cFEDEB37131df97EeF5BB56AfCF'
-    $ heroku config:set CSRF_SECRET_KEY='E7a1989EbaaeF60cEab4Cb9534851e42'
+    $ heroku config:set SESSION_KEY='<your-session-key>'
+    $ heroku config:set CSRF_SECRET_KEY='<your-csrf-secret-key>'
 
 #. Then set your configuration variables, specifying your config filename and the server address, e.g.: ::
 

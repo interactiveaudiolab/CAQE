@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Create the database structure (clearing it if it already exists) and insert the tests and conditions as
-defined in the test configuration (see :doc:`test_configurations`).
+defined in the test configuration (see :doc:`../test_configurations`).
 
 To run: ::
 
