@@ -205,8 +205,8 @@ def mturk():
     -------
     flask.Response
     """
-    if request.args['assignmentId'] == 'ASSIGNMENT_ID_NOT_AVAILABLE' or \
-                    request.args.get('workerId', 'WORKER_ID_NOT_AVAILABLE') == 'WORKER_ID_NOT_AVAILABLE':
+    print request.args
+    if request.args['assignmentId'] == 'ASSIGNMENT_ID_NOT_AVAILABLE':
         preview = 1
         submission_url = None
         crowd_worker_id = 'WORKER_ID_NOT_AVAILABLE'
