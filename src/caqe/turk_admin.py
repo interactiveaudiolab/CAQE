@@ -79,9 +79,10 @@ class TurkAdmin(object):
     Instantiate this class to connect to MTurk and perform administrative tasks.
     """
 
-    def __init__(self):
+    def __init__(self, debug=False):
         self.connection = turk_connect()
         self._hit_type_id = None
+        self.debug = debug
         print app.config['MTURK_HOST']
 
         self.all_hit_types = [self.hit_type_id, ]
@@ -130,11 +131,15 @@ class TurkAdmin(object):
             configuration = app.config
 
         qualifications = Qualifications()
-        qualifications.add(NumberHitsApprovedRequirement('GreaterThanOrEqualTo',
-                                                         configuration['MTURK_NUMBER_HITS_APPROVED_REQUIREMENT']))
-        qualifications.add(PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo',
-                                                                 configuration[
-                                                                     'MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT']))
+        if self.debug:
+            qualifications.add(NumberHitsApprovedRequirement('GreaterThanOrEqualTo', 0))
+            qualifications.add(PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 0))
+        else:
+            qualifications.add(NumberHitsApprovedRequirement('GreaterThanOrEqualTo',
+                                                             configuration['MTURK_NUMBER_HITS_APPROVED_REQUIREMENT']))
+            qualifications.add(PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo',
+                                                                     configuration[
+                                                                         'MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT']))
 
         hit_type = self.connection.register_hit_type(configuration['MTURK_TITLE'],
                                                      configuration['MTURK_DESCRIPTION'],

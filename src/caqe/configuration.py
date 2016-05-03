@@ -32,9 +32,6 @@ except ImportError:
 # Get the application mode from the environment variable APP_MODE
 APP_MODE = os.getenv('APP_MODE')
 
-# The size of the frame when entry point is /mturk_debug
-MTURK_DEBUG_FRAME_HEIGHT = 1200
-
 # HEARING TEST CONSTANTS
 MIN_HEARING_TEST_AUDIO_TONES = 2
 MAX_HEARING_TEST_AUDIO_TONES = 8
@@ -160,6 +157,8 @@ class BaseConfig(object):
     MTURK_LIFETIME_IN_SECONDS : int
         HITs expire (no one can accept them) after this duration since being posted.
         (default is 60 * 60 * 24 * 7, i.e 1 week)
+    MTURK_FRAME_HEIGHT : int
+        The size of the Mechanical Turk browser frame (default is 1200)
     ACCEPTABLE_BROWSERS : list of str
         The set of acceptable browsers. set as None to disable browser rejection. (default is ['chrome',])
     BEGIN_BUTTON_ENABLED : bool
@@ -281,6 +280,7 @@ class BaseConfig(object):
     MTURK_LIFETIME_IN_SECONDS = 60 * 60 * 24 * 7
     MTURK_MAX_ASSIGNMENTS = 200
     MTURK_AUTO_APPROVAL_DELAY_IN_SECONDS = 60 * 60 * 24 * 1  # 1 day
+    MTURK_FRAME_HEIGHT = 1200
 
     # ---------------------------------------------------------------------------------------------
     # FRONT-END VARIABLES

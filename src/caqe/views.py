@@ -344,6 +344,7 @@ def create_participant(participant_type, crowd_worker_id):
     session['crowd_data']['hit_id'] = request.args.get('hitId', None)
     session['crowd_data']['assignment_id'] = request.args.get('assignmentId', 'ASSIGNMENT_ID_NOT_AVAILABLE')
     session['crowd_data']['turk_submit_to'] = request.args.get('turkSubmitTo', 'TURK_SUBMIT_TO_NOT_AVAILABLE')
+    session['state'] = 'PRE_EVALUATION'
 
     return pre_evaluation_tasks()
 
@@ -384,6 +385,7 @@ def pre_evaluation_tasks():
                                    message='Unfortunately, you do not meet the inclusion criteria for this study. '
                                            'Sorry.')
 
+    session['state'] = 'EVALUATION'
     return redirect(url_for('evaluation', _external=True, _scheme=app.config['PREFERRED_URL_SCHEME']))
 
 
@@ -576,6 +578,7 @@ def evaluation():
                 logger.info('Results saved for %r' % trial)
 
             db.session.commit()
+            session['state'] = 'POST_EVALUATION'
             return json.dumps({'error': False, 'message': 'Data is saved!', 'trial_id': utilities.sign_data(trial.id)})
         except Exception as e:
             logger.warning('Error saving results. - %r' % e)
@@ -640,6 +643,7 @@ def post_evaluation_tasks():
     -------
     flask.Response
     """
+    assert(session['state'] == 'POST_EVALUATION')
 
     participant = get_current_participant(session)
 
@@ -653,9 +657,9 @@ def post_evaluation_tasks():
                                 _external=True,
                                 scheme=app.config['PREFERRED_URL_SCHEME']))
 
-    platform = session.get('platform', None)
+    session['state'] = 'END'
     return redirect(url_for('end',
-                            platform=platform,
+                            platform=participant.platform,
                             _external=True,
                             _scheme=app.config['PREFERRED_URL_SCHEME']))
 
@@ -734,6 +738,9 @@ def end(platform):
     -------
     flask.Response
     """
+    # assert state so that workers don't try to just jump to the end
+    assert(session['state'] == 'END')
+
     if platform == 'mturk':
         return render_template('mturk/end.html')
     else:
@@ -756,14 +763,14 @@ def mturk_debug():
     if preview:
         return render_template('mturk_debug.html',
                                url='/mturk?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&workerId=debugNQFUCL',
-                               frame_height=configuration.MTURK_DEBUG_FRAME_HEIGHT)
+                               frame_height=app.config['MTURK_FRAME_HEIGHT'])
     else:
         return render_template('mturk_debug.html',
                                url='/mturk?assignmentId=123RVWYBAZW00EXAMPLE456RVWYBAZW00EXAMPLE&'
                                    'hitId=123RVWYBAZW00EXAMPLE&'
                                    'turkSubmitTo=https://workersandbox.mturk.com&'
                                    'workerId=debugNQFUCL',
-                               frame_height=configuration.MTURK_DEBUG_FRAME_HEIGHT)
+                               frame_height=app.config['MTURK_FRAME_HEIGHT'])
 
 
 @app.route('/admin/stats')

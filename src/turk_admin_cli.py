@@ -9,6 +9,8 @@ from caqe import app
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Manage the Amazon Mechanical Turk assignments and workers for CAQE.')
+    parser.add_argument('--debug', action='store_true', help="Debug mode. (Right now this just means post HITs without "
+                                                             "qualification requirements.")
     sp = parser.add_subparsers(dest='command')
 
     ch = sp.add_parser('create-hits', help='Create MTurk HITs')
@@ -51,8 +53,9 @@ if __name__ == '__main__':
                       action='store_true')
 
     args = parser.parse_args()
+    debug = args.debug
 
-    turk_admin = caqe.turk_admin.TurkAdmin()
+    turk_admin = caqe.turk_admin.TurkAdmin(debug=debug)
 
     if args.command == 'create-hits':
         turk_admin.create_hits(args.num_hits)
