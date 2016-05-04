@@ -235,7 +235,7 @@ def mturk():
 def begin(platform, crowd_worker_id):
     """
     Render a page with a button on it that directs them to the assign conditions. We don't direct them initially to the
-    evaluation pag since some workers accept many HITs at a time. We need to make sure that they don't get assigned
+    evaluation page since some workers accept many HITs at a time. We need to make sure that they don't get assigned
     the same conditions and that their session data is valid.
 
     Parameters
