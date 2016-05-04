@@ -25,9 +25,9 @@ To recruit participants to evaluate our audio, we post assignments on Mechanical
 
     $ export SERVER_ADDRESS=<your-caqe-app>.herokuapp.com
 
-#. After your variables are configured, post your HIT to the MTurk sandbox for testing. ::
+#. After your variables are configured, post your HIT to the MTurk sandbox for testing. With the ``--debug`` flag HITs are created without the worker qualification requirements so that you can test them in the sandbox. ::
 
-    $ python turk_admin_cli.py create-hits <num_hits>
+    $ python turk_admin_cli.py --debug create-hits <num_hits>
 
 #. Your HITs will now be viewable on the Mechanical Turk sandbox site. Visit http://workersandbox.mturk.com and search for the title you provided in your configuration. You can expire them with ``turk_admin_cli.py``: ::
 
