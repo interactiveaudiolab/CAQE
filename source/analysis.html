@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>create_db script &mdash; CAQE 0.1.1a1 documentation</title>
+  <title>analysis script &mdash; CAQE 0.1.1a1 documentation</title>
   
 
   
@@ -32,8 +32,7 @@
   
     <link rel="top" title="CAQE 0.1.1a1 documentation" href="../index.html"/>
         <link rel="up" title="Scripts" href="scripts.html"/>
-        <link rel="next" title="analysis script" href="analysis.html"/>
-        <link rel="prev" title="generate_key_file script" href="generate_key_file.html"/> 
+        <link rel="prev" title="create_db script" href="create_db.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -95,8 +94,8 @@
 <li class="toctree-l1"><a class="reference internal" href="caqe.html">CAQE Package</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="scripts.html">Scripts</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="generate_key_file.html">generate_key_file script</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">create_db script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis.html">analysis script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="create_db.html">create_db script</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">analysis script</a></li>
 </ul>
 </li>
 </ul>
@@ -131,11 +130,11 @@
       
           <li><a href="scripts.html">Scripts</a> &raquo;</li>
       
-    <li>create_db script</li>
+    <li>analysis script</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/source/create_db.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/source/analysis.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -145,14 +144,56 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-create_db">
-<span id="create-db-script"></span><h1>create_db script<a class="headerlink" href="#module-create_db" title="Permalink to this headline">¶</a></h1>
-<p>Create the database structure (clearing it if it already exists) and insert the tests and conditions as
-defined in the test configuration (see <a class="reference internal" href="../test_configurations.html"><span class="doc">Test Configurations</span></a>).</p>
-<p>To run:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ python create_db.py
-</pre></div>
+  <div class="section" id="module-analysis">
+<span id="analysis-script"></span><h1>analysis script<a class="headerlink" href="#module-analysis" title="Permalink to this headline">¶</a></h1>
+<p>Analysis module for estimating scores for performing statistical tests.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This module has dependencies not required by the CAQE web application. To install these dependencies, run <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">analysis_requirements.txt</span></code>.</p>
 </div>
+<dl class="function">
+<dt id="analysis.get_ratings_data">
+<code class="descclassname">analysis.</code><code class="descname">get_ratings_data</code><span class="sig-paren">(</span><em>output_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis.html#get_ratings_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.get_ratings_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the ratings data from the database as a DataFrame
+:param output_file: A filepath to an output CSV file (default is None)
+:type output_file: str</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>ratings</strong> &#8211; All of the rating data from the dictionary.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">pandas.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="analysis.plot_mushra_boxplots">
+<code class="descclassname">analysis.</code><code class="descname">plot_mushra_boxplots</code><span class="sig-paren">(</span><em>data</em>, <em>size=5</em>, <em>output_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis.html#plot_mushra_boxplots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.plot_mushra_boxplots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the MUSHRA ratings as a grid of boxplots. If <cite>output_file</cite> is defined, then save the plot to file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<em>pandas.DataFrame</em>) &#8211; The ratings data obtained from <cite>get_ratings_data</cite>.</li>
+<li><strong>size</strong> (<em>float</em>) &#8211; Height of each boxplot in inches. (default is 5)</li>
+<li><strong>output_file</strong> (<em>str</em>) &#8211; Path to the output file location. (default is None)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>g</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">seaborn.axisgrid.FacetGrid</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -162,10 +203,8 @@ defined in the test configuration (see <a class="reference internal" href="../te
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="analysis.html" class="btn btn-neutral float-right" title="analysis script" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="generate_key_file.html" class="btn btn-neutral" title="generate_key_file script" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="create_db.html" class="btn btn-neutral" title="create_db script" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

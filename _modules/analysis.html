@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>analysis &mdash; CAQE 0.1.1a1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="CAQE 0.1.1a1 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> CAQE
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment.html">Deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recruiting_on_amt.html">Running the Evaluation on Amazon&#8217;s Mechanical Turk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_analysis.html">Downloading and Analyzing Data</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../test_configurations.html">Test Configurations</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../source/caqe.html">CAQE Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source/scripts.html">Scripts</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">CAQE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>analysis</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for analysis</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Analysis module for estimating scores for performing statistical tests.</span>
+
+<span class="sd">.. note:: This module has dependencies not required by the CAQE web application. To install these dependencies, run ``pip install -r analysis_requirements.txt``.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+
+<span class="kn">from</span> <span class="nn">caqe.models</span> <span class="kn">import</span> <span class="n">Condition</span>
+<span class="kn">from</span> <span class="nn">caqe</span> <span class="kn">import</span> <span class="n">app</span>
+
+
+<div class="viewcode-block" id="get_ratings_data"><a class="viewcode-back" href="../source/analysis.html#analysis.get_ratings_data">[docs]</a><span class="k">def</span> <span class="nf">get_ratings_data</span><span class="p">(</span><span class="n">output_file</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the ratings data from the database as a DataFrame</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    output_file : str</span>
+<span class="sd">        A filepath to an output CSV file (default is None)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ratings : pandas.DataFrame</span>
+<span class="sd">        All of the rating data from the dictionary.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conditions</span> <span class="o">=</span> <span class="n">Condition</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">ratings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">trials</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">t_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">trial_ratings</span> <span class="o">=</span> <span class="n">t_data</span><span class="p">[</span><span class="s1">&#39;ratings&#39;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">t_data</span><span class="p">[</span><span class="s1">&#39;ratings&#39;</span><span class="p">]</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;test_id&#39;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">test_id</span><span class="p">,</span>
+                   <span class="s1">&#39;trial_id&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                   <span class="s1">&#39;condition_id&#39;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                   <span class="s1">&#39;participant_id&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">participant_id</span><span class="p">,</span>
+                   <span class="s1">&#39;participant_crowd_worker_id&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">participant</span><span class="o">.</span><span class="n">crowd_worker_id</span><span class="p">,</span>
+                   <span class="s1">&#39;participant_platform&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">participant</span><span class="o">.</span><span class="n">platform</span><span class="p">,</span>
+                   <span class="s1">&#39;participant_passed_hearing_test&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">participant_passed_hearing_test</span><span class="p">,</span>
+                   <span class="s1">&#39;participant_hearing_test_attempts&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">participant</span><span class="o">.</span><span class="n">hearing_test_attempts</span><span class="p">,</span>
+                   <span class="s1">&#39;participant_hearing_test_last_attempt&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">participant</span><span class="o">.</span><span class="n">hearing_test_last_attempt</span><span class="p">,</span>
+                   <span class="s1">&#39;participant_pre_test_survey&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">participant</span><span class="o">.</span><span class="n">pre_test_survey</span><span class="p">,</span>
+                   <span class="s1">&#39;participant_post_test_survey&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">participant</span><span class="o">.</span><span class="n">post_test_survey</span><span class="p">,</span>
+                   <span class="s1">&#39;participant_hearing_response_estimation&#39;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">participant</span><span class="o">.</span><span class="n">hearing_response_estimation</span><span class="p">,</span>
+                   <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">t_data</span><span class="p">)}</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">trial_ratings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="n">r</span><span class="p">[</span><span class="s1">&#39;stimulus&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span>
+                <span class="n">r</span><span class="p">[</span><span class="s1">&#39;rating&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">ratings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+    <span class="n">ratings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">ratings</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ratings</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ratings</span></div>
+
+
+<div class="viewcode-block" id="plot_mushra_boxplots"><a class="viewcode-back" href="../source/analysis.html#analysis.plot_mushra_boxplots">[docs]</a><span class="k">def</span> <span class="nf">plot_mushra_boxplots</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the MUSHRA ratings as a grid of boxplots. If `output_file` is defined, then save the plot to file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: pandas.DataFrame</span>
+<span class="sd">        The ratings data obtained from `get_ratings_data`.</span>
+
+<span class="sd">    size : float</span>
+<span class="sd">        Height of each boxplot in inches. (default is 5)</span>
+
+<span class="sd">    output_file: str</span>
+<span class="sd">        Path to the output file location. (default is None)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    g : seaborn.axisgrid.FacetGrid</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">factorplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;stimulus&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="s1">&#39;condition_id&#39;</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="n">notch</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">g</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MIN_RATING_VALUE&#39;</span><span class="p">],</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MAX_RATING_VALUE&#39;</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Analyze and plot CAQE results.&#39;</span><span class="p">)</span>
+    <span class="n">sp</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s1">&#39;command&#39;</span><span class="p">)</span>
+
+    <span class="n">ch</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;plot-mushra-boxplots&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Plot the MUSHRA ratings as a grid of boxplots.&#39;</span><span class="p">)</span>
+    <span class="n">ch</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;output_file&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Path to output file location&#39;</span><span class="p">)</span>
+    <span class="n">ch</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--size&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Height of each boxplot in inches.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">5.</span><span class="p">)</span>
+
+    <span class="n">ch</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;save-data-to-csv&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Save MUSHRA data to a csv file.&#39;</span><span class="p">)</span>
+    <span class="n">ch</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;output_file&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Path to output file location&#39;</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;plot-mushra-boxplots&#39;</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">get_ratings_data</span><span class="p">()</span>
+        <span class="n">plot_mushra_boxplots</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;save-data-to-csv&#39;</span><span class="p">:</span>
+        <span class="n">get_ratings_data</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Copyright (c) 2016 Mark Cartwright.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.1a1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

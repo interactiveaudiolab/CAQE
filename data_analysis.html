@@ -85,7 +85,11 @@
 <li class="toctree-l1"><a class="reference internal" href="development.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deployment.html">Deployment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="recruiting_on_amt.html">Running the Evaluation on Amazon&#8217;s Mechanical Turk</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Downloading and Analyzing Data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Downloading and Analyzing Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-and-restoring-database-from-heroku">Downloading and restoring database from Heroku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mushra-analysis">MUSHRA Analysis</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="test_configurations.html">Test Configurations</a></li>
@@ -139,6 +143,65 @@
             
   <div class="section" id="downloading-and-analyzing-data">
 <h1>Downloading and Analyzing Data<a class="headerlink" href="#downloading-and-analyzing-data" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="downloading-and-restoring-database-from-heroku">
+<h2>Downloading and restoring database from Heroku<a class="headerlink" href="#downloading-and-restoring-database-from-heroku" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Create a psql user if you haven&#8217;t already:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo -u postgres createuser -P &lt;local-username&gt;
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create a local database owned by that user:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo -u postgres createdb -O &lt;local-username&gt; &lt;dbname&gt;
+</pre></div>
+</div>
+</li>
+<li><p class="first">Capture a database snapshot on Heroku:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ heroku pg:backups capture
+</pre></div>
+</div>
+</li>
+<li><p class="first">Download the snapshot from Heroku to your local machine:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ curl -o latest.dump `heroku pg:backups public-url`
+</pre></div>
+</div>
+</li>
+<li><p class="first">Restore database on local machine:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pg_restore --verbose --clean --no-acl --no-owner -h localhost -U &lt;local-username&gt; -d &lt;dbname&gt; latest.dump
+</pre></div>
+</div>
+</li>
+<li><p class="first">Configure your local CAQE app to use the database. This can achieved either by setting the <code class="docutils literal"><span class="pre">SQLALCHEMY_DATABASE_URI</span></code> in the CAQE configuration (see <a class="reference internal" href="source/caqe.configuration.html"><span class="doc">caqe.configuration module</span></a>) or by setting the <code class="docutils literal"><span class="pre">DATABASE_URL</span></code> environment variable, e.g</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ export DATABASE_URL=&#39;postgres://&lt;local-username&gt;:&lt;psql-password&gt;@localhost/&lt;dbname&gt;&#39;
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="mushra-analysis">
+<h2>MUSHRA Analysis<a class="headerlink" href="#mushra-analysis" title="Permalink to this headline">¶</a></h2>
+<p>To access and format the results of a MUSHRA listening test, either use the <code class="docutils literal"><span class="pre">analysis.py</span></code> module:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="kn">import</span> <span class="nn">analysis</span>
+<span class="o">&gt;&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_ratings_data</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>or export the data to a CSV using the CLI command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python analysis.py save-data-to-csv &lt;output_file.csv&gt;
+</pre></div>
+</div>
+<p>To plot the results of a MUSHRA listening test, either use the <code class="docutils literal"><span class="pre">analysis.py</span></code> module</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="kn">import</span> <span class="nn">analysis</span>
+<span class="o">&gt;&gt;</span> <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">&gt;&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_ratings_data</span><span class="p">()</span>
+<span class="o">&gt;&gt;</span> <span class="n">analysis</span><span class="o">.</span><span class="n">plot_mushra_boxplots</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>or export the plot to a image file (e.g. a <code class="docutils literal"><span class="pre">.png</span></code>, <code class="docutils literal"><span class="pre">.pdf</span></code>, etc.) using the CLI command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python analysis.py plot-mushra-boxplots &lt;output_file.pdf&gt;
+</pre></div>
+</div>
+</div>
 </div>
 
 

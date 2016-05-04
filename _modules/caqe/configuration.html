@@ -171,9 +171,6 @@
 <span class="c1"># Get the application mode from the environment variable APP_MODE</span>
 <span class="n">APP_MODE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;APP_MODE&#39;</span><span class="p">)</span>
 
-<span class="c1"># The size of the frame when entry point is /mturk_debug</span>
-<span class="n">MTURK_DEBUG_FRAME_HEIGHT</span> <span class="o">=</span> <span class="mi">1200</span>
-
 <span class="c1"># HEARING TEST CONSTANTS</span>
 <span class="n">MIN_HEARING_TEST_AUDIO_TONES</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">MAX_HEARING_TEST_AUDIO_TONES</span> <span class="o">=</span> <span class="mi">8</span>
@@ -299,6 +296,8 @@
 <span class="sd">    MTURK_LIFETIME_IN_SECONDS : int</span>
 <span class="sd">        HITs expire (no one can accept them) after this duration since being posted.</span>
 <span class="sd">        (default is 60 * 60 * 24 * 7, i.e 1 week)</span>
+<span class="sd">    MTURK_FRAME_HEIGHT : int</span>
+<span class="sd">        The size of the Mechanical Turk browser frame (default is 1200)</span>
 <span class="sd">    ACCEPTABLE_BROWSERS : list of str</span>
 <span class="sd">        The set of acceptable browsers. set as None to disable browser rejection. (default is [&#39;chrome&#39;,])</span>
 <span class="sd">    BEGIN_BUTTON_ENABLED : bool</span>
@@ -420,6 +419,7 @@
     <span class="n">MTURK_LIFETIME_IN_SECONDS</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span>
     <span class="n">MTURK_MAX_ASSIGNMENTS</span> <span class="o">=</span> <span class="mi">200</span>
     <span class="n">MTURK_AUTO_APPROVAL_DELAY_IN_SECONDS</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">1</span>  <span class="c1"># 1 day</span>
+    <span class="n">MTURK_FRAME_HEIGHT</span> <span class="o">=</span> <span class="mi">1200</span>
 
     <span class="c1"># ---------------------------------------------------------------------------------------------</span>
     <span class="c1"># FRONT-END VARIABLES</span>

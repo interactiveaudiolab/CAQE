@@ -344,8 +344,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    flask.Response</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;assignmentId&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ASSIGNMENT_ID_NOT_AVAILABLE&#39;</span> <span class="ow">or</span> \
-                    <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;workerId&#39;</span><span class="p">,</span> <span class="s1">&#39;WORKER_ID_NOT_AVAILABLE&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;WORKER_ID_NOT_AVAILABLE&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;assignmentId&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ASSIGNMENT_ID_NOT_AVAILABLE&#39;</span><span class="p">:</span>
         <span class="n">preview</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">submission_url</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">crowd_worker_id</span> <span class="o">=</span> <span class="s1">&#39;WORKER_ID_NOT_AVAILABLE&#39;</span>
@@ -375,7 +374,7 @@
 <div class="viewcode-block" id="begin"><a class="viewcode-back" href="../../source/caqe.views.html#caqe.views.begin">[docs]</a><span class="k">def</span> <span class="nf">begin</span><span class="p">(</span><span class="n">platform</span><span class="p">,</span> <span class="n">crowd_worker_id</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Render a page with a button on it that directs them to the assign conditions. We don&#39;t direct them initially to the</span>
-<span class="sd">    evaluation pag since some workers accept many HITs at a time. We need to make sure that they don&#39;t get assigned</span>
+<span class="sd">    evaluation page since some workers accept many HITs at a time. We need to make sure that they don&#39;t get assigned</span>
 <span class="sd">    the same conditions and that their session data is valid.</span>
 
 <span class="sd">    Parameters</span>
@@ -411,7 +410,6 @@
 
     <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;BEGIN_BUTTON_ENABLED&#39;</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;mturk&#39;</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s1">&#39;mturk&#39;</span>
             <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;mturk/begin.html&#39;</span><span class="p">,</span>
                                    <span class="n">link</span><span class="o">=</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;create_participant&#39;</span><span class="p">,</span>
                                                 <span class="n">participant_type</span><span class="o">=</span><span class="n">platform</span><span class="p">,</span>
@@ -421,12 +419,11 @@
                                                 <span class="o">**</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">),</span>
                                    <span class="n">width</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;POPUP_WIDTH&#39;</span><span class="p">],</span>
                                    <span class="n">height</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;POPUP_HEIGHT&#39;</span><span class="p">],</span>
-                                   <span class="n">worker_id</span><span class="o">=</span><span class="n">crowd_worker_id</span><span class="p">,</span>
-                                   <span class="n">assignment_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;assignment_id&#39;</span><span class="p">),</span>
-                                   <span class="n">hit_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;assignment_type&#39;</span><span class="p">),</span>
-                                   <span class="o">**</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+                                   <span class="n">crowd_worker_id</span><span class="o">=</span><span class="n">crowd_worker_id</span><span class="p">,</span>
+                                   <span class="n">crowd_assignment_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;crowd_assignment_id&#39;</span><span class="p">),</span>
+                                   <span class="n">crowd_assignment_type</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;crowd_assignment_type&#39;</span><span class="p">),</span>
+                                   <span class="n">submission_url</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;submission_url&#39;</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="s1">&#39;else&#39;</span>
             <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;begin.html&#39;</span><span class="p">,</span>
                                    <span class="n">link</span><span class="o">=</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;create_participant&#39;</span><span class="p">,</span>
                                                 <span class="n">participant_type</span><span class="o">=</span><span class="n">platform</span><span class="p">,</span>
@@ -483,6 +480,7 @@
     <span class="n">session</span><span class="p">[</span><span class="s1">&#39;crowd_data&#39;</span><span class="p">][</span><span class="s1">&#39;hit_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;hitId&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
     <span class="n">session</span><span class="p">[</span><span class="s1">&#39;crowd_data&#39;</span><span class="p">][</span><span class="s1">&#39;assignment_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;assignmentId&#39;</span><span class="p">,</span> <span class="s1">&#39;ASSIGNMENT_ID_NOT_AVAILABLE&#39;</span><span class="p">)</span>
     <span class="n">session</span><span class="p">[</span><span class="s1">&#39;crowd_data&#39;</span><span class="p">][</span><span class="s1">&#39;turk_submit_to&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;turkSubmitTo&#39;</span><span class="p">,</span> <span class="s1">&#39;TURK_SUBMIT_TO_NOT_AVAILABLE&#39;</span><span class="p">)</span>
+    <span class="n">session</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;PRE_EVALUATION&#39;</span>
 
     <span class="k">return</span> <span class="n">pre_evaluation_tasks</span><span class="p">()</span></div>
 
@@ -523,6 +521,7 @@
                                    <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Unfortunately, you do not meet the inclusion criteria for this study. &#39;</span>
                                            <span class="s1">&#39;Sorry.&#39;</span><span class="p">)</span>
 
+    <span class="n">session</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;EVALUATION&#39;</span>
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;evaluation&#39;</span><span class="p">,</span> <span class="n">_external</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">_scheme</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;PREFERRED_URL_SCHEME&#39;</span><span class="p">]))</span></div>
 
 
@@ -715,6 +714,7 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Results saved for </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">trial</span><span class="p">)</span>
 
             <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="n">session</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;POST_EVALUATION&#39;</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Data is saved!&#39;</span><span class="p">,</span> <span class="s1">&#39;trial_id&#39;</span><span class="p">:</span> <span class="n">utilities</span><span class="o">.</span><span class="n">sign_data</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">id</span><span class="p">)})</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Error saving results. - </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
@@ -779,6 +779,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    flask.Response</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;POST_EVALUATION&#39;</span><span class="p">)</span>
 
     <span class="n">participant</span> <span class="o">=</span> <span class="n">get_current_participant</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
 
@@ -792,9 +793,9 @@
                                 <span class="n">_external</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                                 <span class="n">scheme</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;PREFERRED_URL_SCHEME&#39;</span><span class="p">]))</span>
 
-    <span class="n">platform</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;platform&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">session</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;END&#39;</span>
     <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;end&#39;</span><span class="p">,</span>
-                            <span class="n">platform</span><span class="o">=</span><span class="n">platform</span><span class="p">,</span>
+                            <span class="n">platform</span><span class="o">=</span><span class="n">participant</span><span class="o">.</span><span class="n">platform</span><span class="p">,</span>
                             <span class="n">_external</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                             <span class="n">_scheme</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;PREFERRED_URL_SCHEME&#39;</span><span class="p">]))</span></div>
 
@@ -873,6 +874,9 @@
 <span class="sd">    -------</span>
 <span class="sd">    flask.Response</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># assert state so that workers don&#39;t try to just jump to the end</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;END&#39;</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;mturk&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;mturk/end.html&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -895,14 +899,14 @@
     <span class="k">if</span> <span class="n">preview</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;mturk_debug.html&#39;</span><span class="p">,</span>
                                <span class="n">url</span><span class="o">=</span><span class="s1">&#39;/mturk?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE&amp;workerId=debugNQFUCL&#39;</span><span class="p">,</span>
-                               <span class="n">frame_height</span><span class="o">=</span><span class="n">configuration</span><span class="o">.</span><span class="n">MTURK_DEBUG_FRAME_HEIGHT</span><span class="p">)</span>
+                               <span class="n">frame_height</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MTURK_FRAME_HEIGHT&#39;</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;mturk_debug.html&#39;</span><span class="p">,</span>
                                <span class="n">url</span><span class="o">=</span><span class="s1">&#39;/mturk?assignmentId=123RVWYBAZW00EXAMPLE456RVWYBAZW00EXAMPLE&amp;&#39;</span>
                                    <span class="s1">&#39;hitId=123RVWYBAZW00EXAMPLE&amp;&#39;</span>
                                    <span class="s1">&#39;turkSubmitTo=https://workersandbox.mturk.com&amp;&#39;</span>
                                    <span class="s1">&#39;workerId=debugNQFUCL&#39;</span><span class="p">,</span>
-                               <span class="n">frame_height</span><span class="o">=</span><span class="n">configuration</span><span class="o">.</span><span class="n">MTURK_DEBUG_FRAME_HEIGHT</span><span class="p">)</span></div>
+                               <span class="n">frame_height</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MTURK_FRAME_HEIGHT&#39;</span><span class="p">])</span></div>
 
 
 <span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/admin/stats&#39;</span><span class="p">)</span>

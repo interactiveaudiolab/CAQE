@@ -218,9 +218,10 @@
 <span class="sd">    Instantiate this class to connect to MTurk and perform administrative tasks.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">turk_connect</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hit_type_id</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">debug</span>
         <span class="k">print</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;MTURK_HOST&#39;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">all_hit_types</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hit_type_id</span><span class="p">,</span> <span class="p">]</span>
@@ -269,11 +270,15 @@
             <span class="n">configuration</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span>
 
         <span class="n">qualifications</span> <span class="o">=</span> <span class="n">Qualifications</span><span class="p">()</span>
-        <span class="n">qualifications</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">NumberHitsApprovedRequirement</span><span class="p">(</span><span class="s1">&#39;GreaterThanOrEqualTo&#39;</span><span class="p">,</span>
-                                                         <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;MTURK_NUMBER_HITS_APPROVED_REQUIREMENT&#39;</span><span class="p">]))</span>
-        <span class="n">qualifications</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">PercentAssignmentsApprovedRequirement</span><span class="p">(</span><span class="s1">&#39;GreaterThanOrEqualTo&#39;</span><span class="p">,</span>
-                                                                 <span class="n">configuration</span><span class="p">[</span>
-                                                                     <span class="s1">&#39;MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT&#39;</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+            <span class="n">qualifications</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">NumberHitsApprovedRequirement</span><span class="p">(</span><span class="s1">&#39;GreaterThanOrEqualTo&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">qualifications</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">PercentAssignmentsApprovedRequirement</span><span class="p">(</span><span class="s1">&#39;GreaterThanOrEqualTo&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">qualifications</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">NumberHitsApprovedRequirement</span><span class="p">(</span><span class="s1">&#39;GreaterThanOrEqualTo&#39;</span><span class="p">,</span>
+                                                             <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;MTURK_NUMBER_HITS_APPROVED_REQUIREMENT&#39;</span><span class="p">]))</span>
+            <span class="n">qualifications</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">PercentAssignmentsApprovedRequirement</span><span class="p">(</span><span class="s1">&#39;GreaterThanOrEqualTo&#39;</span><span class="p">,</span>
+                                                                     <span class="n">configuration</span><span class="p">[</span>
+                                                                         <span class="s1">&#39;MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT&#39;</span><span class="p">]))</span>
 
         <span class="n">hit_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">register_hit_type</span><span class="p">(</span><span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;MTURK_TITLE&#39;</span><span class="p">],</span>
                                                      <span class="n">configuration</span><span class="p">[</span><span class="s1">&#39;MTURK_DESCRIPTION&#39;</span><span class="p">],</span>

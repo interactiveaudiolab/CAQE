@@ -169,8 +169,8 @@
 </pre></div>
 </div>
 </li>
-<li><p class="first">After your variables are configured, post your HIT to the MTurk sandbox for testing.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ python turk_admin_cli.py create-hits &lt;num_hits&gt;
+<li><p class="first">After your variables are configured, post your HIT to the MTurk sandbox for testing. With the <code class="docutils literal"><span class="pre">--debug</span></code> flag HITs are created without the worker qualification requirements so that you can test them in the sandbox.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python turk_admin_cli.py --debug create-hits &lt;num_hits&gt;
 </pre></div>
 </div>
 </li>
