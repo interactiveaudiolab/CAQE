@@ -336,6 +336,7 @@ class DevelopmentOverrideConfig(object):
     MTURK_QUESTION_URL = 'https://%s/mturk' % SERVER_ADDRESS
     HEARING_TEST_REJECTION_ENABLED = False
     PREFERRED_URL_SCHEME = 'http'
+    REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS = False
 
 
 class ProductionOverrideConfig(object):
