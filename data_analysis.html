@@ -180,6 +180,10 @@
 </div>
 <div class="section" id="mushra-analysis">
 <h2>MUSHRA Analysis<a class="headerlink" href="#mushra-analysis" title="Permalink to this headline">¶</a></h2>
+<p>First make sure that you have all of the required Python packages for analysis These are not included in the main <code class="docutils literal"><span class="pre">requirements.txt</span></code> file because they are not needed for deployment.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install -r analysis_requirements.txt
+</pre></div>
+</div>
 <p>To access and format the results of a MUSHRA listening test, either use the <code class="docutils literal"><span class="pre">analysis.py</span></code> module:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="kn">import</span> <span class="nn">analysis</span>
 <span class="o">&gt;&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">get_ratings_data</span><span class="p">()</span>
