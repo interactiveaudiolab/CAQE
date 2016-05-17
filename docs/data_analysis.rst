@@ -30,6 +30,11 @@ Downloading and restoring database from Heroku
 
 MUSHRA Analysis
 ---------------
+First make sure that you have all of the required Python packages for analysis These are not included in the main ``requirements.txt`` file because they are not needed for deployment. ::
+
+    $ pip install -r analysis_requirements.txt
+
+
 To access and format the results of a MUSHRA listening test, either use the ``analysis.py`` module: ::
 
     >> import analysis
