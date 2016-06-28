@@ -10,7 +10,7 @@ To recruit participants to evaluate our audio, we post assignments on Mechanical
 
 #. `Create an account on MTurk <https://requester.mturk.com/>`_
 
-#. Create an Amazon AWS IAM user with AmazonMechanicalTurkFullAccess and put your this user's credentials into your ``secret_keys.py`` file.
+#. Create an Amazon AWS IAM user with AmazonMechanicalTurkFullAccess and put your this user's credentials into your ``secret_keys.py`` file (under ``CAQE/src/caqe``).
 
     #. Log into `Amazon AWS <http://aws.amazon.com>`_
     #. Click on `Identity & Access Management` under Amazon Web Services.
@@ -18,6 +18,9 @@ To recruit participants to evaluate our audio, we post assignments on Mechanical
     #. Click on `Create New Users`
     #. Enter a name for your CAQE application and press `Create`.
     #. Click `Show User Security Credentials` and copy those keys into the ``secret_keys.py`` file that you generated earlier using ``generate_key_file.py``.
+    #. Click on `Policies` on the side-panel menu.
+    #. Check ``AmazonMechanicalTurkFullAccess``, click the ``Policy Actions`` button at the top, and click ``Attach``.
+    #. Attach the policy to the user you just created.
 
 #. Configure the MTurk variables in your config file. These are all variables that have the ``MTURK`` prefix. Use these variables to set your HIT's title, description, reward, etc. See :doc:`source/caqe.configuration` for more information.
 

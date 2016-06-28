@@ -150,7 +150,7 @@
 <ol class="arabic">
 <li><p class="first"><a class="reference external" href="https://requester.mturk.com/">Create an account on MTurk</a></p>
 </li>
-<li><p class="first">Create an Amazon AWS IAM user with AmazonMechanicalTurkFullAccess and put your this user&#8217;s credentials into your <code class="docutils literal"><span class="pre">secret_keys.py</span></code> file.</p>
+<li><p class="first">Create an Amazon AWS IAM user with AmazonMechanicalTurkFullAccess and put your this user&#8217;s credentials into your <code class="docutils literal"><span class="pre">secret_keys.py</span></code> file (under <code class="docutils literal"><span class="pre">CAQE/src/caqe</span></code>).</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li>Log into <a class="reference external" href="http://aws.amazon.com">Amazon AWS</a></li>
@@ -159,6 +159,9 @@
 <li>Click on <cite>Create New Users</cite></li>
 <li>Enter a name for your CAQE application and press <cite>Create</cite>.</li>
 <li>Click <cite>Show User Security Credentials</cite> and copy those keys into the <code class="docutils literal"><span class="pre">secret_keys.py</span></code> file that you generated earlier using <code class="docutils literal"><span class="pre">generate_key_file.py</span></code>.</li>
+<li>Click on <cite>Policies</cite> on the side-panel menu.</li>
+<li>Check <code class="docutils literal"><span class="pre">AmazonMechanicalTurkFullAccess</span></code>, click the <code class="docutils literal"><span class="pre">Policy</span> <span class="pre">Actions</span></code> button at the top, and click <code class="docutils literal"><span class="pre">Attach</span></code>.</li>
+<li>Attach the policy to the user you just created.</li>
 </ol>
 </div></blockquote>
 </li>
