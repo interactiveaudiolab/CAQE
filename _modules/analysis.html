@@ -142,6 +142,10 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Analysis module for estimating scores for performing statistical tests.</span>
 
+<span class="sd">Run on the command line, e.g.: ::</span>
+
+<span class="sd">    $ python analysis.py</span>
+
 <span class="sd">.. note:: This module has dependencies not required by the CAQE web application. To install these dependencies, run ``pip install -r analysis_requirements.txt``.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
@@ -158,6 +162,7 @@
 <div class="viewcode-block" id="get_ratings_data"><a class="viewcode-back" href="../source/analysis.html#analysis.get_ratings_data">[docs]</a><span class="k">def</span> <span class="nf">get_ratings_data</span><span class="p">(</span><span class="n">output_file</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the ratings data from the database as a DataFrame</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    output_file : str</span>

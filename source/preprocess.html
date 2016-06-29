@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>analysis script &mdash; CAQE 0.1.1a1 documentation</title>
+  <title>pre-process script &mdash; CAQE 0.1.1a1 documentation</title>
   
 
   
@@ -32,8 +32,7 @@
   
     <link rel="top" title="CAQE 0.1.1a1 documentation" href="../index.html"/>
         <link rel="up" title="Scripts" href="scripts.html"/>
-        <link rel="next" title="pre-process script" href="preprocess.html"/>
-        <link rel="prev" title="create_db script" href="create_db.html"/> 
+        <link rel="prev" title="analysis script" href="analysis.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -96,8 +95,8 @@
 <li class="toctree-l1 current"><a class="reference internal" href="scripts.html">Scripts</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="generate_key_file.html">generate_key_file script</a></li>
 <li class="toctree-l2"><a class="reference internal" href="create_db.html">create_db script</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">analysis script</a></li>
-<li class="toctree-l2"><a class="reference internal" href="preprocess.html">pre-process script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html">analysis script</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pre-process script</a></li>
 </ul>
 </li>
 </ul>
@@ -132,11 +131,11 @@
       
           <li><a href="scripts.html">Scripts</a> &raquo;</li>
       
-    <li>analysis script</li>
+    <li>pre-process script</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/source/analysis.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/source/preprocess.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -146,54 +145,79 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-analysis">
-<span id="analysis-script"></span><h1>analysis script<a class="headerlink" href="#module-analysis" title="Permalink to this headline">¶</a></h1>
-<p>Analysis module for estimating scores for performing statistical tests.</p>
+  <div class="section" id="module-preprocess">
+<span id="pre-process-script"></span><h1>pre-process script<a class="headerlink" href="#module-preprocess" title="Permalink to this headline">¶</a></h1>
+<p>Utilities module for pre-processing audio stimuli</p>
 <p>Run on the command line, e.g.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ python analysis.py
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python preprocess.py
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This module has dependencies not required by the CAQE web application. To install these dependencies, run <code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">analysis_requirements.txt</span></code>.</p>
+<p class="last">This module has dependencies not required by the CAQE web application. To install these dependencies, run
+<code class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">analysis_requirements.txt</span></code>.</p>
 </div>
 <dl class="function">
-<dt id="analysis.get_ratings_data">
-<code class="descclassname">analysis.</code><code class="descname">get_ratings_data</code><span class="sig-paren">(</span><em>output_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis.html#get_ratings_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.get_ratings_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the ratings data from the database as a DataFrame</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>output_file</strong> (<em>str</em>) &#8211; A filepath to an output CSV file (default is None)</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>ratings</strong> &#8211; All of the rating data from the dictionary.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">pandas.DataFrame</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="analysis.plot_mushra_boxplots">
-<code class="descclassname">analysis.</code><code class="descname">plot_mushra_boxplots</code><span class="sig-paren">(</span><em>data</em>, <em>size=5</em>, <em>output_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis.html#plot_mushra_boxplots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.plot_mushra_boxplots" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the MUSHRA ratings as a grid of boxplots. If <cite>output_file</cite> is defined, then save the plot to file.</p>
+<dt id="preprocess.generate_source_separation_anchors">
+<code class="descclassname">preprocess.</code><code class="descname">generate_source_separation_anchors</code><span class="sig-paren">(</span><em>directory=None</em>, <em>file_list=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocess.html#generate_source_separation_anchors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#preprocess.generate_source_separation_anchors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the PEASS-style anchors for use in a source separation evaluation.</p>
+<p>&#8220;The distorted target anchor is created by low-pass filtering the target source signal to a 3.5 kHz cut-off
+frequency and by randomly setting 20% of the remaining timefrequency coefficients to zero.&#8221;</p>
+<p>&#8220;The artifacts anchor is ... created by randomly setting 99% of the time-frequency coefficients of the target to
+zero and by adjusting the loudness of the resulting signal to that of the target.&#8221; - Note that we simply used RMS
+instead of the ISO 352B loudness model as discussed in the paper.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>pandas.DataFrame</em>) &#8211; The ratings data obtained from <cite>get_ratings_data</cite>.</li>
-<li><strong>size</strong> (<em>float</em>) &#8211; Height of each boxplot in inches. (default is 5)</li>
-<li><strong>output_file</strong> (<em>str</em>) &#8211; Path to the output file location. (default is None)</li>
+<li><strong>directory</strong> (<em>str</em>) &#8211; Input directory of audio files to process. Either this or <cite>file_list</cite> must be defined. Default is None.</li>
+<li><strong>file_list</strong> (<em>list of str</em>) &#8211; List of audio files to process. Either this or <cite>directory</cite> must be defined. Default is None.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>g</strong></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">seaborn.axisgrid.FacetGrid</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils footnote" frame="void" id="id1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td>Emiya, V., et al. Subjective and Objective Quality Assessment of Audio Source Separation. IEEE Transactions
+on Audio, Speech, and Language Processing, 19(7): 2046-2057, 2011.</td></tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="preprocess.rms_normalize">
+<code class="descclassname">preprocess.</code><code class="descname">rms_normalize</code><span class="sig-paren">(</span><em>directory=None</em>, <em>file_list=None</em>, <em>suffix=None</em>, <em>target_rms=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocess.html#rms_normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#preprocess.rms_normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>This utility performs rms normalization on a directory or list of files. Note files must be WAV files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>directory</strong> (<em>str</em>) &#8211; Input directory of audio files to process. Either this or <cite>file_list</cite> must be defined. Default is None.</li>
+<li><strong>file_list</strong> (<em>list of str</em>) &#8211; List of audio files to process. Either this or <cite>directory</cite> must be defined. Default is None.</li>
+<li><strong>suffix</strong> (<em>str</em>) &#8211; The suffix to append to the output filenames. If <cite>None</cite>, then the input files will be overwritten. Default is
+None.</li>
+<li><strong>target_rms</strong> (<em>float</em>) &#8211; The target RMS to which we normalize. If <cite>None</cite>, then calculate the minimum RMS of the peak normalized files
+and normalize to that.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>output_file_list</strong> (<em>list of str</em>)</li>
+<li><strong>pre_norm_values</strong> (<em>list of float</em>)</li>
+<li><strong>post_norm_values</strong> (<em>list of float</em>)</li>
+</ul>
+</p>
 </td>
 </tr>
 </tbody>
@@ -209,10 +233,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="preprocess.html" class="btn btn-neutral float-right" title="pre-process script" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="create_db.html" class="btn btn-neutral" title="create_db script" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="analysis.html" class="btn btn-neutral" title="analysis script" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
