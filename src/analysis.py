@@ -3,6 +3,10 @@
 """
 Analysis module for estimating scores for performing statistical tests.
 
+Run on the command line, e.g.: ::
+
+    $ python analysis.py
+
 .. note:: This module has dependencies not required by the CAQE web application. To install these dependencies, run ``pip install -r analysis_requirements.txt``.
 """
 import argparse
@@ -19,6 +23,7 @@ from caqe import app
 def get_ratings_data(output_file=None):
     """
     Get the ratings data from the database as a DataFrame
+
     Parameters
     ----------
     output_file : str

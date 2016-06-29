@@ -1,5 +1,5 @@
 analysis script
-================
+===============
 
 .. automodule:: analysis
     :members:

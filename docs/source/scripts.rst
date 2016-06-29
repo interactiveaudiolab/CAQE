@@ -6,3 +6,4 @@ Scripts
    generate_key_file
    create_db
    analysis
+   preprocess
