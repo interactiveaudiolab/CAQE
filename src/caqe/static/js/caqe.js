@@ -647,8 +647,7 @@ PairwiseTask.prototype.createStimulusMap = function (conditionIndex) {
         referenceKeys.push(this.prependGroupID(this.config.conditions[conditionIndex]['referenceKeys'][i],
             conditionIndex));
     }
-
-    console.log(this.stimulusMap)
+    
     this.audioGroup.setSyncIDs(this.stimulusMap.concat(referenceKeys));
 };
 
