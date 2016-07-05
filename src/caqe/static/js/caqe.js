@@ -536,7 +536,6 @@ PairwiseTask.prototype.constructor = PairwiseTask;
 
 function PairwiseTask(config) {
     EvaluationTask.apply(this, arguments);
-    this.comparisonIndex = 0;
     this.timeoutPassed = false;
     this.createStimulusMap(this.conditionIndex);
 }
@@ -647,7 +646,7 @@ PairwiseTask.prototype.createStimulusMap = function (conditionIndex) {
         referenceKeys.push(this.prependGroupID(this.config.conditions[conditionIndex]['referenceKeys'][i],
             conditionIndex));
     }
-    
+
     this.audioGroup.setSyncIDs(this.stimulusMap.concat(referenceKeys));
 };
 
