@@ -185,13 +185,14 @@ function EvaluationTask (config) {
     this.audioGroup.onLoadedData = $.proxy(this.audioOnLoadedData, this);
     this.audioGroup.onEnded = $.proxy(this.audioOnEnded, this);
 
+    this.stimulusMap = null;
     this.state = EvaluationTaskStateEnum.INTRODUCTION;
     this.currentView = this.views[this.state];
     this.conditionIndex = 0;
     this.completedConditionData = [];
 
     this.loadTrainingAudio();
-    this.loadConditionAudio(this.conditionIndex);
+    this.loadAllConditionGroupAudio();
 
     var evaluationTaskHandle = this;
     window.onbeforeunload = function () {
@@ -199,7 +200,7 @@ function EvaluationTask (config) {
             return 'The evaluation is not complete. Are you sure you want to leave?';
         }
     }
-};
+}
 
 
 EvaluationTask.prototype.views = [
@@ -210,6 +211,13 @@ EvaluationTask.prototype.views = [
     '#complete',
     '#error',
     '#loading'];
+
+
+EvaluationTask.prototype.prependGroupID = function(ID, conditionIndex) {
+    if (typeof conditionIndex === 'undefined') { conditionIndex = this.conditionIndex; }
+
+    return 'G' + this.config.conditions[conditionIndex]['groupID'] + '_' + ID;
+};
 
 
 EvaluationTask.prototype.showOnly = function (targetView) {
@@ -224,16 +232,17 @@ EvaluationTask.prototype.showOnly = function (targetView) {
 
 
 EvaluationTask.prototype.audioOnTimeUpdate = function (e) {
+    var position;
     if (this.audioGroup.audioPlayingID == -1) {
         $('#playback-position').val(0);
     } else if (this.audioGroup.audioPlayingID == -2) {
         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioSoloingID)) {
-            var position = e.target.currentTime / e.target.duration * 100;
+            position = e.target.currentTime / e.target.duration * 100;
             $('#playback-position').val(position);
         }
     } else {
         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioPlayingID)) {
-            var position = e.target.currentTime / e.target.duration * 100;
+            position = e.target.currentTime / e.target.duration * 100;
             $('#playback-position').val(position);
         }
     }
@@ -295,17 +304,25 @@ EvaluationTask.prototype.loadTrainingAudio = function () {
 };
 
 
-EvaluationTask.prototype.loadConditionAudio = function (conditionIndex) {
-    var key;
-    for (key in this.config.conditions[conditionIndex]['referenceFiles']) {
-        if (this.config.conditions[conditionIndex]['referenceFiles'].hasOwnProperty(key)) {
-            this.addAudio(this.audioGroup, this.config.conditions[conditionIndex]['referenceFiles'][key], key);
-        }
+EvaluationTask.prototype.loadConditionGroupAudio = function (conditionGroupID) {
+    var i;
+    for (i = 0; i < this.config.conditionGroups[conditionGroupID]['referenceFiles'].length; i++) {
+        this.addAudio(this.audioGroup,
+            this.config.conditionGroups[conditionGroupID]['referenceFiles'][i][1],
+            'G' + conditionGroupID + '_' + this.config.conditionGroups[conditionGroupID]['referenceFiles'][i][0]);
     }
-    for (key in this.config.conditions[conditionIndex]['stimulusFiles']) {
-        if (this.config.conditions[conditionIndex]['stimulusFiles'].hasOwnProperty(key)) {
-            this.addAudio(this.audioGroup, this.config.conditions[conditionIndex]['stimulusFiles'][key], key);
-        }
+    for (i = 0; i < this.config.conditionGroups[conditionGroupID]['stimulusFiles'].length; i++) {
+        this.addAudio(this.audioGroup,
+            this.config.conditionGroups[conditionGroupID]['stimulusFiles'][i][1],
+            'G' + conditionGroupID + '_' + this.config.conditionGroups[conditionGroupID]['stimulusFiles'][i][0]);
+    }
+};
+
+
+EvaluationTask.prototype.loadAllConditionGroupAudio = function () {
+    var groupIDs = Object.keys(this.config.conditionGroups);
+    for (var i = 0; i < groupIDs.length; i++) {
+        this.loadConditionGroupAudio(groupIDs[i]);
     }
 };
 
@@ -339,6 +356,11 @@ EvaluationTask.prototype.startEvaluation = function () {
     // start timer
     this.testTimeout = setTimeout(this.testTimeoutCallback, this.config['testTimeoutSec'] * 1000.0, this);
 
+    this.setTrialCountLabels();
+
+    if (this.config.conditions[this.conditionIndex]['evaluation_instructions_html'] !== 'None') {
+        $('#evaluationInstructions').html(this.config.conditions[this.conditionIndex]['evaluation_instructions_html']);
+    }
     this.showOnly('#evaluation');
 };
 
@@ -384,7 +406,7 @@ EvaluationTask.prototype.playAudio = function(ID) {
 
 
 EvaluationTask.prototype.playReference = function(ID) {
-    this.audioGroup.play(ID);
+    this.audioGroup.play(this.prependGroupID(ID));
     $('.play-btn').removeClass('btn-success').addClass('btn-default disabled disable-clicks');
     $('#playReference' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played');
 };
@@ -394,6 +416,12 @@ EvaluationTask.prototype.playStimulus = function(idx) {
     this.audioGroup.play(this.stimulusMap[idx]);
     $('.play-btn').removeClass('btn-success').addClass('btn-default disabled disable-clicks');
     $('#playStimulus' + idx + 'Btn').removeClass('btn-default').addClass('btn-success played');
+};
+
+
+EvaluationTask.prototype.setTrialCountLabels = function () {
+    $('#currentTrialLbl').html(this.conditionIndex + 1);
+    $('#totalTrialLbl').html(this.config.conditions.length);
 };
 
 
@@ -408,6 +436,12 @@ EvaluationTask.prototype.nextTrial = function () {
     if (this.conditionIndex >= this.config.conditions.length) {
         this.submitResults();
         return false;
+    }
+
+    this.setTrialCountLabels();
+
+    if (this.config.conditions[this.conditionIndex]['evaluation_instructions_html'] !== 'None') {
+        $('#evaluationInstructions').html(this.config.conditions[this.conditionIndex]['evaluation_instructions_html']);
     }
 
     return true;
@@ -440,12 +474,10 @@ function MushraTask(config) {
 
 MushraTask.prototype.createStimulusMap = function (conditionIndex) {
     this.stimulusMap = [];
-    var i = 0;
-    for (var key in this.config.conditions[conditionIndex]['stimulusFiles']) {
-        if (this.config.conditions[conditionIndex]['stimulusFiles'].hasOwnProperty(key)) {
-            this.stimulusMap[i] = key;
-            i++;
-        }
+    var i;
+    for (i = 0; i < this.config.conditions[conditionIndex]['stimulusKeys'].length; i++) {
+        this.stimulusMap[i] = this.prependGroupID(this.config.conditions[conditionIndex]['stimulusKeys'][i],
+            conditionIndex);
     }
 };
 
@@ -459,26 +491,38 @@ MushraTask.prototype.connectSliders = function() {
     });
 };
 
+MushraTask.prototype.setSliders = function(value) {
+    $('.mushra-slider').each( function() {
+        this.value = value;
+    });
+};
+
 
 MushraTask.prototype.nextTrial = function () {
     if (EvaluationTask.prototype.nextTrial.apply(this)) {
         this.createStimulusMap(this.conditionIndex);
+        this.setSliders(this.config.defaultRatingValue);
     }
 };
 
 
 // save the ratings for the current condition
 MushraTask.prototype.saveRatings = function() {
-    conditionRatings = {};
-    stimulusMap = this.stimulusMap;
+    var conditionRatings = {};
+    var stimulusMap = this.stimulusMap;
     $('.mushra-slider').each( function(idx) {
-        conditionRatings[stimulusMap[idx]] = this.value;
+        var re = /G([0-9]+)_([a-zA-Z0-9]+)/;
+        var stimulusID = re.exec(stimulusMap[idx])[2];
+        conditionRatings[stimulusID] = this.value;
     });
 
     this.completedConditionData[this.conditionIndex] = {'ratings': conditionRatings,
         'conditionID': this.config.conditions[this.conditionIndex].conditionID,
-        'referenceFiles': this.config.conditions[this.conditionIndex].referenceFiles,
-        'stimulusFiles': this.config.conditions[this.conditionIndex].stimulusFiles};
+        'groupID': this.config.conditions[this.conditionIndex].groupID,
+        'referenceFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['referenceFiles'],
+        'stimulusFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['stimulusFiles'],
+        'referenceKeys': this.config.conditions[this.conditionIndex].referenceKeys,
+        'stimulusKeys': this.config.conditions[this.conditionIndex].stimulusKeys};
 };
 
 
@@ -493,32 +537,25 @@ PairwiseTask.prototype.constructor = PairwiseTask;
 function PairwiseTask(config) {
     EvaluationTask.apply(this, arguments);
     this.comparisonIndex = 0;
-    this.conditionRatings = {};
     this.timeoutPassed = false;
-    this.createStimulusMap(this.conditionIndex, this.comparisonIndex);
+    this.createStimulusMap(this.conditionIndex);
 }
 
 PairwiseTask.prototype.startEvaluation = function () {
     EvaluationTask.prototype.startEvaluation.apply(this);
 
-    this.setComparisonCountLabels();
     this.audioGroup.setLoopAudio(true);
 };
 
 
-PairwiseTask.prototype.setComparisonCountLabels = function () {
-    $('#currentComparisonLbl').html(this.comparisonIndex + 1);
-    $('#totalComparisonsLbl').html(this.config.conditions[this.conditionIndex]['comparisonPairs'].length);
-};
-
 PairwiseTask.prototype.testTimeoutCallback = function (_this) {
     _this.timeoutPassed = true;
-    _this.testNextComparisonConditions();
+    _this.testNextTrialRequirements();
 };
 
 
 PairwiseTask.prototype.playReference = function(ID) {
-    this.audioGroup.solo(ID);
+    this.audioGroup.solo(this.prependGroupID(ID));
     if (this.audioGroup.audioPlayingID == -1) {
         this.audioGroup.syncPlay();
     }
@@ -526,7 +563,7 @@ PairwiseTask.prototype.playReference = function(ID) {
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
     $('#playReference' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played');
 
-    this.testNextComparisonConditions();
+    this.testNextTrialRequirements();
 };
 
 
@@ -544,7 +581,7 @@ PairwiseTask.prototype.playStimulus = function(ID) {
     $('#playStimulus' + ID + 'BtnLabel').html('(selected)');
     $('#playStimulus' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played pairwise-selected');
 
-    this.testNextComparisonConditions();
+    this.testNextTrialRequirements();
 };
 
 
@@ -554,7 +591,7 @@ PairwiseTask.prototype.stopAllAudio = function() {
 };
 
 
-PairwiseTask.prototype.nextComparison = function () {
+PairwiseTask.prototype.nextTrial = function () {
     this.stopAllAudio();
     if (!this.saveRatings()) {
         return;
@@ -571,20 +608,23 @@ PairwiseTask.prototype.nextComparison = function () {
     // reset playback position
     $('#playback-position').val(0);
 
-    this.comparisonIndex++;
-    if (this.comparisonIndex >= this.config.conditions[this.conditionIndex]['comparisonPairs'].length) {
-        $(window).scrollTop();
-        this.nextTrial();
+    this.conditionIndex++;
+
+    if (this.conditionIndex >= this.config.conditions.length) {
+        this.submitResults();
     } else {
-        this.createStimulusMap(this.conditionIndex, this.comparisonIndex);
-        this.setComparisonCountLabels();
+        this.createStimulusMap(this.conditionIndex);
+        this.setTrialCountLabels();
+        if (this.config.conditions[this.conditionIndex]['evaluation_instructions_html'] !== 'None') {
+            $('#evaluationInstructions').html(this.config.conditions[this.conditionIndex]['evaluation_instructions_html']);
+        }
         this.timeoutPassed = false;
         this.testTimeout = setTimeout(this.testTimeoutCallback, this.config['testTimeoutSec'] * 1000.0, this);
     }
 };
 
 
-PairwiseTask.prototype.testNextComparisonConditions = function () {
+PairwiseTask.prototype.testNextTrialRequirements = function () {
     var qry = $('#evaluation');
     var all_played = qry.find('.play-btn').length == qry.find('.play-btn').filter('.played').length;
     var stimulus_selected = $('.pairwise-stimulus-play-btn').hasClass('pairwise-selected');
@@ -595,34 +635,21 @@ PairwiseTask.prototype.testNextComparisonConditions = function () {
 };
 
 
-PairwiseTask.prototype.nextTrial = function () {
-    // save the condition ratings list
-    this.completedConditionData[this.conditionIndex] = {'ratings': this.conditionRatings,
-        'conditionID': this.config.conditions[this.conditionIndex].conditionID,
-        'referenceFiles': this.config.conditions[this.conditionIndex].referenceFiles,
-        'stimulusFiles': this.config.conditions[this.conditionIndex].stimulusFiles};
-
-    // clear variables
-    this.comparisonIndex = 0;
-    this.conditionRatings = [];
-
-    this.conditionIndex++;
-    if (this.conditionIndex >= this.config.conditions.length) {
-        this.submitResults();
-    } else {
-        this.createStimulusMap(this.conditionIndex, this.comparisonIndex);
-        this.setComparisonCountLabels();
-        this.timeoutPassed = false;
-        this.testTimeout = setTimeout(this.testTimeoutCallback, this.config['testTimeoutSec'] * 1000.0, this);
+PairwiseTask.prototype.createStimulusMap = function (conditionIndex) {
+    var i;
+    this.stimulusMap = []
+    for (i = 0; i < this.config.conditions[conditionIndex]['stimulusKeys'].length; i++) {
+        this.stimulusMap[i] = this.prependGroupID(this.config.conditions[conditionIndex]['stimulusKeys'][i],
+            conditionIndex);
     }
-};
+    var referenceKeys = [];
+    for (i = 0; i < this.config.conditions[conditionIndex]['referenceKeys'].length; i++) {
+        referenceKeys.push(this.prependGroupID(this.config.conditions[conditionIndex]['referenceKeys'][i],
+            conditionIndex));
+    }
 
-
-PairwiseTask.prototype.createStimulusMap = function (conditionIndex, comparisonIndex) {
-    this.stimulusMap = this.config.conditions[conditionIndex]['comparisonPairs'][comparisonIndex];
-    this.referenceNames = Object.keys(this.config.conditions[conditionIndex]['referenceFiles']);
-
-    this.audioGroup.setSyncIDs(this.stimulusMap.concat(this.referenceNames));
+    console.log(this.stimulusMap)
+    this.audioGroup.setSyncIDs(this.stimulusMap.concat(referenceKeys));
 };
 
 
@@ -634,10 +661,27 @@ PairwiseTask.prototype.saveRatings = function() {
         return false;
     }
 
+    var stimulusMap = [];
+
+    var i;
+    var re = /G([0-9]+)_([a-zA-Z0-9]+)/;
+    for (i = 0; i < this.stimulusMap.length; i++) {
+        stimulusMap[i] = re.exec(this.stimulusMap[i])[2];
+    }
+
     // save the selected one
-    var selected = $('playStimulus0Btn').hasClass('pairwise-selected') ? 'A' : 'B';
-    this.conditionRatings[this.comparisonIndex] = {'stimuli': this.stimulusMap,
-        'selection': selected};
+    var conditionRatings = {};
+    conditionRatings[stimulusMap[0]] = $('#playStimulus0Btn').hasClass('pairwise-selected') ? 1 : 0;
+    conditionRatings[stimulusMap[1]] = $('#playStimulus1Btn').hasClass('pairwise-selected') ? 1 : 0;
+
+    // save the condition data
+    this.completedConditionData[this.conditionIndex] = {'ratings': conditionRatings,
+        'conditionID': this.config.conditions[this.conditionIndex].conditionID,
+        'groupID': this.config.conditions[this.conditionIndex].groupID,
+        'referenceFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['referenceFiles'],
+        'stimulusFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['stimulusFiles'],
+        'referenceKeys': this.config.conditions[this.conditionIndex].referenceKeys,
+        'stimulusKeys': this.config.conditions[this.conditionIndex].stimulusKeys};
 
     return true;
 };

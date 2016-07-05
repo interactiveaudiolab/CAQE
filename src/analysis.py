@@ -103,7 +103,7 @@ if __name__ == '__main__':
     ch.add_argument('output_file', type=str, help='Path to output file location')
     ch.add_argument('--size', type=float, help='Height of each boxplot in inches.', default=5.)
 
-    ch = sp.add_parser('save-data-to-csv', help='Save MUSHRA data to a csv file.')
+    ch = sp.add_parser('save-data-to-csv', help='Save ratings data to a csv file.')
     ch.add_argument('output_file', type=str, help='Path to output file location')
 
     args = parser.parse_args()

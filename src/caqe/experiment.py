@@ -9,12 +9,13 @@ import logging
 import random
 import datetime
 import itertools
+from collections import defaultdict
 
 from sqlalchemy import func
 
 import caqe.utilities as utilities
 
-from .models import Condition, Participant, Trial, Test
+from .models import Condition, Participant, Trial, Test, Group
 from caqe import db
 from caqe import app
 
@@ -59,17 +60,22 @@ def insert_tests_and_conditions(config=None):
         # store app config variables as well for reference
         test_config = copy.deepcopy(config)
         del test_config['TESTS']
-        del test_config['PERMANENT_SESSION_LIFETIME']
+        del test_config['PERMANENT_SESSION_LIFETIME']  # a flask variable
         test_config.update(test_dict['test_config_variables'])
         test = Test(json.dumps(test_config))
         db.session.add(test)
         db.session.commit()
 
-        for condition_dict in test_dict['conditions']:
-            c = Condition(test_id=test.id, data=json.dumps(condition_dict))
-            db.session.add(c)
+        for condition_group in test_dict['condition_groups']:
+            conditions = condition_group['conditions']
+            del condition_group['conditions']
+            group = Group(data=json.dumps(condition_group))
+            db.session.add(group)
             db.session.commit()
-
+            for condition_dict in conditions:
+                c = Condition(test_id=test.id, group_id=group.id, data=json.dumps(condition_dict))
+                db.session.add(c)
+                db.session.commit()
 
 
 def get_available_conditions(limit_to_condition_ids=None):
@@ -132,12 +138,14 @@ def assign_conditions(participant, limit_to_condition_ids=None):
 
     conditions = conditions.filter(Condition.id.notin_(participant_conditions))
 
-    # conditions = db.session.query(Condition). \
-    #     filter(and_(Condition.id.notin_(finished_conditions),
-    #                 Condition.id.notin_(participant_conditions),
-    #                 Condition.id.in_([2, 12, 22, 32, 42, 5, 15, 25, 35, 45]))). \
-    #     order_by(Condition.id).all()
-    conditions = conditions.order_by(Condition.id).all()
+    # find which group has the most conditions for this participant
+    groups, group_counts = zip(*conditions.add_columns(func.count(Condition.group_id)).group_by(Condition.group_id).all())
+
+    group_id = groups[group_counts.index(max(group_counts))].group_id
+    condition_group_ids = [group_id,]
+
+    # limit to one group
+    conditions = conditions.filter(Condition.group_id == group_id).order_by(Condition.id).all()
 
     if conditions is None or len(conditions) == 0:
         logger.info('No hits left for %r' % participant)
@@ -171,8 +179,10 @@ def assign_conditions(participant, limit_to_condition_ids=None):
     else:
         condition_ids = [c.id for c in conditions[:app.config['CONDITIONS_PER_EVALUATION']]]
 
-    logger.info('Participant %r assigned conditions: %r' % (participant, condition_ids))
-    return condition_ids
+    logger.info('Participant %r assigned conditions: %r in groups: %r' % (participant,
+                                                                          condition_ids,
+                                                                          condition_group_ids))
+    return condition_ids, condition_group_ids
 
 
 def get_test_configurations(condition_ids, participant_id):
@@ -201,21 +211,67 @@ def get_test_configurations(condition_ids, participant_id):
                 test_configurations.append(test_config)
             current_test_id = condition.test_id
             test_config = {'test': json.loads(condition.test.data),
-                           'conditions': []}
+                           'conditions': [],
+                           'condition_groups': {}}
 
         condition_data = json.loads(condition.data)
+        condition_group_data = json.loads(condition.group.data)
+
+        if app.config['STIMULUS_ORDER_RANDOMIZED']:
+            random.shuffle(condition_group_data['stimulus_files'])
+            random.shuffle(condition_data['stimulus_keys'])
+
         if app.config['ENCRYPT_AUDIO_STIMULI_URLS']:
-            condition_data['reference_files'] = encrypt_audio_stimuli(condition_data['reference_files'],
-                                                                      participant_id,
-                                                                      condition.id)
-            condition_data['stimulus_files'] = encrypt_audio_stimuli(condition_data['stimulus_files'],
-                                                                     participant_id,
-                                                                     condition.id)
+            condition_group_data['reference_files'] = encrypt_audio_stimuli(condition_group_data['reference_files'],
+                                                                            participant_id,
+                                                                            condition.group_id)
+            condition_group_data['stimulus_files'] = encrypt_audio_stimuli(condition_group_data['stimulus_files'],
+                                                                           participant_id,
+                                                                           condition.group_id)
+            encoding_map, _, _ = get_encoding_maps(condition_group_data['stimulus_files'])
+            condition_data['stimulus_keys'] = [encoding_map[key] for key in condition_data['stimulus_keys']]
+
+        test_config['condition_groups'][condition.group_id] = condition_group_data
+
         # make sure that condition_id is added to the conditions dict
-        test_config['conditions'].append(dict({'id': condition.id}, **condition_data))
+        test_config['conditions'].append(dict({'id': condition.id, 'group_id': condition.group_id}, **condition_data))
     test_configurations.append(test_config)
 
     return test_configurations
+
+
+def get_encoding_maps(encrypted_audio_stimuli):
+    """
+    Build a stimulus key translation map from the `encypted_audio_stimuli`.
+
+    Parameters
+    ----------
+    encrypted_audio_stimuli: list of tuple
+        The first element of each duple is a key, the second is the encrypted audio_file_path
+        For all non-references, the key should be of the form E[0-9+]. The order of the stimuli will be random (except
+        for the references)
+
+    Returns
+    -------
+    encoding_map : dict
+        A map from unencoded to encoded stimulus keys
+    decoding_map : dict
+        A map from encoded to unencoded stimulus keys
+    decrypted_filenames : dict
+        A map from stimulus key to filename
+    """
+    decrypted_filenames = {}
+    encoding_map = {}
+    decoding_map = {}
+
+    # decrypt the URLs to find the mapping between s_id and e_id and the real filename
+    for k, v in encrypted_audio_stimuli:
+        adict = _decode_url(v)
+        decrypted_filenames[adict['s_id']] = adict['URL']
+        encoding_map[adict['s_id']] = adict['e_id']
+        decoding_map[adict['e_id']] = adict['s_id']
+
+    return encoding_map, decoding_map, decrypted_filenames
 
 
 def generate_comparison_pairs(condition_datas):
@@ -247,11 +303,11 @@ def generate_comparison_pairs(condition_datas):
     return condition_datas
 
 
-def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_id):
+def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_group_id):
     """
     Reorder and encrypt the condition files. Do this by encoding each file as a special URL. One in which is an
-    encrypted, serialized, dictionary. The dictionary contains, the participant_id (p_id), the condition_id (c_id),
-    the stimuli_id (s_id), and a encrypted stimuli_id (e_id)
+    encrypted, serialized, dictionary. The dictionary contains, the participant_id (p_id), the condition_group_id
+    (g_id), the stimuli_id (s_id), and a encrypted stimuli_id (e_id)
 
     Parameters
     ----------
@@ -259,20 +315,19 @@ def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_id):
         The first element of each duple is a key, the second is the audio_file_path
         For all non-references, the key should be of the form S[0-9+]
     participant_id: int
-    condition_id: int
+    condition_group_id: int
 
     Returns
     -------
     encrypted_audio_stimuli: list of tuple
         The first element of each duple is a key, the second is the encrypted audio_file_path
-        For all non-references, the key should be of the form E[0-9+]. The order of the stimuli will be random (except
-        for the references)
+        For all non-references, the key should be of the form E[0-9+].
     """
 
     def encode_url(url, _s_id, _e_id):
         adict = {'s_id': _s_id,
                  'p_id': participant_id,
-                 'c_id': condition_id,
+                 'g_id': condition_group_id,
                  'e_id': _e_id,
                  'URL': url}
         return '/audio/' + utilities.encrypt_data(adict) + '.wav'
@@ -283,9 +338,6 @@ def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_id):
 
     non_references = [a for a in audio_stimuli if a[0][0] == 'S']
 
-    if app.config['STIMULUS_ORDER_RANDOMIZED']:
-        random.shuffle(non_references)
-
     for k, a in enumerate(non_references):
         e_id = 'E%d' % (k + 1)
         s_id = a[0]
@@ -293,6 +345,14 @@ def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_id):
         a[1] = encode_url(a[1], s_id, e_id)
 
     return references + non_references
+
+
+def _decode_url(encrypted_url):
+    # remove /audio/
+    encrypted_data = encrypted_url[7:]
+    # remove .wav
+    encrypted_data = encrypted_data[:-4]
+    return utilities.decrypt_data(str(encrypted_data))
 
 
 def decrypt_audio_stimuli(condition_data):
@@ -308,35 +368,18 @@ def decrypt_audio_stimuli(condition_data):
     -------
     trial_data: dict
     """
-
-    def decode_url(encrypted_url):
-        # remove /audio/
-        encrypted_data = encrypted_url[7:]
-        # remove .wav
-        encrypted_data = encrypted_data[:-4]
-        return utilities.decrypt_data(str(encrypted_data))
-
     encrypted_filenames = condition_data['stimulusFiles']
-    decrypted_filenames = {}
-    translation = {}
-
-    # decrypt the URLs to find the mapping between s_id and e_id and the real filename
-    for k, v in encrypted_filenames.items():
-        adict = decode_url(v)
-        decrypted_filenames[adict['s_id']] = adict['URL']
-        translation[adict['e_id']] = adict['s_id']
+    _, decoding_map, decrypted_filenames = get_encoding_maps(encrypted_filenames)
 
     condition_data['stimulusFiles'] = decrypted_filenames
 
     if app.config['TEST_TYPE'] == 'mushra':
-        condition_data['ratings'] = dict([(translation[k], v) for k, v in condition_data['ratings'].items()])
+        condition_data['ratings'] = dict([(decoding_map[k], v) for k, v in condition_data['ratings'].items()])
     elif app.config['TEST_TYPE'] == 'pairwise':
-        ratings_dict = {}
-        for k, v in condition_data['ratings'].items():
-            ratings_dict[k] = {'stimuli': [translation[v['stimuli'][0]],
-                                           translation[v['stimuli'][1]]],
-                               'selection': v['selection']}
-        condition_data['ratings'] = ratings_dict
+        condition_data['ratings'] = dict([(decoding_map[k], v) for k, v in condition_data['ratings'].items()])
+    ###################################################################################################################
+    # ADD NEW TEST TYPES HERE
+    ###################################################################################################################
     return condition_data
 
 
