@@ -158,7 +158,7 @@ def audio(audio_file_key):
 
             # can also assert that this file is for this specific participant and condition
             assert (audio_file_dict['p_id'] == session['participant_id'])
-            assert (audio_file_dict['c_id'] in session['condition_ids'])
+            assert (audio_file_dict['g_id'] in session['condition_group_ids'])
             filename = audio_file_dict['URL']
         except (ValueError, TypeError):
             filename = audio_file_key + '.wav'
@@ -361,7 +361,7 @@ def pre_evaluation_tasks():
     participant = get_current_participant(session)
 
     # assign conditions
-    session['condition_ids'] = experiment.assign_conditions(participant)
+    session['condition_ids'], session['condition_group_ids'] = experiment.assign_conditions(participant)
 
     # Are there any conditions left for the participant to do?
     if session['condition_ids'] is None or len(session['condition_ids']) == 0:
@@ -569,7 +569,10 @@ def evaluation():
                     cd = experiment.decrypt_audio_stimuli(cd)
 
                 # create database object
-                trial = Trial(participant_id, condition_id, json.dumps(cd), json.dumps(crowd_data),
+                trial = Trial(participant_id,
+                              condition_id,
+                              json.dumps(cd),
+                              json.dumps(crowd_data),
                               participant.passed_hearing_test)
                 db.session.add(trial)
                 logger.info('Results saved for %r' % trial)
@@ -584,26 +587,12 @@ def evaluation():
         test_configurations = experiment.get_test_configurations(session['condition_ids'], participant.id)
 
         # for now don't consider the case that there could be more than one test per participant
-        assert len(
-            test_configurations) == 1, "`test_configuration` has length greater than 1. This is not supported for now."
+        assert len(test_configurations) == 1, "`test_configuration` has length greater than 1. This is not supported for now."
         test_config = test_configurations[0]
-
         if app.config['TEST_TYPE'] == 'mushra':
             return render_template('mushra.html',
                                    test=test_config['test'],
-                                   conditions=test_config['conditions'],
-                                   participant_id=participant.id,
-                                   first_evaluation=participant.trials.count() == 0,
-                                   test_complete_redirect_url=url_for('post_evaluation_tasks', _external=True,
-                                                                      _scheme=app.config['PREFERRED_URL_SCHEME']),
-                                   submission_url=url_for('evaluation',
-                                                          _external=True,
-                                                          _scheme=app.config['PREFERRED_URL_SCHEME']))
-        elif app.config['TEST_TYPE'] == 'pairwise':
-            test_config['conditions'] = experiment.generate_comparison_pairs(test_config['conditions'])
-
-            return render_template('pairwise.html',
-                                   test=test_config['test'],
+                                   condition_groups=test_config['condition_groups'],
                                    conditions=test_config['conditions'],
                                    participant_id=participant.id,
                                    first_evaluation=participant.trials.count() == 0,
@@ -613,9 +602,26 @@ def evaluation():
                                    submission_url=url_for('evaluation',
                                                           _external=True,
                                                           _scheme=app.config['PREFERRED_URL_SCHEME']))
+        elif app.config['TEST_TYPE'] == 'pairwise':
+            return render_template('pairwise.html',
+                                   test=test_config['test'],
+                                   condition_groups=test_config['condition_groups'],
+                                   conditions=test_config['conditions'],
+                                   participant_id=participant.id,
+                                   first_evaluation=participant.trials.count() == 0,
+                                   test_complete_redirect_url=url_for('post_evaluation_tasks',
+                                                                      _external=True,
+                                                                      _scheme=app.config['PREFERRED_URL_SCHEME']),
+                                   submission_url=url_for('evaluation',
+                                                          _external=True,
+                                                          _scheme=app.config['PREFERRED_URL_SCHEME']))
+        ###############################################################################################################
+        # ADD NEW TEST TYPES HERE
+        ###############################################################################################################
         else:
             return render_template('%s.html' % test_config['test']['test_type'],
                                    test=test_config['test'],
+                                   condition_groups=test_config['condition_groups'],
                                    conditions=test_config['conditions'],
                                    participant_id=participant.id,
                                    first_evaluation=participant.trials.count() == 0,

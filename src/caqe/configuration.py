@@ -96,7 +96,13 @@ class BaseConfig(object):
     HEARING_RESPONSE_ESTIMATION_ENABLED : bool
         If enabled, ask participants to complete the in-situ hearing response estimation. (default is True)
     CONDITIONS_PER_EVALUATION : int
-        The number of conditions to present to a participant in a single visit to '/evaluate'. (default is 1)
+        The number of conditions to present to a participant in a single visit to '/evaluate'.
+        Note that currently evaluation is limited to one condition group. So if this value is more than 1, there must
+        be at least as many conditions per group as there are conditions per evaluation for this to have an effect.
+        It is also recommended that an integer multiple of `CONDITIONS_PER_EVALUATION` comprise the number of conditions
+        per group. For example, if there are 28 conditions in a group, set the number of `CONDITIONS_PER_EVALUATION` to
+        14 or 7.
+        (default is 1)
     TRIALS_PER_CONDITION : int
         The number of trials we should collect per condition (with distinct participants). (default is 20)
     LIMIT_SUBJECT_TO_ONE_TASK_TYPE : bool
@@ -186,25 +192,34 @@ class BaseConfig(object):
     DEFAULT_RATING_VALUE : int
         The default rating value on the MUSHRA slider. (default is 50)
     TESTS : list of dict
-        The test and condition-specific configuration variables. The dicts are of the form::
+        The test and condition-specific configuration variables.
+        Note that if 'evaluation_instructions_html' is not None in the condition, it will override the instructions
+        defined in the test.
+        Note also that reference keys must be alphanumeric and stimulus keys must begin with 'S' followed by a number,
+        e.g. 'S29'.
 
-            {'test_config_variables' :
-                {'test_title' : '...', # The test title that is displayed on the evaluation page
-                 'first_task_introduction_html' : '...',  # Content of the intro page the first time they do a task
-                 'introduction_html' : '...', # Content of the intro page (after the first time they perform the task)
-                 'training_instructions_html' : '...', # The HTML content of the training instructions
-                 'evaluation_instructions_html' : '...'}, # The HTML content of the evaluation instructions
+        The dicts are of the form::
+
+            {'test_config_variables':
+                {'test_title': '...', # The test title that is displayed on the evaluation page
+                 'first_task_introduction_html': '...',  # Content of the intro page the first time they do a task
+                 'introduction_html': '...', # Content of the intro page (after the first time they perform the task)
+                 'training_instructions_html': '...', # The HTML content of the training instructions
+                 'evaluation_instructions_html': '...'}, # The HTML content of the evaluation instructions
                  'references' : (('<reference_name>', '<reference_description>'),), # Reference names and descriptions
-                 'reference_example_dict' :
+                 'reference_example_dict':
                     {'<reference_name}': url_for('static', filename='audio/<reference_filename>.wav'), ... },
-                 'quality_example_dict' :
+                 'quality_example_dict':
                     {'<example_type0>': [url_for('static', filename='audio/<example0_filename>.wav'),
-                                       url_for('static', filename='audio/<example1_filename>.wav'),],
+                                         url_for('static', filename='audio/<example1_filename>.wav'),],
                      '<example_type1>': [url_for('static', filename='audio/<example3_filename>),]}},
-             'conditions' :
-                [{'reference_files': [(<reference_name>, '<reference_filename>.wav'),],
-                  'stimulus_files': [('S1', '<S1_filename>.wav'),
-                                    ('S2', '<S2_filename>.wav'),]},]}
+             'condition_groups' :
+                [{'reference_files': {<reference_name>: '<reference_filename>.wav',},
+                 {'stimulus_files': {'S1': '<S1_filename>.wav',
+                                     'S2': '<S2_filename>,wav',}},
+                 {'conditions': [{'reference_keys': [<reference_name>,],
+                                  'stimulus_keys': ['S1','S2','S7', ... ],
+                                  'evaluation_instructions_html': <condition_specific_evaluation_instructions>},]},]}
 
         (default is [])
 
