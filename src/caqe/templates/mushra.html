@@ -6,27 +6,37 @@
     <div class="row">
         <div class="col-md-10 col-md-offset-2"><b>Sounds you will rating be in the evaluation phase</b></div>
     </div>
-    {# for now limit to the first condition #}
-    {% for ref, path in conditions[0].reference_files%}
-        <div class="row">
-            <div class="col-md-5 col-md-offset-4 text-right">{{ ref }}</div>
-            <div class="col-md-1">
-                <button class="btn btn-default play-btn" id="play{{ ref }}Btn" onclick="evaluationTask.playAudio('{{ ref }}');">
-                    <span class="glyphicon glyphicon-play"></span>
-                </button>
+    {% for condition in conditions %}
+        {% if conditions|length > 1 %}
+            <div class="row">
+                <div class="col-md-10 col-md-offset-2">&bull; <b>Evaluation {{ loop.index }}</b></div>
             </div>
-        </div>
-    {% endfor %}
+        {% endif %}
+        {% for key in condition.reference_keys%}
+            <div class="row">
+                <div class="col-md-5 col-md-offset-4 text-right">{{ key }}</div>
+                <div class="col-md-1">
+                    <button class="btn btn-default play-btn"
+                            id="play{{ 'G' + condition.group_id|string + '_' + key }}Btn"
+                            onclick="evaluationTask.playAudio('{{ 'G' +condition.group_id|string + '_' + key }}');">
+                        <span class="glyphicon glyphicon-play"></span>
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
 
-    {% for ref, path in conditions[0].stimulus_files%}
-        <div class="row">
-            <div class="col-md-5 col-md-offset-4 text-right">Sound {{ loop.index }}</div>
-            <div class="col-md-1">
-                <button class="btn btn-default play-btn" id="play{{ ref }}Btn" onclick="evaluationTask.playAudio('{{ ref }}');">
-                    <span class="glyphicon glyphicon-play"></span>
-                </button>
+        {% for key in condition.stimulus_keys%}
+            <div class="row">
+                <div class="col-md-5 col-md-offset-4 text-right">Sound {{ loop.index }}</div>
+                <div class="col-md-1">
+                    <button class="btn btn-default play-btn"
+                            id="play{{ 'G' + condition.group_id|string + '_' + key }}Btn"
+                            onclick="evaluationTask.playAudio('{{ 'G' + condition.group_id|string + '_' + key }}');">
+                        <span class="glyphicon glyphicon-play"></span>
+                    </button>
+                </div>
             </div>
-        </div>
+        {% endfor %}
     {% endfor %}
 {% endblock %}
 
@@ -40,7 +50,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">﻿
+            <div class="col-md-8 col-md-offset-2" id="evaluationInstructions">﻿
                 {{ test.evaluation_instructions_html | safe }}
             </div>
         </div>
@@ -48,6 +58,9 @@
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="well" id="mushra-well">
+                    <div class="row text-center">
+                        <h4>Trial <span id="currentTrialLbl">0</span> of <span id="totalTrialLbl">0</span></h4>
+                    </div>
                     {% for reference in test.references %}
                         <div class="row">
                             <div class="col-md-3">
@@ -66,7 +79,7 @@
                         <div class="col-md-10 col-md-offset-2">
                             <div class="row">
                                 {# for now limit to the first condition #}
-                                {% for i in range(conditions[0]['stimulus_files']|count) %}
+                                {% for i in range(conditions[0]['stimulus_keys']|count) %}
                                     <div class="col-md-1"><input type="text"
                                                                  class="rating"
                                                                  id="slider{{ i }}Value"
@@ -84,7 +97,7 @@
                         <div class="col-md-10">
                             <div class="row">
                                 {# for now limit to the first condition #}
-                                {% for i in range(conditions[0]['stimulus_files']|count) %}
+                                {% for i in range(conditions[0]['stimulus_keys']|count) %}
                                     <div class="col-md-1">
                                         <input type="range"
                                                orient="vertical"
@@ -102,7 +115,7 @@
                         <div class="col-md-10 col-md-offset-2">
                             <div class="row">
                                 {# for now limit to the first condition #}
-                                {% for i in range(conditions[0]['stimulus_files']|count) %}
+                                {% for i in range(conditions[0]['stimulus_keys']|count) %}
                                     <div class="col-md-1">
                                         <button type="button"
                                                 class="btn btn-default play-btn"
@@ -117,7 +130,7 @@
                     <div class="row">
                         <div class="col-md-10 col-md-offset-2">
                             <div class="row text-center">
-                                {% for i in range(conditions[0]['stimulus_files']|count) %}
+                                {% for i in range(conditions[0]['stimulus_keys']|count) %}
                                     <div class="col-md-1">{{ i + 1 }}</div>
                                 {% endfor %}
                             </div>
@@ -177,21 +190,38 @@
                             ],
                 {% endfor %}
             },
+            "conditionGroups": {
+                {% for group_id, condition_group_data in condition_groups.iteritems()  %}
+                    "{{ group_id }}": {
+                        "referenceFiles": [
+                            {% for key, file_name in condition_group_data.reference_files %}
+                                ["{{ key }}", "{{ file_name }}"],
+                            {% endfor %}
+                        ],
+                        "stimulusFiles": [
+                            {% for key, file_name in condition_group_data.stimulus_files %}
+                                ["{{ key }}", "{{ file_name }}"],
+                            {% endfor %}
+                        ]
+                    },
+                {% endfor %}
+            },
             "conditions": [
                 {% for condition in conditions %}
                     {
                         "conditionID": "{{ condition.id }}",
-                        "referenceFiles": {
-                            {% for key, value in condition.reference_files %}
-                                "{{ key }}": "{{ value }}",
+                        "groupID": "{{ condition.group_id }}",
+                        "referenceKeys": [
+                            {% for key in condition.reference_keys %}
+                                "{{ key }}",
                             {% endfor %}
-                        },
-                        "stimulusFiles": {
-                            {% for key, value in condition.stimulus_files %}
-                                "{{ key }}": "{{ value }}",
+                        ],
+                        "stimulusKeys": [
+                            {% for key in condition.stimulus_keys %}
+                                "{{ key }}",
                             {% endfor %}
-                        }
-
+                        ],
+                        "evaluation_instructions_html": "{{ condition.evaluation_instructions_html | safe }}"
                     },
                 {% endfor %}
             ]

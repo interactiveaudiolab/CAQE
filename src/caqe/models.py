@@ -127,6 +127,28 @@ class Test(db.Model):
         return "<Test id=%r, data=%r>" % (self.id, self.data)
 
 
+class Group(db.Model):
+    """
+    A group of conditions. For MUSHRA this is typically the same as the condition itself, but for pairwise these is the
+    group of conditions that containing stimuli make up the set of stimuli of a MUSHRA trial. Note that the evaluation
+    software currently only supports one group per evaluation--therefore when configuring the test, make sure that an
+    integer multiple of `CONDITIONS_PER_EVALUATION` comprises the number of conditions per group.
+
+    Attributes
+    ----------
+    id : int
+        Primary key
+    data : str
+        JSON-encoded string of formatted group condition variables (like shared references and stimuli)
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.Text)
+    conditions = db.relationship('Condition', backref='group', lazy='dynamic')
+
+    def __repr__(self):
+        return "<Group id=%r,data=%r>" % (self.id, self.data)
+
+
 class Condition(db.Model):
     """
     An experimental condition, i.e. the variable conditions of a trial
@@ -135,22 +157,25 @@ class Condition(db.Model):
     ----------
     id : int
         Primary key
-    test_id: int, optional
+    test_id : int, optional
         Foreign key to the Test the condition belongs to
+    group_id : int, optional
     data : str
         JSON-enconded string of formatted condition variables
     """
     id = db.Column(db.Integer, primary_key=True)
     test_id = db.Column(db.Integer, db.ForeignKey('test.id'))
+    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     data = db.Column(db.Text)
     trials = db.relationship('Trial', backref='condition', lazy='dynamic')
 
-    def __init__(self, data, test_id=None):
+    def __init__(self, data, test_id=None, group_id=None):
         self.data = data
         self.test_id = test_id
+        self.group_id = group_id
 
     def __repr__(self):
-        return "<Condition id=%r, data=%r>" % (self.id, self.data)
+        return "<Condition id=%r, test_id=%r, group_id=%r, data=%r>" % (self.id, self.test_id, self.group_id, self.data)
 
 
 class Trial(db.Model):
