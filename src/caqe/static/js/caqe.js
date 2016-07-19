@@ -683,3 +683,161 @@ PairwiseTask.prototype.saveRatings = function() {
 
     return true;
 };
+
+/**
+ * Inherits from EvaluationTask and manages the segmentation timestamp marking task
+ * @constructor
+ * @param {string} config - Contains the configuration data for the segmentation timestamp marking task
+ */
+Segmentation.prototype = Object.create(EvaluationTask.prototype);
+Segmentation.prototype.constructor = Segmentation;
+
+function Segmentation(config) {
+    EvaluationTask.apply(this, arguments);
+    this.timeoutPassed = false;
+    this.createStimulusMap(this.conditionIndex);
+}
+
+Segmentation.prototype.startEvaluation = function () {
+    EvaluationTask.prototype.startEvaluation.apply(this);
+
+    this.audioGroup.setLoopAudio(true);
+};
+
+
+Segmentation.prototype.testTimeoutCallback = function (_this) {
+    _this.timeoutPassed = true;
+    _this.testNextTrialRequirements();
+};
+
+
+Segmentation.prototype.playReference = function(ID) {
+    this.audioGroup.solo(this.prependGroupID(ID));
+    if (this.audioGroup.audioPlayingID == -1) {
+        this.audioGroup.syncPlay();
+    }
+
+    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+    $('#playReference' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played');
+
+    this.testNextTrialRequirements();
+};
+
+
+Segmentation.prototype.playStimulus = function(ID) {
+    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+
+    $('.pairwiseStimulusLabel').html('&nbsp;');
+    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected');
+
+    this.audioGroup.solo(this.stimulusMap[ID]);
+    if (this.audioGroup.audioPlayingID == -1) {
+        this.audioGroup.syncPlay();
+    }
+
+    $('#playStimulus' + ID + 'BtnLabel').html('(selected)');
+    $('#playStimulus' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played pairwise-selected');
+
+    this.testNextTrialRequirements();
+};
+
+
+Segmentation.prototype.stopAllAudio = function() {
+    this.audioGroup.syncPause();
+    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+};
+
+
+Segmentation.prototype.nextTrial = function () {
+    this.stopAllAudio();
+    if (!this.saveRatings()) {
+        return;
+    }
+
+    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected played');
+    $('.pairwiseStimulusLabel').html('&nbsp;');
+
+    // disable next button
+    $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
+
+    clearTimeout(this.testTimeout);
+
+    // reset playback position
+    $('#playback-position').val(0);
+
+    this.conditionIndex++;
+
+    if (this.conditionIndex >= this.config.conditions.length) {
+        this.submitResults();
+    } else {
+        this.createStimulusMap(this.conditionIndex);
+        this.setTrialCountLabels();
+        if (this.config.conditions[this.conditionIndex]['evaluation_instructions_html'] !== 'None') {
+            $('#evaluationInstructions').html(this.config.conditions[this.conditionIndex]['evaluation_instructions_html']);
+        }
+        this.timeoutPassed = false;
+        this.testTimeout = setTimeout(this.testTimeoutCallback, this.config['testTimeoutSec'] * 1000.0, this);
+    }
+};
+
+
+Segmentation.prototype.testNextTrialRequirements = function () {
+    var qry = $('#evaluation');
+    var all_played = qry.find('.play-btn').length == qry.find('.play-btn').filter('.played').length;
+    var stimulus_selected = $('.pairwise-stimulus-play-btn').hasClass('pairwise-selected');
+
+    if (all_played && stimulus_selected && this.timeoutPassed) {
+        $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
+    }
+};
+
+
+Segmentation.prototype.createStimulusMap = function (conditionIndex) {
+    var i;
+    this.stimulusMap = []
+    for (i = 0; i < this.config.conditions[conditionIndex]['stimulusKeys'].length; i++) {
+        this.stimulusMap[i] = this.prependGroupID(this.config.conditions[conditionIndex]['stimulusKeys'][i],
+            conditionIndex);
+    }
+    var referenceKeys = [];
+    for (i = 0; i < this.config.conditions[conditionIndex]['referenceKeys'].length; i++) {
+        referenceKeys.push(this.prependGroupID(this.config.conditions[conditionIndex]['referenceKeys'][i],
+            conditionIndex));
+    }
+
+    this.audioGroup.setSyncIDs(this.stimulusMap.concat(referenceKeys));
+};
+
+
+// save the ratings for the current condition
+Segmentation.prototype.saveRatings = function() {
+    // make sure something was selected
+    if (!$('.pairwise-stimulus-play-btn').hasClass('pairwise-selected')) {
+        alert('Press the A or B button to select your preferred recording before continuing.');
+        return false;
+    }
+
+    var stimulusMap = [];
+
+    var i;
+    var re = /G([0-9]+)_([a-zA-Z0-9]+)/;
+    for (i = 0; i < this.stimulusMap.length; i++) {
+        stimulusMap[i] = re.exec(this.stimulusMap[i])[2];
+    }
+
+    // save the selected one
+    var conditionRatings = {};
+    conditionRatings[stimulusMap[0]] = $('#playStimulus0Btn').hasClass('pairwise-selected') ? 1 : 0;
+    conditionRatings[stimulusMap[1]] = $('#playStimulus1Btn').hasClass('pairwise-selected') ? 1 : 0;
+
+    // save the condition data
+    this.completedConditionData[this.conditionIndex] = {'ratings': conditionRatings,
+        'conditionID': this.config.conditions[this.conditionIndex].conditionID,
+        'groupID': this.config.conditions[this.conditionIndex].groupID,
+        'referenceFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['referenceFiles'],
+        'stimulusFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['stimulusFiles'],
+        'referenceKeys': this.config.conditions[this.conditionIndex].referenceKeys,
+        'stimulusKeys': this.config.conditions[this.conditionIndex].stimulusKeys};
+
+    return true;
+};
