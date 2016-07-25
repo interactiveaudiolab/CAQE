@@ -701,7 +701,8 @@ function Segmentation(config) {
 Segmentation.prototype.startEvaluation = function () {
     EvaluationTask.prototype.startEvaluation.apply(this);
 
-    this.audioGroup.setLoopAudio(true);
+    this.audioGroup.setLoopAudio(false);
+    // Set audio loop to false
 };
 
 
@@ -711,35 +712,44 @@ Segmentation.prototype.testTimeoutCallback = function (_this) {
 };
 
 
-Segmentation.prototype.playReference = function(ID) {
+//Segmentation.prototype.playReference = function(ID) {
+//    this.audioGroup.solo(this.prependGroupID(ID));
+//    if (this.audioGroup.audioPlayingID == -1) {
+//        this.audioGroup.syncPlay();
+//    }
+//
+//    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+//    $('#playReference' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played');
+//
+//    this.testNextTrialRequirements();
+//};
+
+//Segmentation.prototype.playStimulus = function(ID) {
+//    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+//
+//    $('.pairwiseStimulusLabel').html('&nbsp;');
+//    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected');
+//
+//    this.audioGroup.solo(this.stimulusMap[ID]);
+//    if (this.audioGroup.audioPlayingID == -1) {
+//        this.audioGroup.syncPlay();
+//    }
+//
+//    $('#playStimulus' + ID + 'BtnLabel').html('(selected)');
+//    $('#playStimulus' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played pairwise-selected');
+//
+//    this.testNextTrialRequirements();
+//};
+
+Segmentation.prototype.playClip = function(ID) {
     this.audioGroup.solo(this.prependGroupID(ID));
-    if (this.audioGroup.audioPlayingID == -1) {
-        this.audioGroup.syncPlay();
-    }
 
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
     $('#playReference' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played');
-
+    
     this.testNextTrialRequirements();
-};
-
-
-Segmentation.prototype.playStimulus = function(ID) {
-    $('.play-btn').removeClass('btn-success').addClass('btn-default');
-
-    $('.pairwiseStimulusLabel').html('&nbsp;');
-    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected');
-
-    this.audioGroup.solo(this.stimulusMap[ID]);
-    if (this.audioGroup.audioPlayingID == -1) {
-        this.audioGroup.syncPlay();
-    }
-
-    $('#playStimulus' + ID + 'BtnLabel').html('(selected)');
-    $('#playStimulus' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played pairwise-selected');
-
-    this.testNextTrialRequirements();
-};
+    
+}
 
 
 Segmentation.prototype.stopAllAudio = function() {
@@ -750,7 +760,7 @@ Segmentation.prototype.stopAllAudio = function() {
 
 Segmentation.prototype.nextTrial = function () {
     this.stopAllAudio();
-    if (!this.saveRatings()) {
+    if (!this.saveMarkings()) {
         return;
     }
 
@@ -809,11 +819,11 @@ Segmentation.prototype.createStimulusMap = function (conditionIndex) {
 };
 
 
-// save the ratings for the current condition
-Segmentation.prototype.saveRatings = function() {
+// save the markings for the current condition
+Segmentation.prototype.saveMarkings = function() {
     // make sure something was selected
     if (!$('.pairwise-stimulus-play-btn').hasClass('pairwise-selected')) {
-        alert('Press the A or B button to select your preferred recording before continuing.');
+        alert('Set a time stamp marking by clicking on the marking button or clicking the "no-transition" button if no transition/change/boundary is heard.');
         return false;
     }
 

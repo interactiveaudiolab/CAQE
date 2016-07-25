@@ -1,0 +1,147 @@
+{% extends "evaluation_base.html" %}
+
+{% block evaluation_view %}
+    <!-- evaluation view -->
+    <div class="container hidden" id="evaluation">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <h1 class="text-center">{{ test.test_title | safe }}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2" id="evaluationInstructions">﻿
+                {{ test.evaluation_instructions_html | safe }}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="well" id="pairwise-well">
+                    <div class="row text-center">
+                        <h4>Trial <span id="currentTrialLbl">0</span> of <span id="totalTrialLbl">0</span></h4>
+                    </div>
+                    <!--{% for reference in test.references %}-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-md-3">-->
+                                <!--<button type="button"-->
+                                        <!--class="btn btn-default btn-block play-btn"-->
+                                        <!--id="playReference{{ reference[0] }}Btn"-->
+                                        <!--onclick="evaluationTask.playReference('{{ reference[0] }}');">-->
+                                    <!--<span class="glyphicon glyphicon-play"></span> {{ reference[0] }}-->
+                                <!--</button>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-9">{{ reference[1] }}</div>-->
+                        <!--</div>-->
+                    <!--{% endfor %}-->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <button type="button"
+                                    class="btn btn-default btn-block"
+                                    id="stopBtn"
+                                    onclick="evaluationTask.stopAllAudio();">
+                                <span class="glyphicon glyphicon-stop"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button"
+                                    class="btn btn-default play-btn pairwise-stimulus-play-btn btn-block"
+                                    id="playStimulus0Btn"
+                                    onclick="evaluationTask.playClip(0);">
+                                ﻿<span style="font-size: 12pt;">play/select</span><br />A
+                            </button>
+                        </div>
+                        <!--<div class="col-md-6">-->
+                            <!--<button type="button"-->
+                                    <!--class="btn btn-default play-btn pairwise-stimulus-play-btn btn-block"-->
+                                    <!--id="playStimulus1Btn"-->
+                                    <!--onclick="evaluationTask.playStimulus(1);">-->
+                                <!--﻿<span style="font-size: 12pt;">play/select</span><br />B-->
+                            <!--</button>-->
+                        <!--</div>-->
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            <span class="pairwiseStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>
+                        </div>
+                        <!--<div class="col-md-6 text-center">-->
+                            <!--<span class="pairwiseStimulusLabel" id="playStimulus1BtnLabel">&nbsp;</span>-->
+                        <!--</div>-->
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <progress id="playback-position" value="0" max="100"></progress>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <ul class="pager">
+                    <li class="next">
+                        <a href="#pairwise-well" id="evaluationNextBtn" onclick="evaluationTask.nextTrial();">Next trial &rarr;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock evaluation_view %}
+
+{% block scripts %}
+    <!-- test config variables -->
+    <script type="text/javascript">
+        // configure the test here
+        var TEST_COMPLETE_REDIRECT_URL = '{{ test_complete_redirect_url }}';
+        var SUBMISSION_URL = '{{ submission_url }}';
+        var PARTICIPANT_ID = '{{ participant_id }}';
+
+        var config = {
+            "testTimeoutSec": {{ config.TEST_TIMEOUT_SEC }},
+            "references": {
+                {% for reference in test.references %}
+                    "{{ reference[0] }}": "{{ reference[1] }}",
+                {% endfor %}
+            },
+            "requireListeningToAllTrainingSounds": {{ ['false','true'][config.REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS] }},
+            "referenceExampleDict": {
+                {% for key, value in test.reference_example_dict.iteritems() %}
+                    "{{ key }}": "{{ value }}",
+                {% endfor %}
+            },
+            "audioEventExampleDict": {
+                {% for key, value in test.audio_event_dict.iteritems() %}
+                    "{{ key }}":
+                            [
+                                {% for v in value %}
+                                    "{{ v }}",
+                                {% endfor %}
+                            ],
+                {% endfor %}
+            },
+
+            "conditions": [
+                {% for condition in conditions %}
+                    {
+                        "audio_clips": "{{ condition.Clip }}",
+                        "evaluation_instructions_html": "{{ condition.evaluation_instructions_html | safe}}"
+                    },
+                {% endfor %}
+            ]
+        }
+
+    </script>
+    <!---->
+    {{ super() }}
+
+    <script type="text/javascript">
+        /* <![CDATA[ */
+        var evaluationTask;
+        window.onload = function () {
+            evaluationTask = new Segmentation(config);
+        };
+        /* ]]> */
+    </script>
+{% endblock scripts %}
