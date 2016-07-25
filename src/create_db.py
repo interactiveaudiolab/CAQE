@@ -14,9 +14,9 @@ from caqe import db
 db.drop_all()
 db.create_all()
 
-import crypto
-import sys
-sys.modules['Crypto'] = crypto
+# import crypto
+# import sys
+# sys.modules['Crypto'] = crypto
 
 import caqe
 import caqe.experiment as experiment
