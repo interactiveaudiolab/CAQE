@@ -9,7 +9,7 @@ import crypto
 import sys
 sys.modules['Crypto'] = crypto
 from itsdangerous import URLSafeSerializer
-from crypto.Cipher import AES
+from Crypto.Cipher import AES
 
 from caqe import app
 
