@@ -235,7 +235,13 @@
 <span class="sd">    HEARING_RESPONSE_ESTIMATION_ENABLED : bool</span>
 <span class="sd">        If enabled, ask participants to complete the in-situ hearing response estimation. (default is True)</span>
 <span class="sd">    CONDITIONS_PER_EVALUATION : int</span>
-<span class="sd">        The number of conditions to present to a participant in a single visit to &#39;/evaluate&#39;. (default is 1)</span>
+<span class="sd">        The number of conditions to present to a participant in a single visit to &#39;/evaluate&#39;.</span>
+<span class="sd">        Note that currently evaluation is limited to one condition group. So if this value is more than 1, there must</span>
+<span class="sd">        be at least as many conditions per group as there are conditions per evaluation for this to have an effect.</span>
+<span class="sd">        It is also recommended that an integer multiple of `CONDITIONS_PER_EVALUATION` comprise the number of conditions</span>
+<span class="sd">        per group. For example, if there are 28 conditions in a group, set the number of `CONDITIONS_PER_EVALUATION` to</span>
+<span class="sd">        14 or 7.</span>
+<span class="sd">        (default is 1)</span>
 <span class="sd">    TRIALS_PER_CONDITION : int</span>
 <span class="sd">        The number of trials we should collect per condition (with distinct participants). (default is 20)</span>
 <span class="sd">    LIMIT_SUBJECT_TO_ONE_TASK_TYPE : bool</span>
@@ -325,25 +331,34 @@
 <span class="sd">    DEFAULT_RATING_VALUE : int</span>
 <span class="sd">        The default rating value on the MUSHRA slider. (default is 50)</span>
 <span class="sd">    TESTS : list of dict</span>
-<span class="sd">        The test and condition-specific configuration variables. The dicts are of the form::</span>
+<span class="sd">        The test and condition-specific configuration variables.</span>
+<span class="sd">        Note that if &#39;evaluation_instructions_html&#39; is not None in the condition, it will override the instructions</span>
+<span class="sd">        defined in the test.</span>
+<span class="sd">        Note also that reference keys must be alphanumeric and stimulus keys must begin with &#39;S&#39; followed by a number,</span>
+<span class="sd">        e.g. &#39;S29&#39;.</span>
 
-<span class="sd">            {&#39;test_config_variables&#39; :</span>
-<span class="sd">                {&#39;test_title&#39; : &#39;...&#39;, # The test title that is displayed on the evaluation page</span>
-<span class="sd">                 &#39;first_task_introduction_html&#39; : &#39;...&#39;,  # Content of the intro page the first time they do a task</span>
-<span class="sd">                 &#39;introduction_html&#39; : &#39;...&#39;, # Content of the intro page (after the first time they perform the task)</span>
-<span class="sd">                 &#39;training_instructions_html&#39; : &#39;...&#39;, # The HTML content of the training instructions</span>
-<span class="sd">                 &#39;evaluation_instructions_html&#39; : &#39;...&#39;}, # The HTML content of the evaluation instructions</span>
+<span class="sd">        The dicts are of the form::</span>
+
+<span class="sd">            {&#39;test_config_variables&#39;:</span>
+<span class="sd">                {&#39;test_title&#39;: &#39;...&#39;, # The test title that is displayed on the evaluation page</span>
+<span class="sd">                 &#39;first_task_introduction_html&#39;: &#39;...&#39;,  # Content of the intro page the first time they do a task</span>
+<span class="sd">                 &#39;introduction_html&#39;: &#39;...&#39;, # Content of the intro page (after the first time they perform the task)</span>
+<span class="sd">                 &#39;training_instructions_html&#39;: &#39;...&#39;, # The HTML content of the training instructions</span>
+<span class="sd">                 &#39;evaluation_instructions_html&#39;: &#39;...&#39;}, # The HTML content of the evaluation instructions</span>
 <span class="sd">                 &#39;references&#39; : ((&#39;&lt;reference_name&gt;&#39;, &#39;&lt;reference_description&gt;&#39;),), # Reference names and descriptions</span>
-<span class="sd">                 &#39;reference_example_dict&#39; :</span>
+<span class="sd">                 &#39;reference_example_dict&#39;:</span>
 <span class="sd">                    {&#39;&lt;reference_name}&#39;: url_for(&#39;static&#39;, filename=&#39;audio/&lt;reference_filename&gt;.wav&#39;), ... },</span>
-<span class="sd">                 &#39;quality_example_dict&#39; :</span>
+<span class="sd">                 &#39;quality_example_dict&#39;:</span>
 <span class="sd">                    {&#39;&lt;example_type0&gt;&#39;: [url_for(&#39;static&#39;, filename=&#39;audio/&lt;example0_filename&gt;.wav&#39;),</span>
-<span class="sd">                                       url_for(&#39;static&#39;, filename=&#39;audio/&lt;example1_filename&gt;.wav&#39;),],</span>
+<span class="sd">                                         url_for(&#39;static&#39;, filename=&#39;audio/&lt;example1_filename&gt;.wav&#39;),],</span>
 <span class="sd">                     &#39;&lt;example_type1&gt;&#39;: [url_for(&#39;static&#39;, filename=&#39;audio/&lt;example3_filename&gt;),]}},</span>
-<span class="sd">             &#39;conditions&#39; :</span>
-<span class="sd">                [{&#39;reference_files&#39;: [(&lt;reference_name&gt;, &#39;&lt;reference_filename&gt;.wav&#39;),],</span>
-<span class="sd">                  &#39;stimulus_files&#39;: [(&#39;S1&#39;, &#39;&lt;S1_filename&gt;.wav&#39;),</span>
-<span class="sd">                                    (&#39;S2&#39;, &#39;&lt;S2_filename&gt;.wav&#39;),]},]}</span>
+<span class="sd">             &#39;condition_groups&#39; :</span>
+<span class="sd">                [{&#39;reference_files&#39;: {&lt;reference_name&gt;: &#39;&lt;reference_filename&gt;.wav&#39;,},</span>
+<span class="sd">                 {&#39;stimulus_files&#39;: {&#39;S1&#39;: &#39;&lt;S1_filename&gt;.wav&#39;,</span>
+<span class="sd">                                     &#39;S2&#39;: &#39;&lt;S2_filename&gt;,wav&#39;,}},</span>
+<span class="sd">                 {&#39;conditions&#39;: [{&#39;reference_keys&#39;: [&lt;reference_name&gt;,],</span>
+<span class="sd">                                  &#39;stimulus_keys&#39;: [&#39;S1&#39;,&#39;S2&#39;,&#39;S7&#39;, ... ],</span>
+<span class="sd">                                  &#39;evaluation_instructions_html&#39;: &lt;condition_specific_evaluation_instructions&gt;},]},]}</span>
 
 <span class="sd">        (default is [])</span>
 

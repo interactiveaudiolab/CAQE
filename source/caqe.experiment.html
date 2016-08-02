@@ -195,10 +195,10 @@
 
 <dl class="function">
 <dt id="caqe.experiment.encrypt_audio_stimuli">
-<code class="descclassname">caqe.experiment.</code><code class="descname">encrypt_audio_stimuli</code><span class="sig-paren">(</span><em>audio_stimuli</em>, <em>participant_id</em>, <em>condition_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#encrypt_audio_stimuli"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.encrypt_audio_stimuli" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">caqe.experiment.</code><code class="descname">encrypt_audio_stimuli</code><span class="sig-paren">(</span><em>audio_stimuli</em>, <em>participant_id</em>, <em>condition_group_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#encrypt_audio_stimuli"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.encrypt_audio_stimuli" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reorder and encrypt the condition files. Do this by encoding each file as a special URL. One in which is an
-encrypted, serialized, dictionary. The dictionary contains, the participant_id (p_id), the condition_id (c_id),
-the stimuli_id (s_id), and a encrypted stimuli_id (e_id)</p>
+encrypted, serialized, dictionary. The dictionary contains, the participant_id (p_id), the condition_group_id
+(g_id), the stimuli_id (s_id), and a encrypted stimuli_id (e_id)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -207,13 +207,12 @@ the stimuli_id (s_id), and a encrypted stimuli_id (e_id)</p>
 <li><strong>audio_stimuli</strong> (<em>list of tuple</em>) &#8211; The first element of each duple is a key, the second is the audio_file_path
 For all non-references, the key should be of the form S[0-9+]</li>
 <li><strong>participant_id</strong> (<em>int</em>) &#8211; </li>
-<li><strong>condition_id</strong> (<em>int</em>) &#8211; </li>
+<li><strong>condition_group_id</strong> (<em>int</em>) &#8211; </li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>encrypted_audio_stimuli</strong> &#8211; The first element of each duple is a key, the second is the encrypted audio_file_path
-For all non-references, the key should be of the form E[0-9+]. The order of the stimuli will be random (except
-for the references)</p>
+For all non-references, the key should be of the form E[0-9+].</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of tuple</p>
@@ -255,6 +254,29 @@ pairs, e.g. ((&#8216;E1&#8217;,&#8217;E2&#8217;),(&#8216;E5&#8217;,&#8217;E8&#82
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>conditions</strong> &#8211; The available conditions</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of Condition</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="caqe.experiment.get_encoding_maps">
+<code class="descclassname">caqe.experiment.</code><code class="descname">get_encoding_maps</code><span class="sig-paren">(</span><em>encrypted_audio_stimuli</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/experiment.html#get_encoding_maps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.experiment.get_encoding_maps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a stimulus key translation map from the <cite>encypted_audio_stimuli</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>encrypted_audio_stimuli</strong> (<em>list of tuple</em>) &#8211; The first element of each duple is a key, the second is the encrypted audio_file_path
+For all non-references, the key should be of the form E[0-9+]. The order of the stimuli will be random (except
+for the references)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>encoding_map</strong> (<em>dict</em>) &#8211; A map from unencoded to encoded stimulus keys</li>
+<li><strong>decoding_map</strong> (<em>dict</em>) &#8211; A map from encoded to unencoded stimulus keys</li>
+<li><strong>decrypted_filenames</strong> (<em>dict</em>) &#8211; A map from stimulus key to filename</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>

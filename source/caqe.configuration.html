@@ -291,7 +291,13 @@ Can be set via environment variable &#8216;DATABASE_URL&#8217;. (default is&#821
 <dl class="attribute">
 <dt id="caqe.configuration.BaseConfig.CONDITIONS_PER_EVALUATION">
 <code class="descname">CONDITIONS_PER_EVALUATION</code><a class="headerlink" href="#caqe.configuration.BaseConfig.CONDITIONS_PER_EVALUATION" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> &#8211; The number of conditions to present to a participant in a single visit to &#8216;/evaluate&#8217;. (default is 1)</p>
+<dd><p><em>int</em> &#8211; The number of conditions to present to a participant in a single visit to &#8216;/evaluate&#8217;.
+Note that currently evaluation is limited to one condition group. So if this value is more than 1, there must
+be at least as many conditions per group as there are conditions per evaluation for this to have an effect.
+It is also recommended that an integer multiple of <cite>CONDITIONS_PER_EVALUATION</cite> comprise the number of conditions
+per group. For example, if there are 28 conditions in a group, set the number of <cite>CONDITIONS_PER_EVALUATION</cite> to
+14 or 7.
+(default is 1)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -517,24 +523,32 @@ conditions are assigned on the fly (so we can have complete control over conditi
 <dl class="attribute">
 <dt id="caqe.configuration.BaseConfig.TESTS">
 <code class="descname">TESTS</code><a class="headerlink" href="#caqe.configuration.BaseConfig.TESTS" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of dict</em> &#8211; The test and condition-specific configuration variables. The dicts are of the form:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;test_config_variables&#39;</span> <span class="p">:</span>
-    <span class="p">{</span><span class="s1">&#39;test_title&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># The test title that is displayed on the evaluation page</span>
-     <span class="s1">&#39;first_task_introduction_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span>  <span class="c1"># Content of the intro page the first time they do a task</span>
-     <span class="s1">&#39;introduction_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># Content of the intro page (after the first time they perform the task)</span>
-     <span class="s1">&#39;training_instructions_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># The HTML content of the training instructions</span>
-     <span class="s1">&#39;evaluation_instructions_html&#39;</span> <span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">},</span> <span class="c1"># The HTML content of the evaluation instructions</span>
+<dd><p><em>list of dict</em> &#8211; The test and condition-specific configuration variables.
+Note that if &#8216;evaluation_instructions_html&#8217; is not None in the condition, it will override the instructions
+defined in the test.
+Note also that reference keys must be alphanumeric and stimulus keys must begin with &#8216;S&#8217; followed by a number,
+e.g. &#8216;S29&#8217;.</p>
+<p>The dicts are of the form:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;test_config_variables&#39;</span><span class="p">:</span>
+    <span class="p">{</span><span class="s1">&#39;test_title&#39;</span><span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># The test title that is displayed on the evaluation page</span>
+     <span class="s1">&#39;first_task_introduction_html&#39;</span><span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span>  <span class="c1"># Content of the intro page the first time they do a task</span>
+     <span class="s1">&#39;introduction_html&#39;</span><span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># Content of the intro page (after the first time they perform the task)</span>
+     <span class="s1">&#39;training_instructions_html&#39;</span><span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="c1"># The HTML content of the training instructions</span>
+     <span class="s1">&#39;evaluation_instructions_html&#39;</span><span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">},</span> <span class="c1"># The HTML content of the evaluation instructions</span>
      <span class="s1">&#39;references&#39;</span> <span class="p">:</span> <span class="p">((</span><span class="s1">&#39;&lt;reference_name&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;reference_description&gt;&#39;</span><span class="p">),),</span> <span class="c1"># Reference names and descriptions</span>
-     <span class="s1">&#39;reference_example_dict&#39;</span> <span class="p">:</span>
+     <span class="s1">&#39;reference_example_dict&#39;</span><span class="p">:</span>
         <span class="p">{</span><span class="s1">&#39;&lt;reference_name}&#39;</span><span class="p">:</span> <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/&lt;reference_filename&gt;.wav&#39;</span><span class="p">),</span> <span class="o">...</span> <span class="p">},</span>
-     <span class="s1">&#39;quality_example_dict&#39;</span> <span class="p">:</span>
+     <span class="s1">&#39;quality_example_dict&#39;</span><span class="p">:</span>
         <span class="p">{</span><span class="s1">&#39;&lt;example_type0&gt;&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/&lt;example0_filename&gt;.wav&#39;</span><span class="p">),</span>
-                           <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/&lt;example1_filename&gt;.wav&#39;</span><span class="p">),],</span>
+                             <span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/&lt;example1_filename&gt;.wav&#39;</span><span class="p">),],</span>
          <span class="s1">&#39;&lt;example_type1&gt;&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">url_for</span><span class="p">(</span><span class="s1">&#39;static&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;audio/&lt;example3_filename&gt;),]}},</span>
- <span class="s1">&#39;conditions&#39;</span> <span class="p">:</span>
-    <span class="p">[{</span><span class="s1">&#39;reference_files&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="o">&lt;</span><span class="n">reference_name</span><span class="o">&gt;</span><span class="p">,</span> <span class="s1">&#39;&lt;reference_filename&gt;.wav&#39;</span><span class="p">),],</span>
-      <span class="s1">&#39;stimulus_files&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;S1_filename&gt;.wav&#39;</span><span class="p">),</span>
-                        <span class="p">(</span><span class="s1">&#39;S2&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;S2_filename&gt;.wav&#39;</span><span class="p">),]},]}</span>
+ <span class="s1">&#39;condition_groups&#39;</span> <span class="p">:</span>
+    <span class="p">[{</span><span class="s1">&#39;reference_files&#39;</span><span class="p">:</span> <span class="p">{</span><span class="o">&lt;</span><span class="n">reference_name</span><span class="o">&gt;</span><span class="p">:</span> <span class="s1">&#39;&lt;reference_filename&gt;.wav&#39;</span><span class="p">,},</span>
+     <span class="p">{</span><span class="s1">&#39;stimulus_files&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;S1&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;S1_filename&gt;.wav&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;S2&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;S2_filename&gt;,wav&#39;</span><span class="p">,}},</span>
+     <span class="p">{</span><span class="s1">&#39;conditions&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;reference_keys&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">reference_name</span><span class="o">&gt;</span><span class="p">,],</span>
+                      <span class="s1">&#39;stimulus_keys&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span><span class="s1">&#39;S2&#39;</span><span class="p">,</span><span class="s1">&#39;S7&#39;</span><span class="p">,</span> <span class="o">...</span> <span class="p">],</span>
+                      <span class="s1">&#39;evaluation_instructions_html&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">condition_specific_evaluation_instructions</span><span class="o">&gt;</span><span class="p">},]},]}</span>
 </pre></div>
 </div>
 <p>(default is [])</p>

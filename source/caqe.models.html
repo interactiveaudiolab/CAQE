@@ -153,7 +153,7 @@
 <p>SQLAlchemy database models</p>
 <dl class="class">
 <dt id="caqe.models.Condition">
-<em class="property">class </em><code class="descclassname">caqe.models.</code><code class="descname">Condition</code><span class="sig-paren">(</span><em>data</em>, <em>test_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/models.html#Condition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.models.Condition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">caqe.models.</code><code class="descname">Condition</code><span class="sig-paren">(</span><em>data</em>, <em>test_id=None</em>, <em>group_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/caqe/models.html#Condition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#caqe.models.Condition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">flask_sqlalchemy.Model</span></code></p>
 <p>An experimental condition, i.e. the variable conditions of a trial</p>
 <dl class="attribute">
@@ -166,6 +166,12 @@
 <dt id="caqe.models.Condition.test_id">
 <code class="descname">test_id</code><a class="headerlink" href="#caqe.models.Condition.test_id" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>int, optional</em> &#8211; Foreign key to the Test the condition belongs to</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="caqe.models.Condition.group_id">
+<code class="descname">group_id</code><a class="headerlink" href="#caqe.models.Condition.group_id" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int, optional</em></p>
 </dd></dl>
 
 <dl class="attribute">
