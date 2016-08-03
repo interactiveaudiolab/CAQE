@@ -24,6 +24,10 @@ To recruit participants to evaluate our audio, we post assignments on Mechanical
 
 #. Configure the MTurk variables in your config file. These are all variables that have the ``MTURK`` prefix. Use these variables to set your HIT's title, description, reward, etc. See :doc:`source/caqe.configuration` for more information.
 
+#. Set `APP_MODE` to `PRODUCTION`::
+
+    $ export APP_MODE=PRODUCTION
+
 #. Set the ``SERVER_ADDRESS`` environment variable to your production server, e.g. ::
 
     $ export SERVER_ADDRESS=<your-caqe-app>.herokuapp.com
