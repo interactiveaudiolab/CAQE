@@ -35,6 +35,7 @@ input[type=range][orient=vertical].mushra-slider
 .rating {
 	margin: 0 0 0 0;
 	padding: 0 0 0 0;
+	min-width: 3.5ch;
 	max-width: 100%;
 }
 .pairwise-stimulus-play-btn {
