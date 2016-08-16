@@ -20,19 +20,19 @@
                     <div class="row text-center">
                         <h4>Trial <span id="currentTrialLbl">0</span> of <span id="totalTrialLbl">0</span></h4>
                     </div>
-                    <!--{% for reference in test.references %}-->
-                        <!--<div class="row">-->
-                            <!--<div class="col-md-3">-->
-                                <!--<button type="button"-->
-                                        <!--class="btn btn-default btn-block play-btn"-->
-                                        <!--id="playReference{{ reference[0] }}Btn"-->
-                                        <!--onclick="evaluationTask.playReference('{{ reference[0] }}');">-->
-                                    <!--<span class="glyphicon glyphicon-play"></span> {{ reference[0] }}-->
-                                <!--</button>-->
-                            <!--</div>-->
-                            <!--<div class="col-md-9">{{ reference[1] }}</div>-->
-                        <!--</div>-->
-                    <!--{% endfor %}-->
+                    {% for reference in test.references %}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <button type="button"
+                                        class="btn btn-default btn-block play-btn"
+                                        id="playReference{{ reference[0] }}Btn"
+                                        onclick="evaluationTask.playReference('{{ reference[0] }}');">
+                                    <span class="glyphicon glyphicon-play"></span> {{ reference[0] }}
+                                </button>
+                            </div>
+                            <div class="col-md-9">{{ reference[1] }}</div>
+                        </div>
+                    {% endfor %}
                     <div class="row">
                         <div class="col-md-3">
                             <button type="button"
@@ -49,26 +49,26 @@
                             <button type="button"
                                     class="btn btn-default play-btn pairwise-stimulus-play-btn btn-block"
                                     id="playStimulus0Btn"
-                                    onclick="evaluationTask.playClip(0);">
+                                    onclick="evaluationTask.playStimulus(0);">
                                 ﻿<span style="font-size: 12pt;">play/select</span><br />A
                             </button>
                         </div>
-                        <!--<div class="col-md-6">-->
-                            <!--<button type="button"-->
-                                    <!--class="btn btn-default play-btn pairwise-stimulus-play-btn btn-block"-->
-                                    <!--id="playStimulus1Btn"-->
-                                    <!--onclick="evaluationTask.playStimulus(1);">-->
-                                <!--﻿<span style="font-size: 12pt;">play/select</span><br />B-->
-                            <!--</button>-->
-                        <!--</div>-->
+                        <div class="col-md-6">
+                            <button type="button"
+                                    class="btn btn-default play-btn pairwise-stimulus-play-btn btn-block"
+                                    id="playStimulus1Btn"
+                                    onclick="evaluationTask.playStimulus(1);">
+                                ﻿<span style="font-size: 12pt;">play/select</span><br />B
+                            </button>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 text-center">
                             <span class="pairwiseStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>
                         </div>
-                        <!--<div class="col-md-6 text-center">-->
-                            <!--<span class="pairwiseStimulusLabel" id="playStimulus1BtnLabel">&nbsp;</span>-->
-                        <!--</div>-->
+                        <div class="col-md-6 text-center">
+                            <span class="pairwiseStimulusLabel" id="playStimulus1BtnLabel">&nbsp;</span>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
@@ -111,8 +111,8 @@
                     "{{ key }}": "{{ value }}",
                 {% endfor %}
             },
-            "audioEventExampleDict": {
-                {% for key, value in test.audio_event_dict.iteritems() %}
+            "qualityExampleDict": {
+                {% for key, value in test.quality_example_dict.iteritems() %}
                     "{{ key }}":
                             [
                                 {% for v in value %}
@@ -121,11 +121,37 @@
                             ],
                 {% endfor %}
             },
-
+            "conditionGroups": {
+                {% for group_id, condition_group_data in condition_groups.iteritems()  %}
+                    "{{ group_id }}": {
+                        "referenceFiles": [
+                            {% for key, file_name in condition_group_data.reference_files %}
+                                ["{{ key }}", "{{ file_name }}"],
+                            {% endfor %}
+                        ],
+                        "stimulusFiles": [
+                            {% for key, file_name in condition_group_data.stimulus_files %}
+                                ["{{ key }}", "{{ file_name }}"],
+                            {% endfor %}
+                        ]
+                    },
+                {% endfor %}
+            },
             "conditions": [
                 {% for condition in conditions %}
                     {
-                        "audio_clips": "{{ condition.Clip }}",
+                        "conditionID": "{{ condition.id }}",
+                        "groupID": "{{ condition.group_id }}",
+                        "referenceKeys": [
+                            {% for key in condition.reference_keys %}
+                                "{{ key }}",
+                            {% endfor %}
+                        ],
+                        "stimulusKeys": [
+                            {% for key in condition.stimulus_keys %}
+                                "{{ key }}",
+                            {% endfor %}
+                        ],
                         "evaluation_instructions_html": "{{ condition.evaluation_instructions_html | safe}}"
                     },
                 {% endfor %}
@@ -140,7 +166,7 @@
         /* <![CDATA[ */
         var evaluationTask;
         window.onload = function () {
-            evaluationTask = new Segmentation(config);
+            evaluationTask = new PairwiseTask(config);
         };
         /* ]]> */
     </script>
