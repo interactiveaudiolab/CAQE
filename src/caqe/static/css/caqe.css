@@ -57,3 +57,13 @@ input[type=range][orient=vertical].mushra-slider
 }
 
 }
+
+.segmentation-clip-play-btn {
+	font-size: 5em;
+	vertical-align: middle;
+	text-align: center;
+	padding: 0 0 0.5em 0;
+	display: inline-block;
+	overflow-x: visible;
+	overflow-y: visible;
+}

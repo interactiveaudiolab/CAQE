@@ -244,7 +244,7 @@ class BaseConfig(object):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:////%s' % os.path.expanduser('~/caqe.db'))
     SERVER_ADDRESS = os.getenv('SERVER_ADDRESS', 'caqe.local:5000')
     PREFERRED_URL_SCHEME = 'https'
-    AUDIO_FILE_DIRECTORY = 'static/audio'
+    AUDIO_FILE_DIRECTORY = os.getenv('AUDIO_FILE_DIRECTORY', 'static/audio')
     ENCRYPT_AUDIO_STIMULI_URLS = True
 
     # ---------------------------------------------------------------------------------------------

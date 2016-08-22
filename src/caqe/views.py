@@ -618,6 +618,20 @@ def evaluation():
         ###############################################################################################################
         # ADD NEW TEST TYPES HERE
         ###############################################################################################################
+        elif app.config['TEST_TYPE'] == 'segmentation':
+            return render_template('segmentation.html',
+                                   test=test_config['test'],
+                                   conditions=test_config['conditions'],
+                                   participant_id=participant.id,
+                                   first_evaluation=participant.trials.count() == 0,
+                                   test_complete_redirect_url=url_for('post_evaluation_tasks',
+                                                                      _external=True,
+                                                                      _scheme=app.config['PREFERRED_URL_SCHEME']),
+                                   submission_url=url_for('evaluation',
+                                                          _external=True,
+                                                          _scheme=app.config['PREFERRED_URL_SCHEME'])
+                                   )
+
         else:
             return render_template('%s.html' % test_config['test']['test_type'],
                                    test=test_config['test'],

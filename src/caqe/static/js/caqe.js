@@ -745,7 +745,7 @@ Segmentation.prototype.playClip = function(ID) {
     this.audioGroup.solo(this.prependGroupID(ID));
 
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
-    $('#playReference' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played');
+    $('#playClip' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played');
     
     this.testNextTrialRequirements();
     
@@ -764,8 +764,8 @@ Segmentation.prototype.nextTrial = function () {
         return;
     }
 
-    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected played');
-    $('.pairwiseStimulusLabel').html('&nbsp;');
+    $('.segmentation-clip-play-btn').removeClass('segmentation-selected played');
+    $('.segmentationClipLabel').html('&nbsp;');
 
     // disable next button
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
@@ -794,7 +794,7 @@ Segmentation.prototype.nextTrial = function () {
 Segmentation.prototype.testNextTrialRequirements = function () {
     var qry = $('#evaluation');
     var all_played = qry.find('.play-btn').length == qry.find('.play-btn').filter('.played').length;
-    var stimulus_selected = $('.pairwise-stimulus-play-btn').hasClass('pairwise-selected');
+    var stimulus_selected = $('.segmentation-clip-play-btn').hasClass('segmentation-selected');
 
     if (all_played && stimulus_selected && this.timeoutPassed) {
         $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
@@ -805,15 +805,15 @@ Segmentation.prototype.testNextTrialRequirements = function () {
 Segmentation.prototype.createStimulusMap = function (conditionIndex) {
     var i;
     this.stimulusMap = []
-    for (i = 0; i < this.config.conditions[conditionIndex]['stimulusKeys'].length; i++) {
-        this.stimulusMap[i] = this.prependGroupID(this.config.conditions[conditionIndex]['stimulusKeys'][i],
+    for (i = 0; i < this.config.conditions[conditionIndex]['clipKeys'].length; i++) {
+        this.stimulusMap[i] = this.prependGroupID(this.config.conditions[conditionIndex]['clipKeys'][i],
             conditionIndex);
     }
-    var referenceKeys = [];
-    for (i = 0; i < this.config.conditions[conditionIndex]['referenceKeys'].length; i++) {
-        referenceKeys.push(this.prependGroupID(this.config.conditions[conditionIndex]['referenceKeys'][i],
-            conditionIndex));
-    }
+//    var referenceKeys = [];
+//    for (i = 0; i < this.config.conditions[conditionIndex]['referenceKeys'].length; i++) {
+//        referenceKeys.push(this.prependGroupID(this.config.conditions[conditionIndex]['referenceKeys'][i],
+//            conditionIndex));
+//    }
 
     this.audioGroup.setSyncIDs(this.stimulusMap.concat(referenceKeys));
 };
@@ -822,7 +822,7 @@ Segmentation.prototype.createStimulusMap = function (conditionIndex) {
 // save the markings for the current condition
 Segmentation.prototype.saveMarkings = function() {
     // make sure something was selected
-    if (!$('.pairwise-stimulus-play-btn').hasClass('pairwise-selected')) {
+    if (!$('.segmentation-clip-play-btn').hasClass('segmentation-selected')) {
         alert('Set a time stamp marking by clicking on the marking button or clicking the "no-transition" button if no transition/change/boundary is heard.');
         return false;
     }
@@ -837,15 +837,15 @@ Segmentation.prototype.saveMarkings = function() {
 
     // save the selected one
     var conditionRatings = {};
-    conditionRatings[stimulusMap[0]] = $('#playStimulus0Btn').hasClass('pairwise-selected') ? 1 : 0;
-    conditionRatings[stimulusMap[1]] = $('#playStimulus1Btn').hasClass('pairwise-selected') ? 1 : 0;
+    conditionRatings[stimulusMap[0]] = $('#playClip0Btn').hasClass('segmentation-selected') ? 1 : 0;
+//    conditionRatings[stimulusMap[1]] = $('#playStimulus1Btn').hasClass('pairwise-selected') ? 1 : 0;
 
     // save the condition data
     this.completedConditionData[this.conditionIndex] = {'ratings': conditionRatings,
         'conditionID': this.config.conditions[this.conditionIndex].conditionID,
         'groupID': this.config.conditions[this.conditionIndex].groupID,
-        'referenceFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['referenceFiles'],
-        'stimulusFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['stimulusFiles'],
+//        'referenceFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['referenceFiles'],
+        'clipFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['clipFiles'],
         'referenceKeys': this.config.conditions[this.conditionIndex].referenceKeys,
         'stimulusKeys': this.config.conditions[this.conditionIndex].stimulusKeys};
 

@@ -13,7 +13,6 @@ from Crypto.Cipher import AES
 
 from caqe import app
 
-
 def sign_data(data):
     """
     Serialize and sign data (likely to be put in a session cookie).
