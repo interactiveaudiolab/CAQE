@@ -20,19 +20,19 @@
                     <div class="row text-center">
                         <h4>Trial <span id="currentTrialLbl">0</span> of <span id="totalTrialLbl">0</span></h4>
                     </div>
-                    <!--{% for reference in test.references %}-->
-                        <!--<div class="row">-->
-                            <!--<div class="col-md-3">-->
-                                <!--<button type="button"-->
-                                        <!--class="btn btn-default btn-block play-btn"-->
-                                        <!--id="playReference{{ reference[0] }}Btn"-->
-                                        <!--onclick="evaluationTask.playReference('{{ reference[0] }}');">-->
-                                    <!--<span class="glyphicon glyphicon-play"></span> {{ reference[0] }}-->
-                                <!--</button>-->
-                            <!--</div>-->
-                            <!--<div class="col-md-9">{{ reference[1] }}</div>-->
-                        <!--</div>-->
-                    <!--{% endfor %}-->
+                    {% for reference in test.references %}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <button type="button"
+                                        class="btn btn-default btn-block play-btn"
+                                        id="playReference{{ reference[0] }}Btn"
+                                        onclick="evaluationTask.playReference('{{ reference[0] }}');">
+                                    <span class="glyphicon glyphicon-play"></span> {{ reference[0] }}
+                                </button>
+                            </div>
+                            <div class="col-md-9">{{ reference[1] }}</div>
+                        </div>
+                    {% endfor %}
                     <div class="row">
                         <div class="col-md-3">
                             <button type="button"
@@ -47,9 +47,9 @@
                     <div class="row">
                         <div class="col-md-6">
                             <button type="button"
-                                    class="btn btn-default play-btn segmentation-clip-play-btn btn-block"
-                                    id="playClip0Btn"
-                                    onclick="evaluationTask.playClip(0);">
+                                    class="btn btn-default play-btn segmentation-stimulus-play-btn btn-block"
+                                    id="playStimulus0Btn"
+                                    onclick="evaluationTask.playStimulus(0);">
                                 ﻿<span style="font-size: 12pt;">play/select</span><br />A
                             </button>
                         </div>
@@ -57,17 +57,17 @@
                             <!--<button type="button"-->
                                     <!--class="btn btn-default play-btn pairwise-stimulus-play-btn btn-block"-->
                                     <!--id="playStimulus1Btn"-->
-                                    <!--onclick="evaluationTask.playStimulus(1);">-->
+                                    <!--onclick="evaluationTask.playStimulus(0);">-->
                                 <!--﻿<span style="font-size: 12pt;">play/select</span><br />B-->
                             <!--</button>-->
                         <!--</div>-->
                     </div>
                     <div class="row">
                         <div class="col-md-6 text-center">
-                            <span class="segmentationClipLabel" id="playClip0BtnLabel">&nbsp;</span>
+                            <span class="segmentationStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>
                         </div>
                         <!--<div class="col-md-6 text-center">-->
-                            <!--<span class="pairwiseStimulusLabel" id="playStimulus1BtnLabel">&nbsp;</span>-->
+                            <!--<span class="segmentationStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>-->
                         <!--</div>-->
                     </div>
                     <div class="row">
@@ -124,8 +124,8 @@
             "conditionGroups": {
                 {% for group_id, condition_group_data in condition_groups.iteritems()  %}
                     "{{ group_id }}": {
-                        "clipFiles": [
-                            {% for key, file_name in condition_group_data.clips %}
+                        "stimulusFiles": [
+                            {% for key, file_name in condition_group_data.stimulus_files %}
                                 ["{{ key }}", "{{ file_name }}"],
                             {% endfor %}
                         ]
@@ -137,8 +137,8 @@
                     {
                         "conditionID": "{{ condition.id }}",
                         "groupID": "{{ condition.group_id }}",
-                        "clipKeys": [
-                            {% for key in condition.clips %}
+                        "stimulusKeys": [
+                            {% for key in condition.stimulus_keys %}
                                 "{{ key }}",
                             {% endfor %}
                         ],

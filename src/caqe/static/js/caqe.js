@@ -711,52 +711,39 @@ Segmentation.prototype.testTimeoutCallback = function (_this) {
     _this.testNextTrialRequirements();
 };
 
-
-//Segmentation.prototype.playReference = function(ID) {
-//    this.audioGroup.solo(this.prependGroupID(ID));
-//    if (this.audioGroup.audioPlayingID == -1) {
-//        this.audioGroup.syncPlay();
-//    }
-//
-//    $('.play-btn').removeClass('btn-success').addClass('btn-default');
-//    $('#playReference' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played');
-//
-//    this.testNextTrialRequirements();
-//};
-
-//Segmentation.prototype.playStimulus = function(ID) {
-//    $('.play-btn').removeClass('btn-success').addClass('btn-default');
-//
-//    $('.pairwiseStimulusLabel').html('&nbsp;');
-//    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected');
-//
-//    this.audioGroup.solo(this.stimulusMap[ID]);
-//    if (this.audioGroup.audioPlayingID == -1) {
-//        this.audioGroup.syncPlay();
-//    }
-//
-//    $('#playStimulus' + ID + 'BtnLabel').html('(selected)');
-//    $('#playStimulus' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played pairwise-selected');
-//
-//    this.testNextTrialRequirements();
-//};
-
-Segmentation.prototype.playClip = function(ID) {
+Segmentation.prototype.playReference = function(ID) {
     this.audioGroup.solo(this.prependGroupID(ID));
+    if (this.audioGroup.audioPlayingID == -1) {
+        this.audioGroup.syncPlay();
+    }
 
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
-    $('#playClip' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played');
-    
-    this.testNextTrialRequirements();
-    
-}
+    $('#playReference' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played');
 
+    this.testNextTrialRequirements();
+};
+
+Segmentation.prototype.playStimulus = function(ID) {
+    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+
+    $('.segmentationStimulusLabel').html('&nbsp;');
+    $('.segmentation-stimulus-play-btn').removeClass('segmentation-selected');
+
+    this.audioGroup.solo(this.stimulusMap[ID]);
+    if (this.audioGroup.audioPlayingID == -1) {
+        this.audioGroup.syncPlay();
+    }
+
+    $('#playStimulus' + ID + 'BtnLabel').html('(selected)');
+    $('#playStimulus' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played segmentation-selected');
+
+    this.testNextTrialRequirements();
+};
 
 Segmentation.prototype.stopAllAudio = function() {
     this.audioGroup.syncPause();
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
 };
-
 
 Segmentation.prototype.nextTrial = function () {
     this.stopAllAudio();
@@ -764,8 +751,8 @@ Segmentation.prototype.nextTrial = function () {
         return;
     }
 
-    $('.segmentation-clip-play-btn').removeClass('segmentation-selected played');
-    $('.segmentationClipLabel').html('&nbsp;');
+    $('.segmentation-stimulus-play-btn').removeClass('segmentation-selected played');
+    $('.segmentationStimulusLabel').html('&nbsp;');
 
     // disable next button
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
@@ -794,7 +781,7 @@ Segmentation.prototype.nextTrial = function () {
 Segmentation.prototype.testNextTrialRequirements = function () {
     var qry = $('#evaluation');
     var all_played = qry.find('.play-btn').length == qry.find('.play-btn').filter('.played').length;
-    var stimulus_selected = $('.segmentation-clip-play-btn').hasClass('segmentation-selected');
+    var stimulus_selected = $('.segmentation-stimulus-play-btn').hasClass('segmentation-selected');
 
     if (all_played && stimulus_selected && this.timeoutPassed) {
         $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
@@ -805,8 +792,8 @@ Segmentation.prototype.testNextTrialRequirements = function () {
 Segmentation.prototype.createStimulusMap = function (conditionIndex) {
     var i;
     this.stimulusMap = []
-    for (i = 0; i < this.config.conditions[conditionIndex]['clipKeys'].length; i++) {
-        this.stimulusMap[i] = this.prependGroupID(this.config.conditions[conditionIndex]['clipKeys'][i],
+    for (i = 0; i < this.config.conditions[conditionIndex]['stimulusKeys'].length; i++) {
+        this.stimulusMap[i] = this.prependGroupID(this.config.conditions[conditionIndex]['stimulusKeys'][i],
             conditionIndex);
     }
 //    var referenceKeys = [];
@@ -815,14 +802,14 @@ Segmentation.prototype.createStimulusMap = function (conditionIndex) {
 //            conditionIndex));
 //    }
 
-    this.audioGroup.setSyncIDs(this.stimulusMap.concat(referenceKeys));
+//    this.audioGroup.setSyncIDs(this.stimulusMap.concat(referenceKeys));
 };
 
 
 // save the markings for the current condition
 Segmentation.prototype.saveMarkings = function() {
     // make sure something was selected
-    if (!$('.segmentation-clip-play-btn').hasClass('segmentation-selected')) {
+    if (!$('.segmentation-stimulus-play-btn').hasClass('segmentation-selected')) {
         alert('Set a time stamp marking by clicking on the marking button or clicking the "no-transition" button if no transition/change/boundary is heard.');
         return false;
     }
@@ -837,7 +824,7 @@ Segmentation.prototype.saveMarkings = function() {
 
     // save the selected one
     var conditionRatings = {};
-    conditionRatings[stimulusMap[0]] = $('#playClip0Btn').hasClass('segmentation-selected') ? 1 : 0;
+    conditionRatings[stimulusMap[0]] = $('#playStimulus0Btn').hasClass('segmentation-selected') ? 1 : 0;
 //    conditionRatings[stimulusMap[1]] = $('#playStimulus1Btn').hasClass('pairwise-selected') ? 1 : 0;
 
     // save the condition data
@@ -845,8 +832,8 @@ Segmentation.prototype.saveMarkings = function() {
         'conditionID': this.config.conditions[this.conditionIndex].conditionID,
         'groupID': this.config.conditions[this.conditionIndex].groupID,
 //        'referenceFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['referenceFiles'],
-        'clipFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['clipFiles'],
-        'referenceKeys': this.config.conditions[this.conditionIndex].referenceKeys,
+        'stimulusFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['stimulusFiles'],
+//        'referenceKeys': this.config.conditions[this.conditionIndex].referenceKeys,
         'stimulusKeys': this.config.conditions[this.conditionIndex].stimulusKeys};
 
     return true;

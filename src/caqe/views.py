@@ -621,6 +621,7 @@ def evaluation():
         elif app.config['TEST_TYPE'] == 'segmentation':
             return render_template('segmentation.html',
                                    test=test_config['test'],
+                                   condition_groups=test_config['condition_groups'],
                                    conditions=test_config['conditions'],
                                    participant_id=participant.id,
                                    first_evaluation=participant.trials.count() == 0,
