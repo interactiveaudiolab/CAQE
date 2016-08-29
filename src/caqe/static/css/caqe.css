@@ -58,6 +58,11 @@ input[type=range][orient=vertical].mushra-slider
 
 }
 
+#segmentation-well {
+	height: 300px;
+}
+
+
 .segmentation-stimulus-play-btn {
 	font-size: 5em;
 	vertical-align: middle;
@@ -66,4 +71,12 @@ input[type=range][orient=vertical].mushra-slider
 	display: inline-block;
 	overflow-x: visible;
 	overflow-y: visible;
+}
+
+#segmentation-playback-position {
+    -webkit-appearance: none;
+    appearance: none;
+	width: 100%;
+    margin: 10px 0px 10px 0px;
+    height: 50px;
 }

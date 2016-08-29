@@ -630,8 +630,7 @@ def evaluation():
                                                                       _scheme=app.config['PREFERRED_URL_SCHEME']),
                                    submission_url=url_for('evaluation',
                                                           _external=True,
-                                                          _scheme=app.config['PREFERRED_URL_SCHEME'])
-                                   )
+                                                          _scheme=app.config['PREFERRED_URL_SCHEME']))
 
         else:
             return render_template('%s.html' % test_config['test']['test_type'],

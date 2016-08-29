@@ -689,8 +689,9 @@ PairwiseTask.prototype.saveRatings = function() {
  * @constructor
  * @param {string} config - Contains the configuration data for the segmentation timestamp marking task
  */
+
 Segmentation.prototype = Object.create(EvaluationTask.prototype);
-Segmentation.prototype.constructor = Segmentation;
+Segmentation.prototype.constructor = PairwiseTask;
 
 function Segmentation(config) {
     EvaluationTask.apply(this, arguments);
@@ -702,7 +703,6 @@ Segmentation.prototype.startEvaluation = function () {
     EvaluationTask.prototype.startEvaluation.apply(this);
 
     this.audioGroup.setLoopAudio(false);
-    // Set audio loop to false
 };
 
 
@@ -710,6 +710,7 @@ Segmentation.prototype.testTimeoutCallback = function (_this) {
     _this.timeoutPassed = true;
     _this.testNextTrialRequirements();
 };
+
 
 Segmentation.prototype.playReference = function(ID) {
     this.audioGroup.solo(this.prependGroupID(ID));
@@ -723,11 +724,12 @@ Segmentation.prototype.playReference = function(ID) {
     this.testNextTrialRequirements();
 };
 
+
 Segmentation.prototype.playStimulus = function(ID) {
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
 
-    $('.segmentationStimulusLabel').html('&nbsp;');
-    $('.segmentation-stimulus-play-btn').removeClass('segmentation-selected');
+    $('.pairwiseStimulusLabel').html('&nbsp;');
+    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected');
 
     this.audioGroup.solo(this.stimulusMap[ID]);
     if (this.audioGroup.audioPlayingID == -1) {
@@ -735,24 +737,26 @@ Segmentation.prototype.playStimulus = function(ID) {
     }
 
     $('#playStimulus' + ID + 'BtnLabel').html('(selected)');
-    $('#playStimulus' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played segmentation-selected');
+    $('#playStimulus' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played pairwise-selected');
 
     this.testNextTrialRequirements();
 };
+
 
 Segmentation.prototype.stopAllAudio = function() {
     this.audioGroup.syncPause();
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
 };
 
+
 Segmentation.prototype.nextTrial = function () {
     this.stopAllAudio();
-    if (!this.saveMarkings()) {
+    if (!this.saveRatings()) {
         return;
     }
 
-    $('.segmentation-stimulus-play-btn').removeClass('segmentation-selected played');
-    $('.segmentationStimulusLabel').html('&nbsp;');
+    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected played');
+    $('.pairwiseStimulusLabel').html('&nbsp;');
 
     // disable next button
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
@@ -781,11 +785,16 @@ Segmentation.prototype.nextTrial = function () {
 Segmentation.prototype.testNextTrialRequirements = function () {
     var qry = $('#evaluation');
     var all_played = qry.find('.play-btn').length == qry.find('.play-btn').filter('.played').length;
-    var stimulus_selected = $('.segmentation-stimulus-play-btn').hasClass('segmentation-selected');
 
-    if (all_played && stimulus_selected && this.timeoutPassed) {
+    if (all_played && this.timeoutPassed) {
         $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
     }
+
+//    var stimulus_selected = $('.pairwise-stimulus-play-btn').hasClass('pairwise-selected');
+
+//    if (all_played && stimulus_selected && this.timeoutPassed) {
+//        $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
+//    }
 };
 
 
@@ -796,23 +805,26 @@ Segmentation.prototype.createStimulusMap = function (conditionIndex) {
         this.stimulusMap[i] = this.prependGroupID(this.config.conditions[conditionIndex]['stimulusKeys'][i],
             conditionIndex);
     }
-//    var referenceKeys = [];
-//    for (i = 0; i < this.config.conditions[conditionIndex]['referenceKeys'].length; i++) {
-//        referenceKeys.push(this.prependGroupID(this.config.conditions[conditionIndex]['referenceKeys'][i],
-//            conditionIndex));
-//    }
+    var referenceKeys = [];
+    for (i = 0; i < this.config.conditions[conditionIndex]['referenceKeys'].length; i++) {
+        referenceKeys.push(this.prependGroupID(this.config.conditions[conditionIndex]['referenceKeys'][i],
+            conditionIndex));
+    }
 
-//    this.audioGroup.setSyncIDs(this.stimulusMap.concat(referenceKeys));
+    this.audioGroup.setSyncIDs(this.stimulusMap.concat(referenceKeys));
 };
 
 
-// save the markings for the current condition
-Segmentation.prototype.saveMarkings = function() {
+// save the ratings for the current condition
+Segmentation.prototype.saveRatings = function() {
     // make sure something was selected
-    if (!$('.segmentation-stimulus-play-btn').hasClass('segmentation-selected')) {
-        alert('Set a time stamp marking by clicking on the marking button or clicking the "no-transition" button if no transition/change/boundary is heard.');
-        return false;
-    }
+
+//    if (!$('.pairwise-stimulus-play-btn').hasClass('pairwise-selected')) {
+//        alert('Press the A or B button to select your preferred recording before continuing.');
+//        return false;
+//    }
+
+    // TODO: setup an alert for marking timeings
 
     var stimulusMap = [];
 
@@ -824,16 +836,66 @@ Segmentation.prototype.saveMarkings = function() {
 
     // save the selected one
     var conditionRatings = {};
-    conditionRatings[stimulusMap[0]] = $('#playStimulus0Btn').hasClass('segmentation-selected') ? 1 : 0;
-//    conditionRatings[stimulusMap[1]] = $('#playStimulus1Btn').hasClass('pairwise-selected') ? 1 : 0;
+    conditionRatings[stimulusMap[0]] = $('#playStimulus0Btn').hasClass('pairwise-selected') ? 1 : 0;
+    conditionRatings[stimulusMap[1]] = $('#playStimulus1Btn').hasClass('pairwise-selected') ? 1 : 0;
 
     // save the condition data
     this.completedConditionData[this.conditionIndex] = {'ratings': conditionRatings,
         'conditionID': this.config.conditions[this.conditionIndex].conditionID,
         'groupID': this.config.conditions[this.conditionIndex].groupID,
-//        'referenceFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['referenceFiles'],
+        'referenceFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['referenceFiles'],
         'stimulusFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['stimulusFiles'],
-//        'referenceKeys': this.config.conditions[this.conditionIndex].referenceKeys,
+        'referenceKeys': this.config.conditions[this.conditionIndex].referenceKeys,
+        'stimulusKeys': this.config.conditions[this.conditionIndex].stimulusKeys};
+
+    return true;
+};
+
+Segmentation.prototype.audioOnTimeUpdate = function (e) {
+    var position;
+    if (this.audioGroup.audioPlayingID == -1) {
+        $('#segmentation-playback-position').val(0);
+    } else if (this.audioGroup.audioPlayingID == -2) {
+        if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioSoloingID)) {
+            position = e.target.currentTime / e.target.duration * 100.0;
+            $('#segmentation-playback-position').val(position);
+        }
+    } else {
+        if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioPlayingID)) {
+            position = e.target.currentTime / e.target.duration * 100.0;
+            $('#segmentation-playback-position').val(position);
+        }
+    }
+};
+
+Segmentation.prototype.saveMarkings = function() {
+    // make sure something was selected
+
+//    if (!$('.pairwise-stimulus-play-btn').hasClass('pairwise-selected')) {
+//        alert('Press the A or B button to select your preferred recording before continuing.');
+//        return false;
+//    }
+
+    var stimulusMap = [];
+
+    var i;
+    var re = /G([0-9]+)_([a-zA-Z0-9]+)/; // TODO: What is this?
+    for (i = 0; i < this.stimulusMap.length; i++) {
+        stimulusMap[i] = re.exec(this.stimulusMap[i])[2];
+    }
+
+    // save the selected one
+    var conditionRatings = {};
+    conditionRatings[stimulusMap[0]] = $('#playStimulus0Btn').hasClass('pairwise-selected') ? 1 : 0;
+    conditionRatings[stimulusMap[1]] = $('#playStimulus1Btn').hasClass('pairwise-selected') ? 1 : 0;
+
+    // save the condition data
+    this.completedConditionData[this.conditionIndex] = {'ratings': conditionRatings,
+        'conditionID': this.config.conditions[this.conditionIndex].conditionID,
+        'groupID': this.config.conditions[this.conditionIndex].groupID,
+        'referenceFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['referenceFiles'],
+        'stimulusFiles': this.config.conditionGroups[this.config.conditions[this.conditionIndex].groupID]['stimulusFiles'],
+        'referenceKeys': this.config.conditions[this.conditionIndex].referenceKeys,
         'stimulusKeys': this.config.conditions[this.conditionIndex].stimulusKeys};
 
     return true;

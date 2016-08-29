@@ -217,18 +217,6 @@ def get_test_configurations(condition_ids, participant_id):
         condition_data = json.loads(condition.data)
         condition_group_data = json.loads(condition.group.data)
 
-        # if app.config['TEST_TYPE'] == 'segmentation':
-        #     if app.config['STIMULUS_ORDER_RANDOMIZED']:
-        #         random.shuffle(condition_group_data['stimulus_files'])
-        #         random.shuffle(condition_data['stimulus_keys'])
-        #
-        #     if app.config['ENCRYPT_AUDIO_STIMULI_URLS']:
-        #         condition_group_data['stimulus_files'] = encrypt_audio_stimuli(condition_group_data['stimulus_files'],
-        #                                                                        participant_id,
-        #                                                                        condition.group_id)
-        #         encoding_map, _, _ = get_encoding_maps(condition_group_data['stimulus_files'])
-        #         condition_data['stimulus_keys'] = [encoding_map[key] for key in condition_data['stimulus_keys']]
-        # else:
         if app.config['STIMULUS_ORDER_RANDOMIZED']:
             random.shuffle(condition_group_data['stimulus_files'])
             random.shuffle(condition_data['stimulus_keys'])
@@ -389,6 +377,9 @@ def decrypt_audio_stimuli(condition_data):
         condition_data['ratings'] = dict([(decoding_map[k], v) for k, v in condition_data['ratings'].items()])
     elif app.config['TEST_TYPE'] == 'pairwise':
         condition_data['ratings'] = dict([(decoding_map[k], v) for k, v in condition_data['ratings'].items()])
+    elif app.config['TEST_TYPE'] == 'segmentation':
+        condition_data['ratings'] = dict([(decoding_map[k], v) for k, v in condition_data['ratings'].items()])
+        # TODO: Change this to markings after implmenting in caqe.js and segmentation.html
     ###################################################################################################################
     # ADD NEW TEST TYPES HERE
     ###################################################################################################################

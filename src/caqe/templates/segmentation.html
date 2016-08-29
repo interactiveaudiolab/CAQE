@@ -16,7 +16,7 @@
         <hr>
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                <div class="well" id="pairwise-well">
+                <div class="well" id="segmentation-well">
                     <div class="row text-center">
                         <h4>Trial <span id="currentTrialLbl">0</span> of <span id="totalTrialLbl">0</span></h4>
                     </div>
@@ -25,12 +25,12 @@
                             <div class="col-md-3">
                                 <button type="button"
                                         class="btn btn-default btn-block play-btn"
-                                        id="playReference{{ reference[0] }}Btn"
-                                        onclick="evaluationTask.playReference('{{ reference[0] }}');">
-                                    <span class="glyphicon glyphicon-play"></span> {{ reference[0] }}
+                                        id="playStimulus0Btn"
+                                        onclick="evaluationTask.playStimulus(0);">
+                                    <span class="glyphicon glyphicon-play"></span> Music Clip
                                 </button>
                             </div>
-                            <div class="col-md-9">{{ reference[1] }}</div>
+                            <div class="col-md-9"></div>
                         </div>
                     {% endfor %}
                     <div class="row">
@@ -39,40 +39,40 @@
                                     class="btn btn-default btn-block"
                                     id="stopBtn"
                                     onclick="evaluationTask.stopAllAudio();">
-                                <span class="glyphicon glyphicon-stop"></span>
+                                <span class="glyphicon glyphicon-stop"></span> Stop
                             </button>
                         </div>
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-md-6">
-                            <button type="button"
-                                    class="btn btn-default play-btn segmentation-stimulus-play-btn btn-block"
-                                    id="playStimulus0Btn"
-                                    onclick="evaluationTask.playStimulus(0);">
-                                ﻿<span style="font-size: 12pt;">play/select</span><br />A
-                            </button>
-                        </div>
+                        <!--<div class="col-md-12">-->
+                            <!--<button type="button"-->
+                                    <!--class="btn btn-default play-btn pairwise-stimulus-play-btn btn-block"-->
+                                    <!--id="playStimulus0Btn"-->
+                                    <!--onclick="evaluationTask.playStimulus(0);">-->
+                                <!--﻿<span style="font-size: 12pt;">play/select</span><br />A-->
+                            <!--</button>-->
+                        <!--</div>-->
                         <!--<div class="col-md-6">-->
                             <!--<button type="button"-->
                                     <!--class="btn btn-default play-btn pairwise-stimulus-play-btn btn-block"-->
                                     <!--id="playStimulus1Btn"-->
-                                    <!--onclick="evaluationTask.playStimulus(0);">-->
+                                    <!--onclick="evaluationTask.playStimulus(1);">-->
                                 <!--﻿<span style="font-size: 12pt;">play/select</span><br />B-->
                             <!--</button>-->
                         <!--</div>-->
                     </div>
                     <div class="row">
-                        <div class="col-md-6 text-center">
-                            <span class="segmentationStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>
+                        <div class="col-md-12 text-center">
+                            <span class="pairwiseStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>
                         </div>
                         <!--<div class="col-md-6 text-center">-->
-                            <!--<span class="segmentationStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>-->
+                            <!--<span class="pairwiseStimulusLabel" id="playStimulus1BtnLabel">&nbsp;</span>-->
                         <!--</div>-->
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <progress id="playback-position" value="0" max="100"></progress>
+                            <progress id="segmentation-playback-position" value="0.0" max="100.0"></progress>
                         </div>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
             <div class="col-md-8 col-md-offset-2">
                 <ul class="pager">
                     <li class="next">
-                        <a href="#pairwise-well" id="evaluationNextBtn" onclick="evaluationTask.nextTrial();">Next trial &rarr;</a>
+                        <a href="#segmentation-well" id="evaluationNextBtn" onclick="evaluationTask.nextTrial();">Next trial &rarr;</a>
                     </li>
                 </ul>
             </div>
@@ -124,6 +124,11 @@
             "conditionGroups": {
                 {% for group_id, condition_group_data in condition_groups.iteritems()  %}
                     "{{ group_id }}": {
+                        "referenceFiles": [
+                            {% for key, file_name in condition_group_data.reference_files %}
+                                ["{{ key }}", "{{ file_name }}"],
+                            {% endfor %}
+                        ],
                         "stimulusFiles": [
                             {% for key, file_name in condition_group_data.stimulus_files %}
                                 ["{{ key }}", "{{ file_name }}"],
@@ -137,6 +142,11 @@
                     {
                         "conditionID": "{{ condition.id }}",
                         "groupID": "{{ condition.group_id }}",
+                        "referenceKeys": [
+                            {% for key in condition.reference_keys %}
+                                "{{ key }}",
+                            {% endfor %}
+                        ],
                         "stimulusKeys": [
                             {% for key in condition.stimulus_keys %}
                                 "{{ key }}",
