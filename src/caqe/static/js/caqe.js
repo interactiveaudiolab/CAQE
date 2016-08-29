@@ -682,6 +682,7 @@ PairwiseTask.prototype.saveRatings = function() {
         'stimulusKeys': this.config.conditions[this.conditionIndex].stimulusKeys};
 
     return true;
+
 };
 
 /**
@@ -899,4 +900,5 @@ Segmentation.prototype.saveMarkings = function() {
         'stimulusKeys': this.config.conditions[this.conditionIndex].stimulusKeys};
 
     return true;
+
 };

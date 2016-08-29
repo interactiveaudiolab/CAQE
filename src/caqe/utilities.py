@@ -5,9 +5,13 @@ Utility functions
 """
 import base64
 import json
+<<<<<<< HEAD
 import crypto
 import sys
 sys.modules['Crypto'] = crypto
+=======
+
+>>>>>>> 1ed138a1357e7e6551d73fa29cc01fad7e52255c
 from itsdangerous import URLSafeSerializer
 from Crypto.Cipher import AES
 
