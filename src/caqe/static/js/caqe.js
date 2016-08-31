@@ -85,6 +85,14 @@ AudioGroup.prototype.play = function (ID) {
 };
 
 
+AudioGroup.prototype.playMarker = function (ID, Time) {
+    var audioelement = $('#' + this.ID + '_audio' + ID).get(0)
+    audioelement.currentTime = Time;
+    audioelement.play();
+    this.audioPlayingID = ID;
+    this.audioSoloingID = ID;
+};
+
 AudioGroup.prototype.pause = function () {
     if (this.audioPlayingID == -2) {
         this.syncPause();
@@ -692,23 +700,44 @@ PairwiseTask.prototype.saveRatings = function() {
  */
 
 Segmentation.prototype = Object.create(EvaluationTask.prototype);
-Segmentation.prototype.constructor = PairwiseTask;
+Segmentation.prototype.constructor = Segmentation;
 
 function Segmentation(config) {
     EvaluationTask.apply(this, arguments);
     this.timeoutPassed = false;
     this.createStimulusMap(this.conditionIndex);
+
+    //
+    this.stimulusPlayed = false;
 }
 
 Segmentation.prototype.startEvaluation = function () {
-    EvaluationTask.prototype.startEvaluation.apply(this);
+    // disable next trial button
+    $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
 
+    // disable experiment UI before one full listening
+    $('#playStimulus0Marker').addClass('disabled');
+    $('#stopBtn').addClass('disabled');
+    $('#nullBtn').addClass('disabled');
+    $('#segmentation-marker').prop('disabled', true);
+
+    // start timer
+    // this.testTimeout = setTimeout(this.testTimeoutCallback, this.config['testTimeoutSec'] * 1000.0, this);
+
+    this.setTrialCountLabels();
+
+    if (this.config.conditions[this.conditionIndex]['evaluation_instructions_html'] !== 'None') {
+        $('#evaluationInstructions').html(this.config.conditions[this.conditionIndex]['evaluation_instructions_html']);
+    }
+    this.showOnly('#evaluation');
     this.audioGroup.setLoopAudio(false);
 };
 
 
 Segmentation.prototype.testTimeoutCallback = function (_this) {
     _this.timeoutPassed = true;
+    _this.firstFullListen();
+    _this.stimulusPlayed = true;
     _this.testNextTrialRequirements();
 };
 
@@ -729,20 +758,39 @@ Segmentation.prototype.playReference = function(ID) {
 Segmentation.prototype.playStimulus = function(ID) {
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
 
-    $('.pairwiseStimulusLabel').html('&nbsp;');
-    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected');
+//    $('.pairwiseStimulusLabel').html('&nbsp;');
+//    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected');
 
     this.audioGroup.solo(this.stimulusMap[ID]);
     if (this.audioGroup.audioPlayingID == -1) {
         this.audioGroup.syncPlay();
     }
 
-    $('#playStimulus' + ID + 'BtnLabel').html('(selected)');
-    $('#playStimulus' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played pairwise-selected');
+    if (!this.stimulusPlayed){
+        var audioLength = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0).duration
+        this.testTimeout = setTimeout(this.testTimeoutCallback, audioLength * 1000.0, this);
+    }
+
+//    $('#playStimulus' + ID + 'BtnLabel').html('(selected)');
+//    $('#playStimulus' + ID + 'Btn').removeClass('btn-default').addClass('btn-success played pairwise-selected');
 
     this.testNextTrialRequirements();
 };
 
+
+Segmentation.prototype.playStimulusMarker = function(ID) {
+    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+
+    var audioLength = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0).duration
+    var markerValue = $('#segmentation-marker').val()
+
+    this.audioGroup.solo(this.stimulusMap[ID]);
+    this.audioGroup.playMarker(this.stimulusMap[ID], markerValue*audioLength);
+//    if (this.audioGroup.audioPlayingID == -1) {
+//        this.audioGroup.syncPlay();
+//    }
+
+}
 
 Segmentation.prototype.stopAllAudio = function() {
     this.audioGroup.syncPause();
@@ -756,8 +804,8 @@ Segmentation.prototype.nextTrial = function () {
         return;
     }
 
-    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected played');
-    $('.pairwiseStimulusLabel').html('&nbsp;');
+//    $('.pairwise-stimulus-play-btn').removeClass('pairwise-selected played');
+//    $('.pairwiseStimulusLabel').html('&nbsp;');
 
     // disable next button
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
@@ -783,11 +831,18 @@ Segmentation.prototype.nextTrial = function () {
 };
 
 
-Segmentation.prototype.testNextTrialRequirements = function () {
-    var qry = $('#evaluation');
-    var all_played = qry.find('.play-btn').length == qry.find('.play-btn').filter('.played').length;
+Segmentation.prototype.firstFullListen = function () {
+    $('#playStimulus0Marker').removeClass('disabled');
+    $('#stopBtn').removeClass('disabled');
+    $('#nullBtn').removeClass('disabled');
+    $('#segmentation-marker').prop('disabled', false);
+}
 
-    if (all_played && this.timeoutPassed) {
+Segmentation.prototype.testNextTrialRequirements = function () {
+//    var qry = $('#evaluation');
+//    var all_played = qry.find('.play-btn').length == qry.find('.play-btn').filter('.played').length;
+    // TODO: Check if marking is made.
+    if (this.timeoutPassed) {
         $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
     }
 
@@ -825,7 +880,7 @@ Segmentation.prototype.saveRatings = function() {
 //        return false;
 //    }
 
-    // TODO: setup an alert for marking timeings
+    // TODO: setup an alert for marking timings
 
     var stimulusMap = [];
 
@@ -856,26 +911,30 @@ Segmentation.prototype.audioOnTimeUpdate = function (e) {
     var position;
     if (this.audioGroup.audioPlayingID == -1) {
         $('#segmentation-playback-position').val(0);
+        $('#segmentation-playback-time').html("0.00 sec");
     } else if (this.audioGroup.audioPlayingID == -2) {
         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioSoloingID)) {
             position = e.target.currentTime / e.target.duration * 100.0;
             $('#segmentation-playback-position').val(position);
+            $('#segmentation-playback-time').html(parseFloat(e.target.currentTime).toFixed(2) + " secs");
         }
     } else {
         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioPlayingID)) {
             position = e.target.currentTime / e.target.duration * 100.0;
             $('#segmentation-playback-position').val(position);
+            $('#segmentation-playback-time').html(parseFloat(e.target.currentTime).toFixed(2) + " secs");
         }
     }
 };
 
+Segmentation.prototype.changeTimeStamp = function(){
+
+//    $('#segmentation-playback-time').html(parseFloat(e.target.currentTime).toFixed(2) + " secs");
+
+}
+
 Segmentation.prototype.saveMarkings = function() {
     // make sure something was selected
-
-//    if (!$('.pairwise-stimulus-play-btn').hasClass('pairwise-selected')) {
-//        alert('Press the A or B button to select your preferred recording before continuing.');
-//        return false;
-//    }
 
     var stimulusMap = [];
 

@@ -20,27 +20,47 @@
                     <div class="row text-center">
                         <h4>Trial <span id="currentTrialLbl">0</span> of <span id="totalTrialLbl">0</span></h4>
                     </div>
-                    {% for reference in test.references %}
-                        <div class="row">
-                            <div class="col-md-3">
-                                <button type="button"
-                                        class="btn btn-default btn-block play-btn"
-                                        id="playStimulus0Btn"
-                                        onclick="evaluationTask.playStimulus(0);">
-                                    <span class="glyphicon glyphicon-play"></span> Music Clip
-                                </button>
-                            </div>
-                            <div class="col-md-9"></div>
-                        </div>
-                    {% endfor %}
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-6">
+                            <button type="button"
+                                    class="btn btn-default btn-block play-btn"
+                                    id="playStimulus0Btn"
+                                    onclick="evaluationTask.playStimulus(0);">
+                                <span class="glyphicon glyphicon-play"></span> Play from the beginning
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-default btn-block play-btn"
+                                    id="playStimulus0Marker"
+                                    onclick="evaluationTask.playStimulusMarker(0)">
+                            <span class="glyphicon glyphicon-play"></span> Play from right before the marker
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
                             <button type="button"
                                     class="btn btn-default btn-block"
                                     id="stopBtn"
                                     onclick="evaluationTask.stopAllAudio();">
                                 <span class="glyphicon glyphicon-stop"></span> Stop
                             </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button"
+                                    class="btn btn-default btn-block"
+                                    id="nullBtn";>
+                                <span class="glyphicon glyphicon-ban-circle"></span> No change heard
+                            </button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <input type="range" id="segmentation-marker"
+                                   min="0.0" max="1.0" value="0.0" step="0.0001"
+                                   onchange="evaluationTask.changeTimeStamp();">
+                            <!--<span class="pairwiseStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>-->
                         </div>
                     </div>
                     <hr>
@@ -63,16 +83,23 @@
                         <!--</div>-->
                     </div>
                     <div class="row">
-                        <div class="col-md-12 text-center">
-                            <span class="pairwiseStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>
-                        </div>
+                        <!--<div class="col-md-12 text-center">-->
+                            <!--<input type="text" id="segmentation-playback-time">-->
+                            <!--&lt;!&ndash;<span class="pairwiseStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>&ndash;&gt;-->
+                        <!--</div>-->
+                        <!--<div class="col-md-12 text-center">-->
+                            <!--<span class="pairwiseStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>-->
+                        <!--</div>-->
                         <!--<div class="col-md-6 text-center">-->
                             <!--<span class="pairwiseStimulusLabel" id="playStimulus1BtnLabel">&nbsp;</span>-->
                         <!--</div>-->
                     </div>
+
                     <div class="row">
                         <div class="col-md-12">
                             <progress id="segmentation-playback-position" value="0.0" max="100.0"></progress>
+                            <label id="segmentation-playback-time" >0.00 sec</label>
+                            <!--<input type="text" id="segmentation-playback-time">-->
                         </div>
                     </div>
                 </div>
