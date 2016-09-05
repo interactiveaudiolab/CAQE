@@ -10,9 +10,12 @@ import random
 import urlparse
 import datetime
 import functools
+import os
+import mimetypes
+import re
 
-from flask import request, render_template, flash, redirect, session, make_response, send_from_directory, \
-    safe_join, url_for
+from flask import request, render_template, flash, redirect, session, make_response, \
+    safe_join, url_for, send_file, Response
 
 import experiment
 
@@ -23,6 +26,54 @@ import caqe.utilities as utilities
 import caqe.configuration as configuration
 
 logger = logging.getLogger(__name__)
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Accept-Ranges', 'bytes')
+    return response
+
+
+def send_file_partial(path):
+    """
+    Simple wrapper around send_file which handles HTTP 206 Partial Content
+    (byte ranges)
+
+    Parameters
+    ----------
+    path : str
+
+    Notes
+    -----
+    This is code is from https://gist.github.com/lizhiwei/7885684
+    """
+    range_header = request.headers.get('Range', None)
+    if not range_header: return send_file(path)
+
+    size = os.path.getsize(path)
+    byte1, byte2 = 0, None
+
+    m = re.search('(\d+)-(\d*)', range_header)
+    g = m.groups()
+
+    if g[0]: byte1 = int(g[0])
+    if g[1]: byte2 = int(g[1])
+
+    length = size - byte1
+    if byte2 is not None:
+        length = byte2 - byte1
+
+    data = None
+    with open(path, 'rb') as f:
+        f.seek(byte1)
+        data = f.read(length)
+
+    rv = Response(data,
+                  206,
+                  mimetype=mimetypes.guess_type(path)[0],
+                  direct_passthrough=True)
+    rv.headers.add('Content-Range', 'bytes {0}-{1}/{2}'.format(byte1, byte1 + length - 1, size))
+
+    return rv
 
 
 def nocache(view):
@@ -137,7 +188,6 @@ def page_not_found(e):
 
 
 @app.route('/audio/<audio_file_key>.wav')
-@nocache
 def audio(audio_file_key):
     """
     Return audio from audio file URL in `audio_file_key`
@@ -165,14 +215,7 @@ def audio(audio_file_key):
     else:
         filename = audio_file_key + '.wav'
 
-    # for now, audio directory must be in /static
-    assert(app.config['AUDIO_FILE_DIRECTORY'] == 'static/audio')
-
-    return redirect( url_for('static',
-                             filename='audio/' + filename,
-                             _external=True,
-                             _scheme=app.config['PREFERRED_URL_SCHEME']))
-
+    return send_file_partial(safe_join(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename))
 
 @app.route('/anonymous')
 @nocache
