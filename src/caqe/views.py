@@ -165,7 +165,13 @@ def audio(audio_file_key):
     else:
         filename = audio_file_key + '.wav'
 
-    return send_from_directory(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename)
+    # for now, audio directory must be in /static
+    assert(app.config['AUDIO_FILE_DIRECTORY'] == 'static/audio')
+
+    return redirect( url_for('static',
+                             filename='audio/' + filename,
+                             _external=True,
+                             _scheme=app.config['PREFERRED_URL_SCHEME']))
 
 
 @app.route('/anonymous')
