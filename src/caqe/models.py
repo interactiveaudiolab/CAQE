@@ -157,11 +157,11 @@ class Condition(db.Model):
     ----------
     id : int
         Primary key
+    data : str
+        JSON-enconded string of formatted condition variables
     test_id : int, optional
         Foreign key to the Test the condition belongs to
     group_id : int, optional
-    data : str
-        JSON-enconded string of formatted condition variables
     """
     id = db.Column(db.Integer, primary_key=True)
     test_id = db.Column(db.Integer, db.ForeignKey('test.id'))
@@ -190,11 +190,11 @@ class Trial(db.Model):
         Foreign key to the Participant of the trial
     condition_id : int
         Foreign key to the Condition of the trial
-    crowd_data : str
-        JSON-encoded string of data from the crowdsourcing site (e.g. workerId, assignmentId, HITId, etc. from MTurk)
     data : str
         JSON-enconded string formatted trial data dictionary
-    participant_passed_hearing_test: bool
+    crowd_data : str, optional
+        JSON-encoded string of data from the crowdsourcing site (e.g. workerId, assignmentId, HITId, etc. from MTurk)
+    participant_passed_hearing_test: bool, optional
         Participant passed hearing test at time of trial
     """
     id = db.Column(db.Integer, primary_key=True)
