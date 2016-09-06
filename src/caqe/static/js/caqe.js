@@ -716,9 +716,9 @@ Segmentation.prototype.startEvaluation = function () {
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
 
     // disable experiment UI before one full listening
-    $('#playStimulus0Marker').addClass('disabled');
-    $('#stopBtn').addClass('disabled');
-    $('#nullBtn').addClass('disabled');
+//    $('#playStimulus0Marker').addClass('disable-clicks').parent().addClass('disabled');
+//    $('#stopBtn').addClass('disable-clicks').parent().addClass('disabled');
+//    $('#nullBtn').addClass('disable-clicks').parent().addClass('disabled');
     $('#segmentation-marker').prop('disabled', true);
 
     // start timer
