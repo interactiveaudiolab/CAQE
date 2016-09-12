@@ -33,12 +33,12 @@
                             <button type="button" class="btn btn-default btn-block play-btn disabled"
                                     id="playStimulus0Marker"
                                     onclick="evaluationTask.playStimulusMarker(0)">
-                            <span class="glyphicon glyphicon-play"></span> Play from right before the marker
+                            <span class="glyphicon glyphicon-play"></span> Play from right before the slider position
                             </button>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <button type="button"
                                     class="btn btn-default btn-block disabled"
                                     id="stopBtn"
@@ -46,13 +46,13 @@
                                 <span class="glyphicon glyphicon-stop"></span> Stop
                             </button>
                         </div>
-                        <div class="col-md-6">
-                            <button type="button"
-                                    class="btn btn-default btn-block disabled"
-                                    id="nullBtn";>
-                                <span class="glyphicon glyphicon-ban-circle"></span> No change heard
-                            </button>
-                        </div>
+                        <!--<div class="col-md-6">-->
+                            <!--<button type="button"-->
+                                    <!--class="btn btn-default btn-block disabled"-->
+                                    <!--id="nullBtn";>-->
+                                <!--<span class="glyphicon glyphicon-ban-circle"></span> No change heard-->
+                            <!--</button>-->
+                        <!--</div>-->
                     </div>
                     <hr>
                     <div class="row">
@@ -63,8 +63,7 @@
                             <!--<span class="pairwiseStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>-->
                         </div>
                     </div>
-                    <hr>
-                    <div class="row">
+                    <!--<div class="row">-->
                         <!--<div class="col-md-12">-->
                             <!--<button type="button"-->
                                     <!--class="btn btn-default play-btn pairwise-stimulus-play-btn btn-block"-->
@@ -81,8 +80,8 @@
                                 <!--﻿<span style="font-size: 12pt;">play/select</span><br />B-->
                             <!--</button>-->
                         <!--</div>-->
-                    </div>
-                    <div class="row">
+                    <!--</div>-->
+                    <!--<div class="row">-->
                         <!--<div class="col-md-12 text-center">-->
                             <!--<input type="text" id="segmentation-playback-time">-->
                             <!--&lt;!&ndash;<span class="pairwiseStimulusLabel" id="playStimulus0BtnLabel">&nbsp;</span>&ndash;&gt;-->
@@ -93,13 +92,32 @@
                         <!--<div class="col-md-6 text-center">-->
                             <!--<span class="pairwiseStimulusLabel" id="playStimulus1BtnLabel">&nbsp;</span>-->
                         <!--</div>-->
-                    </div>
-
+                    <!--</div>-->
                     <div class="row">
                         <div class="col-md-12">
+                            <!--<div class="segmentation-progress">-->
+
+                            <!--</div>-->
                             <progress id="segmentation-playback-position" value="0.0" max="100.0"></progress>
                             <label id="segmentation-playback-time" >0.00 sec</label>
-                            <!--<input type="text" id="segmentation-playback-time">-->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button"
+                                    class="btn btn-default btn-block disabled"
+                                    id="submitBtn"
+                                    onclick="evaluationTask.submitSliderPosition()" ;>
+                                <span class="glyphicon glyphicon-ok"></span> Submit current slider position
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button"
+                                    class="btn btn-default btn-block disabled"
+                                    id="nullBtn"
+                                    onclick="evaluationTask.noChangeHeard()" ;>
+                                <span class="glyphicon glyphicon-ban-circle"></span> No change heard
+                            </button>
                         </div>
                     </div>
                 </div>

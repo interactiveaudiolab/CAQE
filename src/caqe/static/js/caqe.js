@@ -122,6 +122,19 @@ AudioGroup.prototype.syncPlay = function() {
 };
 
 
+AudioGroup.prototype.syncPlayMarker = function(Time) {
+    // Play all audio tags in the syncIDs group at once, set audioPlayingID to -2 to indicate sync play
+    var audioelement;
+
+    for (var i=0; i < this.syncIDs.length; i++) {
+        audioelement = $('#' + this.ID + '_audio' + this.syncIDs[i]).get(0);
+        audioelement.currentTime = Time;
+        audioelement.play();
+
+        this.audioPlayingID = -2;
+    }
+};
+
 AudioGroup.prototype.syncPause = function() {
     // pause all audio tags in the syncIDs group
     var audioelement;
@@ -716,9 +729,9 @@ Segmentation.prototype.startEvaluation = function () {
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
 
     // disable experiment UI before one full listening
-//    $('#playStimulus0Marker').addClass('disable-clicks').parent().addClass('disabled');
-//    $('#stopBtn').addClass('disable-clicks').parent().addClass('disabled');
-//    $('#nullBtn').addClass('disable-clicks').parent().addClass('disabled');
+    $('#playStimulus0Marker').addClass('disable-clicks').addClass('disabled');
+    $('#stopBtn').addClass('disable-clicks').addClass('disabled');
+    $('#nullBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-marker').prop('disabled', true);
 
     // start timer
@@ -785,10 +798,9 @@ Segmentation.prototype.playStimulusMarker = function(ID) {
     var markerValue = $('#segmentation-marker').val()
 
     this.audioGroup.solo(this.stimulusMap[ID]);
-    this.audioGroup.playMarker(this.stimulusMap[ID], markerValue*audioLength);
-//    if (this.audioGroup.audioPlayingID == -1) {
-//        this.audioGroup.syncPlay();
-//    }
+    if (this.audioGroup.audioPlayingID == -1) {
+        this.audioGroup.syncPlayMarker(markerValue*audioLength);
+    }
 
 }
 
@@ -796,6 +808,16 @@ Segmentation.prototype.stopAllAudio = function() {
     this.audioGroup.syncPause();
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
 };
+
+Segmentation.prototype.submitSliderPosition = function(){
+
+
+}
+
+Segmentation.prototype.noChangeHeard = function() {
+
+
+}
 
 
 Segmentation.prototype.nextTrial = function () {
@@ -832,9 +854,10 @@ Segmentation.prototype.nextTrial = function () {
 
 
 Segmentation.prototype.firstFullListen = function () {
-    $('#playStimulus0Marker').removeClass('disabled');
-    $('#stopBtn').removeClass('disabled');
-    $('#nullBtn').removeClass('disabled');
+    $('#playStimulus0Marker').removeClass('disabled').removeClass('disable-clicks');
+    $('#stopBtn').removeClass('disabled').removeClass('disable-clicks');
+    $('#nullBtn').removeClass('disabled').removeClass('disable-clicks');
+    $('#submitBtn').removeClass('disabled').removeClass('disable-clicks');
     $('#segmentation-marker').prop('disabled', false);
 }
 
