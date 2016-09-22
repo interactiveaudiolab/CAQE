@@ -367,5 +367,26 @@ class ProductionOverrideConfig(object):
     """
     TESTING = False
     DEBUG = False
-    
 
+
+class EvaluationDevOverrideConfig(object):
+    """
+    Override config for evaluation task development.
+
+    Note
+    ----
+    To enable these parameters set environment variable ``APP_MODE`` to 'PRODUCTION'. In Linux: ::
+
+        $ export APP_MODE=EVALUATION
+
+    """
+    DEBUG = True
+    SERVER_ADDRESS = 'caqe.local:5000'
+    MTURK_QUESTION_URL = 'https://%s/mturk' % SERVER_ADDRESS
+    HEARING_TEST_REJECTION_ENABLED = False
+    HEARING_SCREENING_TEST_ENABLED = False
+    HEARING_RESPONSE_ESTIMATION_ENABLED = False
+    PREFERRED_URL_SCHEME = 'http'
+    REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS = False
+    PRE_TEST_SURVEY_ENABLED = False
+    POST_TEST_SURVEY_ENABLED = False
