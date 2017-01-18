@@ -375,7 +375,7 @@ class EvaluationDevOverrideConfig(object):
 
     Note
     ----
-    To enable these parameters set environment variable ``APP_MODE`` to 'PRODUCTION'. In Linux: ::
+    To enable these parameters set environment variable ``APP_MODE`` to 'EVALUATION'. In Linux: ::
 
         $ export APP_MODE=EVALUATION
 
