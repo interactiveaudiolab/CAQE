@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Consent - CAQE{% endblock %}
+
+{% block body_content %}
+{{ super() }}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      	<h1 class="text-center">Consent</h1>
+    </div>
+</div>
+<hr>
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">﻿
+        <h3>!!!!!THIS IS JUST AN EXAMPLE!!!!!!!</h3>
+        <h3>Title of Research Study: {insert title here}</h3>
+
+        <h3>Investigator: {insert investigator here}</h3>
+
+        <h3>Supported By: {insert university of organization here}</h3>
+
+        <h3>Why am I being asked to take part in this research study?</h3>
+        <p>We are asking you to take part in this research study because we are trying to learn more about the performance
+            of audio processing algorithms.</p>
+
+        <h3>What should I know about a research study?</h3>
+        <ul>
+            <li>Whether or not you take part is up to you.</li>
+            <li>You can choose not to take part.</li>
+            <li>You can agree to take part and later change your mind.</li>
+            <li>Your decision will not be held against you.</li>
+        </ul>
+
+        <h3>Who can I talk to?</h3>
+        <p>If you have questions, concerns, or complaints, or think the research has hurt you, talk to the Principal
+            Investigator, Jane Doe, at (999) 999-9999, or the student investigator, John Done, at (999) 999-9999.</p>
+
+        <p>This research has been reviewed and approved by an Institutional Review Board ("IRB"). You may talk to them
+            at (999) 999-9999 or irb@yourorganization.edu if:
+            <ul>
+                <li>Your questions, concerns, or complaints are not being answered by the research team.</li>
+                <li>You cannot reach the research team.</li>
+                <li>You want to talk to someone besides the research team.</li>
+                <li>You have questions about your rights as a research participant.</li>
+                <li>You want to get information or provide input about this research.</li>
+            </ul>
+        </p>
+
+        <h3>Why is this research being done?</h3>
+        <p>The purpose of this research is to learn how audio processing algorithms perform.</p>
+
+        <h3>How long will the research last?</h3>
+        <p>Your participation in this study will last approximately X minutes.</p>
+
+        <h3>What happens if I say "Yes, I want to be in this research"?</h3>
+        <p>If you agree to participate, you will be asked to listen to and rate audio stimuli and answer survey
+            questions on your audio/music and general background.</p>
+
+        <h3>etc.</h3>
+        <h3>etc.</h3>
+        <h3>etc.</h3>
+
+        <h3>Consent</h3>
+
+        <p>If you want a copy of this consent for your records, you can print it from the screen.</p>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+        <form name="consentForm" action="/consent" method="POST">
+            <div class="form-group">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="consent" id="consentRadios" value="agree" checked>
+                        <b>I wish to participate in this study</b>
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="consent" id="consentRadios" value="disagree" checked>
+                        <b>I <i>do not</i> wish to participate in this study</b>
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-default">Continue <span aria-hidden="true">&rarr;</span></button>
+        </form>
+    </div>
+</div>
+{% endblock body_content %}

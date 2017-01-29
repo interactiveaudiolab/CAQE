@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Begin - CAQE{% endblock %}
+
+{% block body_content %}
+{{ super() }}
+<div class="alert alert-warning">
+    <span class="glyphicon glyphicon-info-sign"></span>&nbsp;
+    Please read the following before accepting the HIT. When you are done, click the Accept HIT button on the Amazon page to begin the HIT.
+</div>
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      	<h1 class="text-center">Audio Quality Evaluation</h1>
+    </div>
+</div>
+<hr>
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">﻿
+        {{ preview_html | safe }}
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+		<button type="button" class="btn btn-lg btn-default disabled center-block">Click here to begin</button>
+    </div>
+</div>
+{% endblock body_content %}

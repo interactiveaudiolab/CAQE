@@ -1,0 +1,96 @@
+/* Main stylesheet */
+
+/* Your customizations here */
+
+input[type=range][orient=vertical].mushra-slider
+{
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 8px;
+    height: 250px;
+    padding: 0 5px;
+	margin: 0 auto 0 auto;
+}
+
+#playback-position {
+	width: 100%;
+    margin: 10px 0px 10px 0px;
+}
+
+#mushra-well {
+	height: 500px;
+}
+
+#pairwise-well {
+	height: 500px;
+}
+
+#mushra-label {
+	margin: 0 0 auto auto;
+	padding-right: 0;
+	float: right;
+}
+
+@media screen{
+.rating {
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+	min-width: 3.5ch;
+	max-width: 100%;
+}
+.pairwise-stimulus-play-btn {
+	font-size: 5em;
+	vertical-align: middle;
+	text-align: center;
+	padding: 0 0 0.5em 0;
+	display: inline-block;
+	overflow-x: visible;
+	overflow-y: visible;
+}
+
+.play-btn {
+
+}
+
+.disable-clicks {
+	pointer-events: none;
+}
+
+}
+
+#segmentation-well {
+	height: 500px;
+}
+
+
+.segmentation-stimulus-play-btn {
+	font-size: 5em;
+	vertical-align: middle;
+	text-align: center;
+	padding: 0 0 0.5em 0;
+	display: inline-block;
+	overflow-x: visible;
+	overflow-y: visible;
+}
+
+#segmentation-playback-position {
+    -webkit-appearance: none;
+    appearance: none;
+	width: 100%;
+    margin: 10px 0px 10px 0px;
+    height: 50px;
+}
+
+#segmentation-playback-time{
+    font-size: 20px;
+    position: relative;
+    top: -2.7em;
+    margin-left: 45%;
+}
+
+.segmentation-progress {
+    background-color:rgb(128, 128, 128);
+    width: 100%;
+    height: 50px;
+}
+

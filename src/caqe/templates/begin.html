@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Begin - CAQE{% endblock %}
+
+{% block body_content %}
+{{ super() }}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      	<h1 class="text-center">Audio Quality Evaluation</h1>
+    </div>
+</div>
+<hr>
+<div class="row">
+	<div class="text-center col-md-8 col-md-offset-2">﻿
+        <div class="jumbotron">
+            <h2>Thank you for accepting the HIT.</h2>
+        </div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+		<button type="button" class="btn btn-lg btn-default center-block" onclick="window.open('{{ link }}','_blank','scrollbars=1, width={{ width }}, height={{ height }}, location=0, menubar=0')">Click here to begin</button>
+    </div>
+</div>
+{% endblock body_content %}
