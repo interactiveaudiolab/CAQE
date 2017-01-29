@@ -860,7 +860,6 @@ Segmentation.prototype.playStimulus = function(ID) {
         var audioLength = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0).duration;
         this.testTimeout = setTimeout(this.testTimeoutCallback, audioLength * 1000.0, this);
     }
-
 };
 
 
@@ -910,7 +909,6 @@ Segmentation.prototype.nextTrial = function () {
 
     // reset playback position
     $('#segmentation-playback-position').val(0);
-
     this.conditionIndex++;
 
     if (this.conditionIndex >= this.config.conditions.length) {
