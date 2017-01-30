@@ -983,7 +983,7 @@ Segmentation.prototype.saveRatings = function() {
     // save the selected one
     var conditionRatings = {};
     conditionRatings[stimulusMap[0]] = this.segmentVal;
-    conditionRatings[stimulusMap[1]] = this.segmentVal;
+    // conditionRatings[stimulusMap[1]] = this.segmentVal;
 
     // save the condition data
     this.completedConditionData[this.conditionIndex] = {'ratings': conditionRatings,
