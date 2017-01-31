@@ -27,14 +27,14 @@
                                     class="btn btn-default btn-block play-btn"
                                     id="playStimulus0Btn"
                                     onclick="evaluationTask.playStimulus(0);">
-                                <span class="glyphicon glyphicon-play"></span> Play from the beginning
+                                <span class="glyphicon glyphicon-play"></span> Play from the slider
                             </button>
                         </div>
                         <div class="col-md-6">
                             <button type="button" class="btn btn-default btn-block play-btn disabled"
                                     id="playStimulus0Marker"
                                     onclick="evaluationTask.playStimulusMarker(0)">
-                            <span class="glyphicon glyphicon-play"></span> Play from right before the slider position
+                            <span class="glyphicon glyphicon-play"></span> Play from the selection
                             </button>
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                                     class="btn btn-default btn-block disabled"
                                     id="stopBtn"
                                     onclick="evaluationTask.stopAllAudio();">
-                                <span class="glyphicon glyphicon-stop"></span> Stop
+                                <span class="glyphicon glyphicon-pause"></span> Pause
                             </button>
                         </div>
                     </div>
@@ -61,9 +61,8 @@
                         <div class="col-md-12">
                             <!--<div class="segmentation-progress">-->
 
-                            <!--</div>-->
                             <progress id="segmentation-playback-position" value="0.0" max="100.0"></progress>
-                            <label id="segmentation-playback-time" >0.00 sec</label>
+                            <!--<label id="segmentation-playback-time" >0.00 sec</label>-->
                         </div>
                     </div>
                     <div class="row">
@@ -72,7 +71,7 @@
                                     class="btn btn-default btn-block disabled"
                                     id="segmentation-submitBtn"
                                     onclick="evaluationTask.submitSliderPosition();">
-                                <span class="glyphicon glyphicon-ok"></span> Submit current slider position
+                                <span class="glyphicon glyphicon-ok"></span> Submit current selection position
                             </button>
                         </div>
                         <div class="col-md-6">
@@ -179,4 +178,14 @@
         };
         /* ]]> */
     </script>
+
+    <!--<script type="text/javascript">-->
+    <!--document.getElementById('segmentation-playback-position').addEventListener('click', function (e) {-->
+        <!--var boxOffset = $(this).offset().left;-->
+        <!--var x = (e.pageX - boxOffset)/this.offsetWidth, // or e.offsetX (less support, though)-->
+            <!--clickedValue = x * this.max;-->
+        <!--this.value = clickedValue;-->
+    <!--});-->
+    <!--</script>-->
 {% endblock scripts %}
+
