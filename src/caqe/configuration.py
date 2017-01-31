@@ -285,11 +285,15 @@ class BaseConfig(object):
     MTURK_MIN_CONSISTENCY_THRESHOLD_FOR_BONUS = 0.7
     MTURK_NUMBER_HITS_APPROVED_REQUIREMENT = 1000
     MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT = 97
-    MTURK_TITLE = 'Critical audio listening task. Listen to audio recordings and rate them on various ' \
-                  'scales of quality.'
-    MTURK_DESCRIPTION = 'This listening test aims to rate the quality of a set of signals in comparison to a reference ' \
-                        'signal. Note that while the maximum number assignments a worker can do is 10, it\'s possible that ' \
-                        'fewer than 10 may be available to you. **CHROME ONLY** **BONUS AVAILABLE**'
+    # MTURK_TITLE = 'Critical audio listening task. Listen to audio recordings and rate them on various ' \
+    #               'scales of quality.'
+    # MTURK_DESCRIPTION = 'This listening test aims to rate the quality of a set of signals in comparison to a reference ' \
+    #                     'signal. Note that while the maximum number assignments a worker can do is 10, it\'s possible that ' \
+    #                     'fewer than 10 may be available to you. **CHROME ONLY** **BONUS AVAILABLE**'
+
+    MTURK_TITLE = 'Music segmentation/boundary labeling task. Listen to music clips and mark the boundaries happened' \
+                  'of each clip.'
+    MTURK_DESCRIPTION = 'This listening task aims to collect timings of section changes/boundaries in music clips.'
     MTURK_KEYWORDS = 'audio, sound, music, listening, research'
     MTURK_ASSIGNMENT_DURATION_IN_SECONDS = 60 * 30
     MTURK_LIFETIME_IN_SECONDS = 60 * 60 * 24 * 7
