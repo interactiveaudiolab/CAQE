@@ -93,6 +93,20 @@ AudioGroup.prototype.playMarker = function (ID, Time) {
     this.audioSoloingID = ID;
 };
 
+AudioGroup.prototype.playSelection = function (ID, StarTime, EndTime) {
+    var audioelement = $('#' + this.ID + '_audio' + ID).get(0)
+    audioelement.currentTime = StarTime;
+    audioelement.play();
+    this.audioPlayingID = ID;
+    this.audioSoloingID = ID;
+    audioelement.ontimeupdate = function(){
+        if(audioelement.currentTime >= EndTime){
+            audioelement.pause();
+        }
+    };
+};
+
+
 AudioGroup.prototype.pause = function () {
     if (this.audioPlayingID == -2) {
         this.syncPause();
@@ -720,7 +734,6 @@ function Segmentation(config) {
     this.timeoutPassed = false;
     this.createStimulusMap(this.conditionIndex);
 
-    //
     this.stimulusPlayed = false;
     this.segmentVal = null;
 }
@@ -736,9 +749,12 @@ Segmentation.prototype.startEvaluation = function () {
     $('#segmentation-nullBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-audio-progress').prop('disabled', true);
 
-    var ctx = $('#segmentation-marker').getContext("2d");
-    ctx.fillStyle = "#E5E8E8";
-    ctx.fillRect(0,0, ctx.width, ctx.height);
+    // $('#segmentation-marker').css('background-color', 'rgba(146, 213, 157, 0.5)');
+    $('#segmentation-marker').css('background-color', 'rgba(188, 246, 227, 1.0)');
+    $('#segmentation-marker').off('click');
+    var canvas = $('#segmentation-marker').get(0);
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     this.setTrialCountLabels();
 
@@ -754,7 +770,7 @@ Segmentation.prototype.testTimeoutCallback = function (_this) {
     _this.timeoutPassed = true;
     _this.firstFullListen();
     _this.stimulusPlayed = true;
-    _this.testNextTrialRequirements();
+    // _this.testNextTrialRequirements();
 };
 
 
@@ -765,11 +781,6 @@ Segmentation.prototype.playStimulus = function(ID) {
     var markerValue = $('#segmentation-audio-progress').val();
 
     this.audioGroup.playMarker(this.stimulusMap[ID], markerValue*audioLength);
-
-    // this.audioGroup.solo(this.stimulusMap[ID]);
-    // if (this.audioGroup.audioPlayingID == -1) {
-    //     this.audioGroup.syncPlayMarker(markerValue*audioLength);
-    // }
 
     if (!this.stimulusPlayed){
         var audioLength = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0).duration;
@@ -782,17 +793,70 @@ Segmentation.prototype.playStimulusMarker = function(ID) {
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
 
     var audioLength = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0).duration;
-    // var markerValue = $('#segmentation-audio-progress').val();
-    var markerValue = $('#segmentation-playback-position').val()/100.0;
+    var markerValue = $('#segmentation-marker').get(0).value;
 
     this.audioGroup.playMarker(this.stimulusMap[ID], markerValue*audioLength);
 
-    //
-    // this.audioGroup.solo(this.stimulusMap[ID]);
-    // if (this.audioGroup.audioPlayingID == -1) {
-    //     this.audioGroup.syncPlayMarker(markerValue*audioLength);
-    // }
+}
 
+Segmentation.prototype.playSelection = function(ID) {
+    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+
+    var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0)
+    var audioLength = audio.duration;
+    var markerValue = $('#segmentation-marker').get(0).value;
+
+    if(markerValue>0.1){
+        var startTime = markerValue-0.1;
+    }else{
+        var startTime = 0.0;
+    }
+
+    if(markerValue<0.9){
+        var endTime = markerValue+0.1;
+    }else{
+        var endTime = 1.0;
+    }
+    this.audioGroup.playSelection(this.stimulusMap[ID], startTime*audioLength, endTime*audioLength);
+    // audio.onplaying=function(){
+    //     setInterval(function increment(){
+    //         var markerValue = $('#segmentation-audio-progress').val();
+    //         $('#segmentation-audio-progress').val(markerValue+0.01);
+    //     }, 300);
+    // };
+}
+
+
+Segmentation.prototype.playPauseStimulus = function(ID){
+
+    var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0)
+
+    if (!this.stimulusPlayed){
+
+        $('#playStimulusBtn').addClass('disable-clicks').addClass('disabled');
+        var audioLength = audio.duration;
+        var markerValue = $('#segmentation-audio-progress').val();
+
+        this.audioGroup.playSelection(this.stimulusMap[ID], 0, audioLength);
+
+        var audioLength = audio.duration;
+        this.testTimeout = setTimeout(this.testTimeoutCallback, audioLength * 1000.0, this);
+
+    }else{
+
+        if(audio.paused){
+            // $('.play-btn').removeClass('btn-success').addClass('btn-default');
+
+            var audioLength = audio.duration;
+            var markerValue = $('#segmentation-audio-progress').val();
+
+            this.audioGroup.playSelection(this.stimulusMap[ID], markerValue*audioLength, audioLength);
+
+        }else {
+            this.audioGroup.syncPause();
+            // $('.play-btn').removeClass('btn-success').addClass('btn-default');
+        }
+    }
 }
 
 Segmentation.prototype.stopAllAudio = function() {
@@ -801,12 +865,15 @@ Segmentation.prototype.stopAllAudio = function() {
 };
 
 Segmentation.prototype.submitSliderPosition = function(){
-    this.segmentVal = $('#segmentation-playback-position').value/100.0;
-    // this.segmentVal = $('#segmentation-audio-progress').val();
+    this.segmentVal = $('#segmentation-marker').get(0).value;
 }
 
 Segmentation.prototype.noChangeHeard = function() {
     this.segmentVal = -1;
+
+    var canvas = $('#segmentation-marker').get(0);
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 
@@ -828,8 +895,12 @@ Segmentation.prototype.nextTrial = function () {
     clearTimeout(this.testTimeout);
 
     // reset playback position
-    $('#segmentation-playback-position').val(0);
-    $('#segmentation-playback-position').off('click');
+    $('#segmentation-marker').off('click');
+
+    var canvas = $('#segmentation-marker').get(0);
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     $('#segmentation-audio-progress').val(0);
     this.conditionIndex++;
 
@@ -856,24 +927,48 @@ Segmentation.prototype.firstFullListen = function () {
     $('#segmentation-submitBtn').removeClass('disabled').removeClass('disable-clicks');
     $('#segmentation-audio-progress').prop('disabled', false);
     $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
+    $('#playStimulusBtn').removeClass('disable-clicks').parent().removeClass('disabled');
 
-    $('#segmentation-playback-position').on('click', function (e) {
+    $('#segmentation-marker').on('click', function (e){
+
         var boxOffset = $(this).offset().left;
-        var x = (e.pageX - boxOffset)/this.offsetWidth, // or e.offsetX (less support, though)
-            clickedValue = x * this.max;
-        this.value = clickedValue;
+        var x = (e.pageX - boxOffset)/this.offsetWidth;
+        var canvas = $(this).get(0)
+        var ctx = canvas.getContext("2d");
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        var iStrokeWidth = 1;
+        var iTranslate = (iStrokeWidth % 2) / 2;
+        ctx.translate(iTranslate, iTranslate);
+        ctx.lineWidth = iStrokeWidth;
+        ctx.beginPath();
+
+        if(x>0.1){
+            var left = x-0.1;
+            if(x<0.9){
+                var w = 0.2;
+            }else{
+                var w = 0.1+(1.0-x);
+            }
+        }else{
+            var left = 0.0;
+            var w = x +0.1
+        }
+        ctx.rect(left*canvas.width, 0, w*canvas.width, canvas.height);
+        ctx.fillStyle = "#30E3A8";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(Math.round(x*canvas.width), 0);
+        ctx.lineTo(Math.round(x*canvas.width), canvas.height);
+        ctx.strokeStyle="Black";
+        ctx.stroke();
+
+        ctx.translate(-iTranslate, -iTranslate);
+        this.value = x;
     });
-
 }
-
-// Segmentation.prototype.testNextTrialRequirements = function () {
-//
-//     // TODO: Check if marking is made.
-//     if (this.timeoutPassed) {
-//         $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
-//     }
-//
-// };
 
 
 Segmentation.prototype.createStimulusMap = function (conditionIndex) {
@@ -929,22 +1024,35 @@ Segmentation.prototype.saveRatings = function() {
 
 Segmentation.prototype.audioOnTimeUpdate = function (e) {
     var position;
+
     if (this.audioGroup.audioPlayingID == -1) {
-        // $('#segmentation-playback-position').val(0);
-        // $('#segmentation-playback-time').html("0.00 sec");
+
     } else if (this.audioGroup.audioPlayingID == -2) {
         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioSoloingID)) {
             position = e.target.currentTime / e.target.duration;
-            // $('#segmentation-playback-position').val(position * 100.0);
             $('#segmentation-audio-progress').val(position)
-            // $('#segmentation-playback-time').html(parseFloat(e.target.currentTime).toFixed(2) + " secs");
         }
     } else {
         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioPlayingID)) {
             position = e.target.currentTime / e.target.duration;
-            // $('#segmentation-playback-position').val(position * 100.0);
             $('#segmentation-audio-progress').val(position)
-            // $('#segmentation-playback-time').html(parseFloat(e.target.currentTime).toFixed(2) + " secs");
         }
     }
 };
+
+// Segmentation.prototype.audioOnTimeUpdate = function (e) {
+//     var position;
+//     if (this.audioGroup.audioPlayingID == -1) {
+//
+//     } else if (this.audioGroup.audioPlayingID == -2) {
+//         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioSoloingID)) {
+//             position = e.target.currentTime / e.target.duration;
+//             $('#segmentation-audio-progress').val(position)
+//         }
+//     } else {
+//         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioPlayingID)) {
+//             position = e.target.currentTime / e.target.duration;
+//             $('#segmentation-audio-progress').val(position)
+//         }
+//     }
+// };

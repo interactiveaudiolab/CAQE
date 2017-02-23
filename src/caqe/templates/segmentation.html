@@ -4,74 +4,62 @@
     <!-- evaluation view -->
     <div class="container hidden" id="evaluation">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <h1 class="text-center">{{ test.test_title | safe }}</h1>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2" id="evaluationInstructions">﻿
+            <div class="col-md-10 col-md-offset-1" id="evaluationInstructions">﻿
                 {{ test.evaluation_instructions_html | safe }}
             </div>
         </div>
         <hr>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <div class="well" id="segmentation-well">
                     <div class="row text-center">
                         <h4>Trial <span id="currentTrialLbl">0</span> of <span id="totalTrialLbl">0</span></h4>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-2">
                             <button type="button"
                                     class="btn btn-default btn-block play-btn"
-                                    id="playStimulus0Btn"
-                                    onclick="evaluationTask.playStimulus(0);">
-                                <span class="glyphicon glyphicon-play"></span> Play from the slider
+                                    id="playStimulusBtn"
+                                    onclick="evaluationTask.playPauseStimulus(0)">
+                                <span class="glyphicon glyphicon-play"></span> / <span class="glyphicon glyphicon-pause"></span>
                             </button>
                         </div>
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-default btn-block play-btn disabled"
-                                    id="playStimulus0Marker"
-                                    onclick="evaluationTask.playStimulusMarker(0)">
-                            <span class="glyphicon glyphicon-play"></span> Play from the selection
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="button"
-                                    class="btn btn-default btn-block disabled"
-                                    id="stopBtn"
-                                    onclick="evaluationTask.stopAllAudio();">
-                                <span class="glyphicon glyphicon-pause"></span> Pause
-                            </button>
+                        <div class="col-md-10 text-center">
+                            <input type="range" id="segmentation-audio-progress"
+                                   min="0.0" max="1.0" value="0.0" step="0.0001">
+                                   <!--onchange="evaluationTask.changeTimeStamp();"-->
                         </div>
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-md-12 text-center">
-                            <input type="range" id="segmentation-audio-progress"
-                                   min="0.0" max="1.0" value="0.0" step="0.0001"
-                                   onchange="evaluationTask.changeTimeStamp();">
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default btn-block play-btn disabled"
+                                    id="playStimulus0Marker"
+                                    onclick="evaluationTask.playSelection(0)">
+                            <!--<span class="glyphicon glyphicon-ok"></span>-->
+                                Check selection
+                            </button>
                         </div>
-                    </div>
+                        <div class="col-md-10">
+                            <canvas id="segmentation-marker"></canvas>
+                        </div>
 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <!--<div class="segmentation-progress">-->
-                            <canvas id="segmentation-marker">
-                            <!--<progress id="segmentation-playback-position" value="0.0" max="100.0"></progress>-->
-                            <!--<label id="segmentation-playback-time" >0.00 sec</label>-->
-                        </div>
                     </div>
+                    <hr>
+
                     <div class="row">
                         <div class="col-md-6">
                             <button type="button"
                                     class="btn btn-default btn-block disabled"
                                     id="segmentation-submitBtn"
                                     onclick="evaluationTask.submitSliderPosition();">
-                                <span class="glyphicon glyphicon-ok"></span> Submit current selection position
+                                <span class="glyphicon glyphicon-upload"></span> Submit current selection position
                             </button>
                         </div>
                         <div class="col-md-6">
@@ -87,7 +75,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <ul class="pager">
                     <li class="next">
                         <a href="#segmentation-well" id="evaluationNextBtn" onclick="evaluationTask.nextTrial();">Next trial &rarr;</a>
