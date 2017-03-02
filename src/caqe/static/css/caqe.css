@@ -62,6 +62,10 @@ input[type=range][orient=vertical].mushra-slider
 	height: 300px;
 }
 
+h5.segmentation{
+    text-align: center;
+}
+
 .segmentation-stimulus-play-btn {
 	font-size: 5em;
 	vertical-align: middle;
@@ -99,15 +103,15 @@ input[type=range][orient=vertical].mushra-slider
 
 }
 
-input[type=range] {
+input[type=range].segmentation-slider {
   -webkit-appearance: none;
   width: 100%;
   margin: 12.15px 0;
 }
-input[type=range]:focus {
+input[type=range].segmentation-slider:focus {
   outline: none;
 }
-input[type=range]::-webkit-slider-runnable-track {
+input[type=range].segmentation-slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 8.7px;
   cursor: pointer;
@@ -116,7 +120,7 @@ input[type=range]::-webkit-slider-runnable-track {
   border-radius: 0px;
   border: 0px solid #010101;
 }
-input[type=range]::-webkit-slider-thumb {
+input[type=range].segmentation-slider::-webkit-slider-thumb {
   box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
   border: 0px solid #000000;
   height: 33px;
@@ -127,10 +131,10 @@ input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   margin-top: -12.15px;
 }
-input[type=range]:focus::-webkit-slider-runnable-track {
+input[type=range].segmentation-slider:focus::-webkit-slider-runnable-track {
   background: #7f769a;
 }
-input[type=range]::-moz-range-track {
+input[type=range].segmentation-slider::-moz-range-track {
   width: 100%;
   height: 8.7px;
   cursor: pointer;
@@ -139,7 +143,7 @@ input[type=range]::-moz-range-track {
   border-radius: 0px;
   border: 0px solid #010101;
 }
-input[type=range]::-moz-range-thumb {
+input[type=range].segmentation-slider::-moz-range-thumb {
   box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
   border: 0px solid #000000;
   height: 33px;
@@ -148,7 +152,7 @@ input[type=range]::-moz-range-thumb {
   background: #000000;
   cursor: pointer;
 }
-input[type=range]::-ms-track {
+input[type=range].segmentation-slider::-ms-track {
   width: 100%;
   height: 8.7px;
   cursor: pointer;
@@ -156,7 +160,7 @@ input[type=range]::-ms-track {
   border-color: transparent;
   color: transparent;
 }
-input[type=range]::-ms-fill-lower {
+input[type=range].segmentation-slider::-ms-fill-lower {
   background: #7f769a;
   border: 0px solid #010101;
   border-radius: 0px;
@@ -168,7 +172,7 @@ input[type=range]::-ms-fill-upper {
   border-radius: 0px;
   box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
 }
-input[type=range]::-ms-thumb {
+input[type=range].segmentation-slider::-ms-thumb {
   box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
   border: 0px solid #000000;
   height: 33px;
@@ -178,9 +182,9 @@ input[type=range]::-ms-thumb {
   cursor: pointer;
   height: 8.7px;
 }
-input[type=range]:focus::-ms-fill-lower {
+input[type=range].segmentation-slider:focus::-ms-fill-lower {
   background: #7f769a;
 }
-input[type=range]:focus::-ms-fill-upper {
+input[type=range].segmentation-slider:focus::-ms-fill-upper {
   background: #7f769a;
 }

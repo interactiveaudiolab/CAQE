@@ -743,8 +743,8 @@ Segmentation.prototype.startEvaluation = function () {
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
 
     // disable experiment UI before one full listening
-    $('#playStimulus0Marker').addClass('disable-clicks').addClass('disabled');
-    $('#stopBtn').addClass('disable-clicks').addClass('disabled');
+    $('#playStimulus0Marker').prop('disabled', true);
+    // $('#stopBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-submitBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-nullBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-audio-progress').prop('disabled', true);
@@ -833,7 +833,8 @@ Segmentation.prototype.playPauseStimulus = function(ID){
 
     if (!this.stimulusPlayed){
 
-        $('#playStimulusBtn').addClass('disable-clicks').addClass('disabled');
+        // $('#playStimulusBtn').addClass('disable-clicks').addClass('disabled');
+        $('#playStimulusBtn').prop('disabled', true);
         var audioLength = audio.duration;
         var markerValue = $('#segmentation-audio-progress').val();
 
@@ -886,11 +887,12 @@ Segmentation.prototype.nextTrial = function () {
     // disable next button
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
 
-    $('#playStimulus0Marker').addClass('disable-clicks').addClass('disabled');
-    $('#stopBtn').addClass('disable-clicks').addClass('disabled');
+    // $('#stopBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-submitBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-nullBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-audio-progress').prop('disabled', true);
+
+    $('#playStimulus0Marker').prop('disabled', true);
 
     clearTimeout(this.testTimeout);
 
@@ -921,13 +923,14 @@ Segmentation.prototype.nextTrial = function () {
 
 
 Segmentation.prototype.firstFullListen = function () {
-    $('#playStimulus0Marker').removeClass('disabled').removeClass('disable-clicks');
-    $('#stopBtn').removeClass('disabled').removeClass('disable-clicks');
+    $('#playStimulus0Marker').removeAttr('disabled');
+    // $('#stopBtn').removeClass('disabled').removeClass('disable-clicks');
     $('#segmentation-nullBtn').removeClass('disabled').removeClass('disable-clicks');
     $('#segmentation-submitBtn').removeClass('disabled').removeClass('disable-clicks');
     $('#segmentation-audio-progress').prop('disabled', false);
     $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
-    $('#playStimulusBtn').removeClass('disable-clicks').parent().removeClass('disabled');
+    // $('#playStimulusBtn').removeClass('disable-clicks').parent().removeClass('disabled');
+    $('#playStimulusBtn').removeAttr('disabled');
 
     $('#segmentation-marker').on('click', function (e){
 

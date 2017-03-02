@@ -20,7 +20,11 @@
                     <div class="row text-center">
                         <h4>Trial <span id="currentTrialLbl">0</span> of <span id="totalTrialLbl">0</span></h4>
                     </div>
-
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="segmentation">Audio Progress Bar</h5>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-2">
                             <button type="button"
@@ -32,11 +36,17 @@
                         </div>
                         <div class="col-md-10 text-center">
                             <input type="range" id="segmentation-audio-progress"
-                                   min="0.0" max="1.0" value="0.0" step="0.0001">
+                                   min="0.0" max="1.0" value="0.0" step="0.0001"
+                                   class="segmentation-slider"
+                            >
                                    <!--onchange="evaluationTask.changeTimeStamp();"-->
                         </div>
                     </div>
-                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="segmentation">Segmentation Selection Slider</h5>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-2">
                             <button type="button" class="btn btn-default btn-block play-btn disabled"
@@ -59,7 +69,7 @@
                                     class="btn btn-default btn-block disabled"
                                     id="segmentation-submitBtn"
                                     onclick="evaluationTask.submitSliderPosition();">
-                                <span class="glyphicon glyphicon-upload"></span> Submit current selection position
+                                <span class="glyphicon glyphicon-upload"></span> Submit
                             </button>
                         </div>
                         <div class="col-md-6">
