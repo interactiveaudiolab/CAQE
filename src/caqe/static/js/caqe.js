@@ -820,8 +820,8 @@ Segmentation.prototype.playSelection = function(ID) {
     this.audioGroup.playSelection(this.stimulusMap[ID], startTime*audioLength, endTime*audioLength);
     // audio.onplaying=function(){
     //     setInterval(function increment(){
-    //         var markerValue = $('#segmentation-audio-progress').val();
-    //         $('#segmentation-audio-progress').val(markerValue+0.01);
+    //         var _markerValue = $('#segmentation-audio-progress').val();
+    //         $('#segmentation-audio-progress').val(_markerValue+0.01);
     //     }, 300);
     // };
 }
@@ -996,7 +996,7 @@ Segmentation.prototype.saveRatings = function() {
     // make sure something was selected
 
     if (this.segmentVal === null) {
-        alert('Press "Submit current slider value" or "No change heard" button before continuing.');
+        alert('Press "Mark slider position" or "No change heard" button before continuing.');
         return false;
     }
 
@@ -1043,19 +1043,3 @@ Segmentation.prototype.audioOnTimeUpdate = function (e) {
     }
 };
 
-// Segmentation.prototype.audioOnTimeUpdate = function (e) {
-//     var position;
-//     if (this.audioGroup.audioPlayingID == -1) {
-//
-//     } else if (this.audioGroup.audioPlayingID == -2) {
-//         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioSoloingID)) {
-//             position = e.target.currentTime / e.target.duration;
-//             $('#segmentation-audio-progress').val(position)
-//         }
-//     } else {
-//         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioPlayingID)) {
-//             position = e.target.currentTime / e.target.duration;
-//             $('#segmentation-audio-progress').val(position)
-//         }
-//     }
-// };

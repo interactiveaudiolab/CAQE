@@ -16,7 +16,7 @@
         <hr>
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
-                <div class="well" id="segmentation-well">
+                <div class="well" id="segmentation-task-well">
                     <div class="row text-center">
                         <h4>Trial <span id="currentTrialLbl">0</span> of <span id="totalTrialLbl">0</span></h4>
                     </div>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <h5 class="segmentation">Segmentation Selection Slider</h5>
+                            <h5 class="segmentation">Boundary Selection Slider</h5>
                         </div>
                     </div>
                     <div class="row">
@@ -61,15 +61,38 @@
                         </div>
 
                     </div>
-                    <hr>
 
+                    <!--<div class="row">-->
+                        <!--<div class="col-md-6">-->
+                            <!--<button type="button"-->
+                                    <!--class="btn btn-default btn-block disabled"-->
+                                    <!--id="segmentation-submitBtn"-->
+                                    <!--onclick="evaluationTask.submitSliderPosition();">-->
+                                <!--<span class="glyphicon glyphicon-upload"></span> Submit-->
+                            <!--</button>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-6">-->
+                            <!--<button type="button"-->
+                                    <!--class="btn btn-default btn-block disabled"-->
+                                    <!--id="segmentation-nullBtn"-->
+                                    <!--onclick="evaluationTask.noChangeHeard();">-->
+                                <!--<span class="glyphicon glyphicon-ban-circle"></span> No change heard-->
+                            <!--</button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="well" id="segmentation-submit-well">
                     <div class="row">
                         <div class="col-md-6">
                             <button type="button"
                                     class="btn btn-default btn-block disabled"
                                     id="segmentation-submitBtn"
                                     onclick="evaluationTask.submitSliderPosition();">
-                                <span class="glyphicon glyphicon-upload"></span> Submit
+                                <span class="glyphicon glyphicon-pencil"></span> Mark slider position
                             </button>
                         </div>
                         <div class="col-md-6">
@@ -81,16 +104,13 @@
                             </button>
                         </div>
                     </div>
+
+                    <ul class="pager">
+                        <li class="next">
+                            <a href="#segmentation-well" id="evaluationNextBtn" onclick="evaluationTask.nextTrial();">Next trial &rarr;</a>
+                        </li>
+                    </ul>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-10 col-md-offset-1">
-                <ul class="pager">
-                    <li class="next">
-                        <a href="#segmentation-well" id="evaluationNextBtn" onclick="evaluationTask.nextTrial();">Next trial &rarr;</a>
-                    </li>
-                </ul>
             </div>
         </div>
     </div>

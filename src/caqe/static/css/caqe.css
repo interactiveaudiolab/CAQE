@@ -58,8 +58,12 @@ input[type=range][orient=vertical].mushra-slider
 
 }
 
-#segmentation-well {
-	height: 300px;
+#segmentation-task-well {
+	height: 225px;
+}
+
+#segmentation-submit-well {
+    height: 125px;
 }
 
 h5.segmentation{
