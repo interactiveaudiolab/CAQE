@@ -62,24 +62,6 @@
 
                     </div>
 
-                    <!--<div class="row">-->
-                        <!--<div class="col-md-6">-->
-                            <!--<button type="button"-->
-                                    <!--class="btn btn-default btn-block disabled"-->
-                                    <!--id="segmentation-submitBtn"-->
-                                    <!--onclick="evaluationTask.submitSliderPosition();">-->
-                                <!--<span class="glyphicon glyphicon-upload"></span> Submit-->
-                            <!--</button>-->
-                        <!--</div>-->
-                        <!--<div class="col-md-6">-->
-                            <!--<button type="button"-->
-                                    <!--class="btn btn-default btn-block disabled"-->
-                                    <!--id="segmentation-nullBtn"-->
-                                    <!--onclick="evaluationTask.noChangeHeard();">-->
-                                <!--<span class="glyphicon glyphicon-ban-circle"></span> No change heard-->
-                            <!--</button>-->
-                        <!--</div>-->
-                    <!--</div>-->
                 </div>
             </div>
         </div>
@@ -104,13 +86,12 @@
                             </button>
                         </div>
                     </div>
-
-                    <ul class="pager">
-                        <li class="next">
-                            <a href="#segmentation-well" id="evaluationNextBtn" onclick="evaluationTask.nextTrial();">Next trial &rarr;</a>
-                        </li>
-                    </ul>
                 </div>
+                <ul class="pager">
+                    <li class="next">
+                        <a href="#" id="evaluationNextBtn" onclick="evaluationTask.nextTrial();">Next trial &rarr;</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -197,13 +178,5 @@
         /* ]]> */
     </script>
 
-    <!--<script type="text/javascript">-->
-    <!--document.getElementById('segmentation-playback-position').addEventListener('click', function (e) {-->
-        <!--var boxOffset = $(this).offset().left;-->
-        <!--var x = (e.pageX - boxOffset)/this.offsetWidth, // or e.offsetX (less support, though)-->
-            <!--clickedValue = x * this.max;-->
-        <!--this.value = clickedValue;-->
-    <!--});-->
-    <!--</script>-->
 {% endblock scripts %}
 

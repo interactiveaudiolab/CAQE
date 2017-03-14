@@ -761,8 +761,9 @@ Segmentation.prototype.startEvaluation = function () {
     if (this.config.conditions[this.conditionIndex]['evaluation_instructions_html'] !== 'None') {
         $('#evaluationInstructions').html(this.config.conditions[this.conditionIndex]['evaluation_instructions_html']);
     }
-    this.showOnly('#evaluation');
+
     this.audioGroup.setLoopAudio(false);
+    this.showOnly('#evaluation');
 };
 
 

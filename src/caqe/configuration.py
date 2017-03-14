@@ -391,3 +391,4 @@ class EvaluationDevOverrideConfig(object):
     PRE_TEST_SURVEY_ENABLED = False
     POST_TEST_SURVEY_ENABLED = False
     STIMULUS_ORDER_RANDOMIZED = False
+    # DATABASE_URL = "postgres://wangsix:Six0420!@localhost/segmentation-test"
