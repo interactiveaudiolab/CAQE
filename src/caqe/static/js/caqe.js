@@ -195,6 +195,54 @@ AudioGroup.prototype.muteAll = function () {
 
 
 /**
+ * Represents a video player.
+ * @constructor
+ * @param {string} ID - The identifier
+ */
+function VideoPlayer (path) {
+    this.loopVideo = false;
+    this.videoelement = document.createElement('video');
+    this.videoelement.setAttribute('src', path);
+    this.videoelement.setAttribute('width', '100%');
+    this.videoelement.setAttribute('height', 'auto')
+
+    this.videoelement.setAttribute('class', 'videoelement');
+    this.videoelement.setAttribute('preload', 'auto');
+    this.videoelement.loop = false;
+
+    // add event listeners
+    this.videoelement.addEventListener('loadeddata', this.onLoadedData);
+    this.videoelement.addEventListener('error', this.onError);
+    this.videoelement.addEventListener('ended', this.onEnded);
+
+}
+
+
+VideoPlayer.prototype.onLoadedData = function () {
+};
+VideoPlayer.prototype.onError = function (e) {
+};
+VideoPlayer.prototype.onEnded = function () {
+    if (this.loopVideo) {
+        this.play();
+    } else {
+
+    }
+};
+
+
+VideoPlayer.prototype.play = function () {
+    this.videoelement.currentTime = 0;
+    this.videoelement.play();
+};
+
+
+VideoPlayer.prototype.pause = function () {
+    this.videoelement.pause();
+};
+
+
+/**
  * Manages the evaluation task
  * @constructor
  * @param {string} config - Contains the configuration data for the evaluation task
