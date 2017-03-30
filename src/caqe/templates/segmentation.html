@@ -2,21 +2,17 @@
 
 {% block training_view_examples %}
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">﻿<b>Instruction Video</b></div>
+        <div class="col-md-10 col-md-offset-1">﻿<b>Instruction Video</b></div>
     </div>
 
 
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="well" id="segmentation-well">
-                <video id='tutorial_video' width="320" height="240" controls>
-                    <source src="{{ url_for('static', filename='video/tutorial_video.mp4') }}" type="video/mp4">
-                    <source src="{{ url_for('static', filename='video/tutorial_video.ogv') }}" type='video/ogg; codecs="theora, vorbis"'>
-                    <!--<source src="../static/video/tutorial_video.mp4" type="video/mp4">-->
-                    <!--<source src="../static/video/tutorial_video.ogv" type="video/ogg">-->
-                    Your browser does not support the video tag.
-                </video>
-            </div>
+        <div class="col-md-10 col-md-offset-1">
+            <video id='tutorial_video' width="100%" height="auto" controls>
+                <source src="https://dl.dropboxusercontent.com/u/4893373/videos/tutorial_video.mp4" type="video/mp4">
+                <source src="https://dl.dropboxusercontent.com/u/4893373/videos/tutorial_video.ogv" type='video/ogg; codecs="theora, vorbis"'>
+                Your browser does not support the video tag.
+            </video>
         </div>
     </div>
 
