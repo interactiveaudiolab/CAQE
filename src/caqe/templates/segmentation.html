@@ -2,21 +2,41 @@
 
 {% block training_view_examples %}
     <div class="row">
-        <div class="col-md-10 col-md-offset-1">﻿<b>Instruction Video</b></div>
+        <div class="col-md-10 col-md-offset-1">﻿
+            <button class="btn btn-default play-btn" id="playTutorialVideoBtn" onclick="evaluationTask.playTrainingVideo();">
+                <span class="glyphicon glyphicon-play"></span>
+            </button>
+            <b>Play Instruction Video</b>
+        </div>
+
     </div>
 
 
     <div class="row">
         <div class="col-md-10 col-md-offset-1">
-            <video id='tutorial_video' width="100%" height="auto" controls>
-                <source src="https://dl.dropboxusercontent.com/u/4893373/videos/tutorial_video.mp4" type="video/mp4">
-                <source src="https://dl.dropboxusercontent.com/u/4893373/videos/tutorial_video.ogv" type='video/ogg; codecs="theora, vorbis"'>
+            <video id='tutorial_video' width="100%" height="auto">
+                <source src="{{ test.instruction_video }}.mp4" type="video/mp4">
+                <source src="{{ test.instruction_video }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
+                <!--<source src="https://dl.dropboxusercontent.com/u/4893373/videos/tutorial_video.mp4" type="video/mp4">-->
+                <!--<source src="https://dl.dropboxusercontent.com/u/4893373/videos/tutorial_video.ogv" type='video/ogg; codecs="theora, vorbis"'>-->
                 Your browser does not support the video tag.
             </video>
         </div>
     </div>
 
 {% endblock training_view_examples %}
+
+{% block training_end %}
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <ul class="pager">
+            <li class="next">
+                <a href="#" id="trainingNextBtn" onclick="evaluationTask.startEvaluation();">Proceed to evaluation &rarr;</a>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock training_end %}
 
 {% block evaluation_view %}
     <!-- evaluation view -->
@@ -131,21 +151,7 @@
                 {% endfor %}
             },
             "requireListeningToAllTrainingSounds": {{ ['false','true'][config.REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS] }},
-            "referenceExampleDict": {
-                {% for key, value in test.reference_example_dict.iteritems() %}
-                    "{{ key }}": "{{ value }}",
-                {% endfor %}
-            },
-            "qualityExampleDict": {
-                {% for key, value in test.quality_example_dict.iteritems() %}
-                    "{{ key }}":
-                            [
-                                {% for v in value %}
-                                    "{{ v }}",
-                                {% endfor %}
-                            ],
-                {% endfor %}
-            },
+
             "conditionGroups": {
                 {% for group_id, condition_group_data in condition_groups.iteritems()  %}
                     "{{ group_id }}": {

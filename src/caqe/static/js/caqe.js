@@ -195,54 +195,6 @@ AudioGroup.prototype.muteAll = function () {
 
 
 /**
- * Represents a video player.
- * @constructor
- * @param {string} ID - The identifier
- */
-function VideoPlayer (path) {
-    this.loopVideo = false;
-    this.videoelement = document.createElement('video');
-    this.videoelement.setAttribute('src', path);
-    this.videoelement.setAttribute('width', '100%');
-    this.videoelement.setAttribute('height', 'auto')
-
-    this.videoelement.setAttribute('class', 'videoelement');
-    this.videoelement.setAttribute('preload', 'auto');
-    this.videoelement.loop = false;
-
-    // add event listeners
-    this.videoelement.addEventListener('loadeddata', this.onLoadedData);
-    this.videoelement.addEventListener('error', this.onError);
-    this.videoelement.addEventListener('ended', this.onEnded);
-
-}
-
-
-VideoPlayer.prototype.onLoadedData = function () {
-};
-VideoPlayer.prototype.onError = function (e) {
-};
-VideoPlayer.prototype.onEnded = function () {
-    if (this.loopVideo) {
-        this.play();
-    } else {
-
-    }
-};
-
-
-VideoPlayer.prototype.play = function () {
-    this.videoelement.currentTime = 0;
-    this.videoelement.play();
-};
-
-
-VideoPlayer.prototype.pause = function () {
-    this.videoelement.pause();
-};
-
-
-/**
  * Manages the evaluation task
  * @constructor
  * @param {string} config - Contains the configuration data for the evaluation task
@@ -779,6 +731,7 @@ Segmentation.prototype.constructor = Segmentation;
 
 function Segmentation(config) {
     EvaluationTask.apply(this, arguments);
+
     this.timeoutPassed = false;
     this.createStimulusMap(this.conditionIndex);
 
@@ -787,6 +740,7 @@ function Segmentation(config) {
 }
 
 Segmentation.prototype.startEvaluation = function () {
+    this.state = EvaluationTaskStateEnum.EVALUATION;
     // disable next trial button
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
 
@@ -837,6 +791,41 @@ Segmentation.prototype.playStimulus = function(ID) {
     }
 };
 
+
+Segmentation.prototype.startTraining = function(){
+
+    this.state = EvaluationTaskStateEnum.TRAINING;
+
+    var trainVideo = $('#tutorial_video').get(0);
+    // trainVideo.addEventListener('ended', this.onEnded);
+
+    trainVideo.addEventListener('ended', this.videoOnEnded);
+
+
+    if (this.config.requireListeningToAllTrainingSounds) {
+        // disable play buttons
+        $('#training').find('.play-btn').addClass('disabled disable-clicks').first().removeClass('disabled disable-clicks');
+
+        // disable next button
+        $('#trainingNextBtn').addClass('disable-clicks').parent().addClass('disabled');
+    }
+
+    this.showOnly('#training');
+
+};
+
+Segmentation.prototype.videoOnEnded = function() {
+
+    $('.play-btn').removeClass('disabled disable-clicks btn-success').addClass('btn-default');
+    $('#trainingNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
+}
+
+
+Segmentation.prototype.playTrainingVideo = function(){
+    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+    var video = $('#tutorial_video').get(0);
+    video.play();
+};
 
 Segmentation.prototype.playStimulusMarker = function(ID) {
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
