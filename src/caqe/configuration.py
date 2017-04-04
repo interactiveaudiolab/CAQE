@@ -245,6 +245,7 @@ class BaseConfig(object):
     SERVER_ADDRESS = os.getenv('SERVER_ADDRESS', 'caqe.local:5000')
     PREFERRED_URL_SCHEME = 'https'
     AUDIO_FILE_DIRECTORY = os.getenv('AUDIO_FILE_DIRECTORY', 'static/audio')
+    AUDIO_CODEC = 'wav'
     ENCRYPT_AUDIO_STIMULI_URLS = True
 
     # ---------------------------------------------------------------------------------------------
