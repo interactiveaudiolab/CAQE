@@ -740,7 +740,6 @@ function Segmentation(config) {
 }
 
 Segmentation.prototype.startEvaluation = function () {
-    this.state = EvaluationTaskStateEnum.EVALUATION;
     // disable next trial button
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
 
@@ -797,8 +796,6 @@ Segmentation.prototype.startTraining = function(){
     this.state = EvaluationTaskStateEnum.TRAINING;
 
     var trainVideo = $('#tutorial_video').get(0);
-    // trainVideo.addEventListener('ended', this.onEnded);
-
     trainVideo.addEventListener('ended', this.videoOnEnded);
 
 
