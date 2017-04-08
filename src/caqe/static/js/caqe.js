@@ -801,7 +801,7 @@ Segmentation.prototype.startTraining = function(){
 
     if (this.config.requireListeningToAllTrainingSounds) {
         // disable play buttons
-        $('#training').find('.play-btn').addClass('disabled disable-clicks').first().removeClass('disabled disable-clicks');
+        // $('#training').find('.play-btn').addClass('disabled disable-clicks').first().removeClass('disabled disable-clicks');
 
         // disable next button
         $('#trainingNextBtn').addClass('disable-clicks').parent().addClass('disabled');
@@ -823,6 +823,38 @@ Segmentation.prototype.playTrainingVideo = function(){
     var video = $('#tutorial_video').get(0);
     video.play();
 };
+
+Segmentation.prototype.playPauseTrainingVideo = function(){
+    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+    var video = $('#tutorial_video').get(0);
+
+    if(video.paused){
+        // $('.play-btn').removeClass('btn-success').addClass('btn-default');
+
+        // var audioLength = audio.duration;
+        // var markerValue = $('#segmentation-audio-progress').val();
+
+        video.play();
+
+    }else {
+        video.pause();
+        // this.audioGroup.syncPause();
+        // $('.play-btn').removeClass('btn-success').addClass('btn-default');
+    }
+
+}
+
+Segmentation.prototype.rewindTrainingVideo = function(){
+    $('.play-btn').removeClass('btn-success').addClass('btn-default');
+    var video = $('#tutorial_video').get(0);
+    if(video.currentTime <= 3.0){
+        video.currentTime=0.0;
+    }else{
+        video.currentTime=video.currentTime-3.0;
+    }
+
+};
+
 
 Segmentation.prototype.playStimulusMarker = function(ID) {
     $('.play-btn').removeClass('btn-success').addClass('btn-default');

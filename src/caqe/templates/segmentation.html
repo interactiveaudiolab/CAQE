@@ -2,13 +2,21 @@
 
 {% block training_view_examples %}
     <div class="row">
-        <div class="col-md-10 col-md-offset-1">﻿
-            <button class="btn btn-default play-btn" id="playTutorialVideoBtn" onclick="evaluationTask.playTrainingVideo();">
-                <span class="glyphicon glyphicon-play"></span>
-            </button>
-            <b>Play Instruction Video</b>
-        </div>
+        <div class="col-md-10 col-md-offset-1">
 
+            <div class="col-md-6 ">﻿
+                <button class="btn btn-default play-btn" id="playTutorialVideoBtn" onclick="evaluationTask.playPauseTrainingVideo();">
+                    <span class="glyphicon glyphicon-play"></span> / <span class="glyphicon glyphicon-pause"></span>
+                </button>
+                <b>Play/Pause Instruction Video</b>
+            </div>
+            <div class="col-md-6 ">﻿
+                <button class="btn btn-default play-btn" id="rewindTutorialVideoBtn" onclick="evaluationTask.rewindTrainingVideo();">
+                    <span class="glyphicon glyphicon-backward"></span>
+                </button>
+                <b>Rewind video (3 seconds)</b>
+            </div>
+        </div>
     </div>
 
 
