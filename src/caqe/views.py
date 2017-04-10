@@ -29,6 +29,7 @@ import caqe.configuration as configuration
 
 logger = logging.getLogger(__name__)
 
+
 @app.after_request
 def after_request(response):
     response.headers.add('Accept-Ranges', 'bytes')
@@ -51,19 +52,17 @@ def send_file_partial(path):
     range_header = request.headers.get('Range', None)
     if not range_header: return send_file(path)
 
-    if app.config['EXTERNAL_FILE_HOST']:
-        d = urllib2.urlopen(path)
-        size = int(d.info()['Content-Length'])
-    else:
-        size = os.path.getsize(path)
+    size = os.path.getsize(path)
 
     byte1, byte2 = 0, None
 
     m = re.search('(\d+)-(\d*)', range_header)
     g = m.groups()
 
-    if g[0]: byte1 = int(g[0])
-    if g[1]: byte2 = int(g[1])
+    if g[0]:
+        byte1 = int(g[0])
+    if g[1]:
+        byte2 = int(g[1])
 
     length = size - byte1
     if byte2 is not None:
@@ -71,20 +70,57 @@ def send_file_partial(path):
 
     data = None
 
-    if app.config['EXTERNAL_FILE_HOST']:
-        f = urllib2.urlopen(path)
-        data = io.BytesIO(f.read())
-
-    else:
-        with open(path, 'rb') as f:
-            f.seek(byte1)
-            data = f.read(length)
+    with open(path, 'rb') as f:
+        f.seek(byte1)
+        data = f.read(length)
 
     rv = Response(data,
                   206,
                   mimetype=mimetypes.guess_type(path)[0],
                   direct_passthrough=True)
     rv.headers.add('Content-Range', 'bytes {0}-{1}/{2}'.format(byte1, byte1 + length - 1, size))
+
+    return rv
+
+
+def send_file_partial_hack(path):
+
+    range_header = request.headers.get('Range', None)
+
+    f = urllib2.urlopen(path)
+    size = int(f.info()['Content-Length'])
+    byte = io.BytesIO(f.read())
+    f.close()
+
+    byte1, byte2 = 0, size
+
+    m = re.search('(\d+)-(\d*)', range_header)
+    g = m.groups()
+
+    if g[0]:
+        byte1 = int(g[0])
+    if g[1]:
+        byte2 = int(g[1])
+
+    length = size - byte1
+    if byte2 is not None:
+        length = byte2 - byte1
+
+    byte.seek(byte1)
+    data = byte.read(length)
+    byte.close()
+
+    rv = Response(data,
+                  206,
+                  mimetype=mimetypes.guess_type(path)[0],
+                  direct_passthrough=True)
+    # rv.headers.add('Accept-Ranges', 'bytes')
+
+    rv.headers.add('Content-Range', 'bytes {0}-{1}/{2}'.format(byte1, byte1 + length - 1, size))
+    # rv.headers.add('Content-Range', 'bytes {0}-{1}/*'.format(byte1, byte1 + length - 1))
+    # rv.headers.add('Content-Length', '{0}'.format(length))
+    # rv.headers.add('X-Content-Duration', '20.0')
+    # rv.headers.add('Content-Duration', '20.0')
 
     return rv
 
@@ -234,7 +270,9 @@ def audio(audio_file_key):
         filename = audio_file_key + format
 
     if app.config['EXTERNAL_FILE_HOST']:
-        return send_file_partial(app.config['AUDIO_FILE_DIRECTORY']+filename)
+        # return send_file_partial(app.config['AUDIO_FILE_DIRECTORY']+filename)
+        return send_file_partial_hack(app.config['AUDIO_FILE_DIRECTORY']+filename)
+
     else:
         return send_file_partial(safe_join(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename))
 
