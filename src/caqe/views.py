@@ -13,6 +13,8 @@ import functools
 import os
 import mimetypes
 import re
+import urllib2
+import io
 
 from flask import request, render_template, flash, redirect, session, make_response, \
     safe_join, url_for, send_file, Response
@@ -49,7 +51,12 @@ def send_file_partial(path):
     range_header = request.headers.get('Range', None)
     if not range_header: return send_file(path)
 
-    size = os.path.getsize(path)
+    if app.config['EXTERNAL_FILE_HOST']:
+        d = urllib2.urlopen(path)
+        size = int(d.info()['Content-Length'])
+    else:
+        size = os.path.getsize(path)
+
     byte1, byte2 = 0, None
 
     m = re.search('(\d+)-(\d*)', range_header)
@@ -63,9 +70,15 @@ def send_file_partial(path):
         length = byte2 - byte1
 
     data = None
-    with open(path, 'rb') as f:
-        f.seek(byte1)
-        data = f.read(length)
+
+    if app.config['EXTERNAL_FILE_HOST']:
+        f = urllib2.urlopen(path)
+        data = io.BytesIO(f.read())
+
+    else:
+        with open(path, 'rb') as f:
+            f.seek(byte1)
+            data = f.read(length)
 
     rv = Response(data,
                   206,
@@ -220,7 +233,10 @@ def audio(audio_file_key):
     else:
         filename = audio_file_key + format
 
-    return send_file_partial(safe_join(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename))
+    if app.config['EXTERNAL_FILE_HOST']:
+        return send_file_partial(app.config['AUDIO_FILE_DIRECTORY']+filename)
+    else:
+        return send_file_partial(safe_join(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename))
 
 
 @app.route('/anonymous')

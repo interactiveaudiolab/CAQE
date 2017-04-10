@@ -247,6 +247,7 @@ class BaseConfig(object):
     AUDIO_FILE_DIRECTORY = os.getenv('AUDIO_FILE_DIRECTORY', 'static/audio')
     AUDIO_CODEC = 'wav'
     ENCRYPT_AUDIO_STIMULI_URLS = True
+    EXTERNAL_FILE_HOST = False
 
     # ---------------------------------------------------------------------------------------------
     # TESTING VARIABLES
