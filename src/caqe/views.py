@@ -92,7 +92,7 @@ def send_file_partial_hack(path):
     byte = io.BytesIO(f.read())
     f.close()
 
-    byte1, byte2 = 0, size
+    byte1, byte2 = 0, None
 
     m = re.search('(\d+)-(\d*)', range_header)
     g = m.groups()
