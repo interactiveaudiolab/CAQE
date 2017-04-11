@@ -391,5 +391,5 @@ class EvaluationDevOverrideConfig(object):
     PREFERRED_URL_SCHEME = 'http'
     REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS = False
     PRE_TEST_SURVEY_ENABLED = False
-    # POST_TEST_SURVEY_ENABLED = False
+    POST_TEST_SURVEY_ENABLED = False
     # DATABASE_URL = "postgres://wangsix:Six0420!@localhost/segmentation-test"

@@ -88,11 +88,11 @@ def send_file_partial_hack(path):
 
     range_header = request.headers.get('Range', None)
 
-    # f = urllib2.urlopen(path)
+    f = urllib2.urlopen(path)
 
-    df, h = urllib.urlretrieve(path)
-
-    size = os.path.getsize(df)
+    # df, h = urllib.urlretrieve(path)
+    size = int(f.info()['Content-Length'])
+    # size = os.path.getsize(df)
 
     # size = int(h['Content-Length'])
 
@@ -112,19 +112,19 @@ def send_file_partial_hack(path):
 
     data = None
 
-    with open(df, 'rb') as f:
-        f.seek(byte1)
-        data = f.read(length)
-
-    # byte.seek(byte1)
-    # data = byte.read(length)
-    # byte.close()
+    # with open(df, 'rb') as f:
+    #     f.seek(byte1)
+    #     data = f.read(length)
+    byte = io.BytesIO(f.read())
+    f.close()
+    byte.seek(byte1)
+    data = byte.read(length)
+    byte.close()
 
     rv = Response(data,
                   206,
                   mimetype=mimetypes.guess_type(path)[0],
                   direct_passthrough=True)
-    # rv.headers.add('Accept-Ranges', 'bytes')
 
     rv.headers.add('Content-Range', 'bytes {0}-{1}/{2}'.format(byte1, byte1 + length - 1, size))
     # rv.headers.add('Content-Range', 'bytes {0}-{1}/*'.format(byte1, byte1 + length - 1))
