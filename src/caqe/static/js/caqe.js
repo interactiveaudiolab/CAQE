@@ -45,7 +45,7 @@ AudioGroup.prototype.addAudio = function (path, ID) {
     audioelement.addEventListener('loadeddata', this.onLoadedData);
     audioelement.addEventListener('error', this.onError);
     audioelement.addEventListener('ended', this.onEnded);
-
+    audioelement.load();
     // add audio element to audio group
     $('#' + this.ID).append(audioelement);
 };
@@ -899,15 +899,14 @@ Segmentation.prototype.playPauseStimulus = function(ID){
     var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0)
 
     if (!this.stimulusPlayed){
-        audio.load();
-        // $('#playStimulusBtn').addClass('disable-clicks').addClass('disabled');
+        // audio.load()
+
+        $('#playStimulusBtn').addClass('disable-clicks').addClass('disabled');
         $('#playStimulusBtn').prop('disabled', true);
         var audioLength = audio.duration;
         var markerValue = $('#segmentation-audio-progress').val();
 
         this.audioGroup.playSelection(this.stimulusMap[ID], 0, audioLength);
-
-        var audioLength = audio.duration;
         this.testTimeout = setTimeout(this.testTimeoutCallback, audioLength * 1000.0, this);
 
     }else{
