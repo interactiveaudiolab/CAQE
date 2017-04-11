@@ -1063,7 +1063,7 @@ Segmentation.prototype.saveRatings = function() {
     // make sure something was selected
 
     if (this.segmentVal === null) {
-        alert('Press "Mark slider position" or "No change heard" button before continuing.');
+        alert('Press "Change heard" or "No change heard" button before continuing.');
         return false;
     }
 

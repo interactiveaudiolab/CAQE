@@ -14,6 +14,7 @@ import os
 import mimetypes
 import re
 import urllib2
+import urllib
 import io
 
 from flask import request, render_template, flash, redirect, session, make_response, \
@@ -87,10 +88,13 @@ def send_file_partial_hack(path):
 
     range_header = request.headers.get('Range', None)
 
-    f = urllib2.urlopen(path)
-    size = int(f.info()['Content-Length'])
-    byte = io.BytesIO(f.read())
-    f.close()
+    # f = urllib2.urlopen(path)
+
+    df, h = urllib.urlretrieve(path)
+
+    size = os.path.getsize(df)
+
+    # size = int(h['Content-Length'])
 
     byte1, byte2 = 0, None
 
@@ -106,9 +110,15 @@ def send_file_partial_hack(path):
     if byte2 is not None:
         length = byte2 - byte1
 
-    byte.seek(byte1)
-    data = byte.read(length)
-    byte.close()
+    data = None
+
+    with open(df, 'rb') as f:
+        f.seek(byte1)
+        data = f.read(length)
+
+    # byte.seek(byte1)
+    # data = byte.read(length)
+    # byte.close()
 
     rv = Response(data,
                   206,
@@ -271,7 +281,7 @@ def audio(audio_file_key):
 
     if app.config['EXTERNAL_FILE_HOST']:
         # return send_file_partial(app.config['AUDIO_FILE_DIRECTORY']+filename)
-        return send_file_partial_hack(app.config['AUDIO_FILE_DIRECTORY']+filename)
+        return send_file_partial_hack(safe_join(app.config['AUDIO_FILE_DIRECTORY'],filename))
 
     else:
         return send_file_partial(safe_join(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename))
@@ -846,7 +856,21 @@ def post_test_survey():
         db.session.commit()
         return post_evaluation_tasks()
     else:
-        return render_template('post_test_survey.html')
+
+        if app.config['TEST_TYPE'] == 'mushra':
+            return render_template('post_test_surveys/post_test_survey.html')
+        elif app.config['TEST_TYPE'] == 'pairwise':
+            return render_template('post_test_surveys/post_test_survey.html')
+        ###############################################################################################################
+        # ADD NEW TEST TYPES HERE
+        ###############################################################################################################
+        elif app.config['TEST_TYPE'] == 'segmentation':
+            return render_template('post_test_surveys/segmentation_post_survey.html')
+
+        else:
+            return render_template('post_test_surveys/post_test_survey.html')
+
+        # return render_template('post_test_survey.html')
 
 
 @app.route('/end/<platform>', methods=['GET'])
