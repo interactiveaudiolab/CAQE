@@ -899,7 +899,7 @@ Segmentation.prototype.playPauseStimulus = function(ID){
     var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0)
 
     if (!this.stimulusPlayed){
-
+        audio.load();
         // $('#playStimulusBtn').addClass('disable-clicks').addClass('disabled');
         $('#playStimulusBtn').prop('disabled', true);
         var audioLength = audio.duration;
