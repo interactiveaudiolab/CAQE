@@ -46,6 +46,8 @@ AudioGroup.prototype.addAudio = function (path, ID) {
     audioelement.addEventListener('error', this.onError);
     audioelement.addEventListener('ended', this.onEnded);
     audioelement.load();
+
+    // audioelement.src = audioelement.src
     // add audio element to audio group
     $('#' + this.ID).append(audioelement);
 };
@@ -95,6 +97,7 @@ AudioGroup.prototype.playMarker = function (ID, Time) {
 
 AudioGroup.prototype.playSelection = function (ID, StarTime, EndTime) {
     var audioelement = $('#' + this.ID + '_audio' + ID).get(0)
+    audioelement.load();
     audioelement.currentTime = StarTime;
     audioelement.play();
     this.audioPlayingID = ID;
@@ -899,7 +902,6 @@ Segmentation.prototype.playPauseStimulus = function(ID){
     var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0)
 
     if (!this.stimulusPlayed){
-        // audio.load()
 
         $('#playStimulusBtn').addClass('disable-clicks').addClass('disabled');
         $('#playStimulusBtn').prop('disabled', true);
@@ -983,6 +985,7 @@ Segmentation.prototype.nextTrial = function () {
         this.stimulusPlayed = false;
         this.timeoutPassed = false;
         this.segmentVal = null;
+        var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0);
         // this.testTimeout = setTimeout(this.testTimeoutCallback, this.config['testTimeoutSec'] * 1000.0, this);
     }
 };
