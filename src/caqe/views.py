@@ -14,7 +14,6 @@ import os
 import mimetypes
 import re
 import urllib2
-import urllib
 import io
 
 from flask import request, render_template, flash, redirect, session, make_response, \
@@ -90,11 +89,7 @@ def send_file_partial_hack(path):
 
     f = urllib2.urlopen(path)
 
-    # df, h = urllib.urlretrieve(path)
     size = int(f.info()['Content-Length'])
-    # size = os.path.getsize(df)
-
-    # size = int(h['Content-Length'])
 
     byte1, byte2 = 0, None
 
@@ -112,9 +107,6 @@ def send_file_partial_hack(path):
 
     data = None
 
-    # with open(df, 'rb') as f:
-    #     f.seek(byte1)
-    #     data = f.read(length)
     byte = io.BytesIO(f.read())
     f.close()
     byte.seek(byte1)
@@ -127,11 +119,6 @@ def send_file_partial_hack(path):
                   direct_passthrough=True)
 
     rv.headers.add('Content-Range', 'bytes {0}-{1}/{2}'.format(byte1, byte1 + length - 1, size))
-    # rv.headers.add('Content-Range', 'bytes {0}-{1}/*'.format(byte1, byte1 + length - 1))
-    # rv.headers.add('Content-Length', '{0}'.format(length))
-    # rv.headers.add('X-Content-Duration', '20.0')
-    # rv.headers.add('Content-Duration', '20.0')
-
     return rv
 
 
@@ -384,6 +371,7 @@ def begin(platform, crowd_worker_id):
     preview = int(request.args.get('preview', 0))
     if preview:
         return render_template('preview.html',
+                               title=app.config['BEGIN_TITLE'],
                                link="",
                                preview_html=app.config['PREVIEW_HTML'],
                                **request.args)
@@ -405,6 +393,7 @@ def begin(platform, crowd_worker_id):
                                    submission_url=request.args.get('submission_url'))
         else:
             return render_template('begin.html',
+                                   title=app.config['BEGIN_TITLE'],
                                    link=url_for('create_participant',
                                                 participant_type=platform,
                                                 crowd_worker_id=crowd_worker_id,

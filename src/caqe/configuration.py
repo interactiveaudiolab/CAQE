@@ -248,6 +248,7 @@ class BaseConfig(object):
     AUDIO_CODEC = 'wav'
     ENCRYPT_AUDIO_STIMULI_URLS = True
     EXTERNAL_FILE_HOST = False
+    BEGIN_TITLE = 'Audio Quality Evaluation'
 
     # ---------------------------------------------------------------------------------------------
     # TESTING VARIABLES
@@ -269,7 +270,7 @@ class BaseConfig(object):
     # ---------------------------------------------------------------------------------------------
     # HEARING SCREENING VARIABLES
     HEARING_SCREENING_TEST_ENABLED = True
-    HEARING_TEST_EXPIRATION_HOURS = 24
+    HEARING_TEST_EXPIRATION_HOURS = 12
     MAX_HEARING_TEST_ATTEMPTS = 2
     HEARING_TEST_REJECTION_ENABLED = True
 
