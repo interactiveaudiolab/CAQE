@@ -630,8 +630,11 @@ def hearing_test_audio(example_num):
     flask.Response
     """
     if example_num == '0':
-        # calibration file
-        file_path = 'hearing_test_audio/1000Hz.wav'
+        # calibration
+        if app.config['TEST_TYPE'] == 'segmentation':
+            file_path = 'hearing_test_audio/seg_hearing.wav'
+        else:
+            file_path = 'hearing_test_audio/1000Hz.wav'
     else:
         hearing_test_audio_index = int(utilities.decrypt_data(session['hearing_test_audio_index%s' % example_num]))
         num_tones = hearing_test_audio_index / configuration.HEARING_TEST_AUDIO_FILES_PER_TONES
