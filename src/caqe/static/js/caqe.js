@@ -20,6 +20,11 @@ AudioGroup.prototype.onLoadedData = function () {
 };
 AudioGroup.prototype.onError = function (e) {
 };
+AudioGroup.prototype.onPlay = function () {
+};
+AudioGroup.prototype.onPause = function () {
+};
+
 AudioGroup.prototype.onEnded = function () {
     if (this.loopAudio) {
         this.play(this.audioPlayingID);
@@ -45,6 +50,8 @@ AudioGroup.prototype.addAudio = function (path, ID) {
     audioelement.addEventListener('loadeddata', this.onLoadedData);
     audioelement.addEventListener('error', this.onError);
     audioelement.addEventListener('ended', this.onEnded);
+    audioelement.addEventListener('play', this.onPlay);
+    audioelement.addEventListener('pause', this.onPause);
     audioelement.load();
 
     // audioelement.src = audioelement.src
@@ -222,6 +229,8 @@ function EvaluationTask (config) {
     this.audioGroup.onError = $.proxy(this.audioOnError, this);
     this.audioGroup.onLoadedData = $.proxy(this.audioOnLoadedData, this);
     this.audioGroup.onEnded = $.proxy(this.audioOnEnded, this);
+    this.audioGroup.onPlay = $.proxy(this.audioOnPlay, this);
+    this.audioGroup.onPause = $.proxy(this.audioOnPause, this);
 
     this.stimulusMap = null;
     this.state = EvaluationTaskStateEnum.INTRODUCTION;
@@ -321,6 +330,11 @@ EvaluationTask.prototype.audioOnEnded = function () {
     }
 };
 
+EvaluationTask.prototype.audioOnPlay = function () {
+}
+
+EvaluationTask.prototype.audioOnPause = function () {
+}
 
 EvaluationTask.prototype.loadTrainingAudio = function () {
     var key, value;
@@ -1111,4 +1125,3 @@ Segmentation.prototype.audioOnTimeUpdate = function (e) {
         }
     }
 };
-

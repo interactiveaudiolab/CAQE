@@ -265,6 +265,7 @@ class BaseConfig(object):
     TRIALS_PER_CONDITION = 20
     LIMIT_SUBJECT_TO_ONE_TASK_TYPE = True
     TEST_CONDITION_ORDER_RANDOMIZED = True
+    TEST_CONDITION_GROUP_ORDER_RANDOMIZED = False
     STIMULUS_ORDER_RANDOMIZED = True
 
     # ---------------------------------------------------------------------------------------------

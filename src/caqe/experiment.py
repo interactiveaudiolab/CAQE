@@ -139,9 +139,15 @@ def assign_conditions(participant, limit_to_condition_ids=None):
     conditions = conditions.filter(Condition.id.notin_(participant_conditions))
 
     # find which group has the most conditions for this participant
-    group_id = db.session.query(Condition.group_id).filter(Condition.id.in_([c.id for c in conditions.all()])). \
-        group_by(Condition.group_id). \
-        order_by(func.count(Condition.group_id).desc()).first()[0]
+
+    if app.config['TEST_CONDITION_GROUP_ORDER_RANDOMIZED']:
+        group_id = db.session.query(Condition.group_id).filter(Condition.id.in_([c.id for c in conditions.all()])). \
+            group_by(Condition.group_id). \
+            order_by(func.random()).first()[0]
+    else:
+        group_id = db.session.query(Condition.group_id).filter(Condition.id.in_([c.id for c in conditions.all()])). \
+            group_by(Condition.group_id). \
+            order_by(func.count(Condition.group_id).desc()).first()[0]
     condition_group_ids = [group_id,]
 
     # limit to one group
