@@ -20,10 +20,6 @@ AudioGroup.prototype.onLoadedData = function () {
 };
 AudioGroup.prototype.onError = function (e) {
 };
-AudioGroup.prototype.onPlay = function () {
-};
-AudioGroup.prototype.onPause = function () {
-};
 
 AudioGroup.prototype.onEnded = function () {
     if (this.loopAudio) {
@@ -50,8 +46,6 @@ AudioGroup.prototype.addAudio = function (path, ID) {
     audioelement.addEventListener('loadeddata', this.onLoadedData);
     audioelement.addEventListener('error', this.onError);
     audioelement.addEventListener('ended', this.onEnded);
-    audioelement.addEventListener('play', this.onPlay);
-    audioelement.addEventListener('pause', this.onPause);
     audioelement.load();
 
     // audioelement.src = audioelement.src
@@ -112,7 +106,11 @@ AudioGroup.prototype.playSelection = function (ID, StarTime, EndTime) {
     audioelement.ontimeupdate = function(){
         if(audioelement.currentTime >= EndTime){
             audioelement.pause();
-        }
+        };
+
+        if(audioelement.length == audioelement.currentTime){
+            audioelement.currentTime = 0.0;
+        };
     };
 };
 
@@ -769,10 +767,50 @@ Segmentation.prototype.startEvaluation = function () {
 
     // $('#segmentation-marker').css('background-color', 'rgba(146, 213, 157, 0.5)');
     $('#segmentation-marker').css('background-color', 'rgba(188, 246, 227, 1.0)');
-    $('#segmentation-marker').off('click');
+    // $('#segmentation-marker').off('click');
     var canvas = $('#segmentation-marker').get(0);
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    $('#segmentation-marker').on('click', function (e){
+
+        var boxOffset = $(this).offset().left;
+        var x = (e.pageX - boxOffset)/this.offsetWidth;
+        var canvas = $(this).get(0)
+        var ctx = canvas.getContext("2d");
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        var iStrokeWidth = 1;
+        var iTranslate = (iStrokeWidth % 2) / 2;
+        ctx.translate(iTranslate, iTranslate);
+        ctx.lineWidth = iStrokeWidth;
+        ctx.beginPath();
+
+        if(x>0.1){
+            var left = x-0.1;
+            if(x<0.9){
+                var w = 0.2;
+            }else{
+                var w = 0.1+(1.0-x);
+            }
+        }else{
+            var left = 0.0;
+            var w = x +0.1
+        }
+        ctx.rect(left*canvas.width, 0, w*canvas.width, canvas.height);
+        ctx.fillStyle = "#30E3A8";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(Math.round(x*canvas.width), 0);
+        ctx.lineTo(Math.round(x*canvas.width), canvas.height);
+        ctx.strokeStyle="Black";
+        ctx.stroke();
+
+        ctx.translate(-iTranslate, -iTranslate);
+        this.value = x;
+    });
 
     this.setTrialCountLabels();
 
@@ -815,7 +853,6 @@ Segmentation.prototype.startTraining = function(){
     var trainVideo = $('#tutorial_video').get(0);
     trainVideo.addEventListener('ended', this.videoOnEnded);
 
-
     if (this.config.requireListeningToAllTrainingSounds) {
         // disable play buttons
         // $('#training').find('.play-btn').addClass('disabled disable-clicks').first().removeClass('disabled disable-clicks');
@@ -825,14 +862,13 @@ Segmentation.prototype.startTraining = function(){
     }
 
     this.showOnly('#training');
-
 };
 
 Segmentation.prototype.videoOnEnded = function() {
 
     $('.play-btn').removeClass('disabled disable-clicks btn-success').addClass('btn-default');
     $('#trainingNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
-}
+};
 
 
 Segmentation.prototype.playTrainingVideo = function(){
@@ -846,20 +882,12 @@ Segmentation.prototype.playPauseTrainingVideo = function(){
     var video = $('#tutorial_video').get(0);
 
     if(video.paused){
-        // $('.play-btn').removeClass('btn-success').addClass('btn-default');
-
-        // var audioLength = audio.duration;
-        // var markerValue = $('#segmentation-audio-progress').val();
-
         video.play();
-
     }else {
         video.pause();
-        // this.audioGroup.syncPause();
-        // $('.play-btn').removeClass('btn-success').addClass('btn-default');
     }
 
-}
+};
 
 Segmentation.prototype.rewindTrainingVideo = function(){
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
@@ -868,8 +896,7 @@ Segmentation.prototype.rewindTrainingVideo = function(){
         video.currentTime=0.0;
     }else{
         video.currentTime=video.currentTime-3.0;
-    }
-
+    };
 };
 
 
@@ -902,12 +929,6 @@ Segmentation.prototype.playSelection = function(ID) {
         var endTime = 1.0;
     }
     this.audioGroup.playSelection(this.stimulusMap[ID], startTime*audioLength, endTime*audioLength);
-    // audio.onplaying=function(){
-    //     setInterval(function increment(){
-    //         var _markerValue = $('#segmentation-audio-progress').val();
-    //         $('#segmentation-audio-progress').val(_markerValue+0.01);
-    //     }, 300);
-    // };
 }
 
 
@@ -979,43 +1000,13 @@ Segmentation.prototype.nextTrial = function () {
     clearTimeout(this.testTimeout);
 
     // reset playback position
-    $('#segmentation-marker').off('click');
+    // $('#segmentation-marker').off('click');
 
     var canvas = $('#segmentation-marker').get(0);
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    $('#segmentation-audio-progress').val(0);
-    this.conditionIndex++;
-
-    if (this.conditionIndex >= this.config.conditions.length) {
-        this.submitResults();
-    } else {
-        this.createStimulusMap(this.conditionIndex);
-        this.setTrialCountLabels();
-        if (this.config.conditions[this.conditionIndex]['evaluation_instructions_html'] !== 'None') {
-            $('#evaluationInstructions').html(this.config.conditions[this.conditionIndex]['evaluation_instructions_html']);
-        }
-        this.stimulusPlayed = false;
-        this.timeoutPassed = false;
-        this.segmentVal = null;
-        var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0);
-        // this.testTimeout = setTimeout(this.testTimeoutCallback, this.config['testTimeoutSec'] * 1000.0, this);
-    }
-};
-
-
-Segmentation.prototype.firstFullListen = function () {
-    $('#playStimulus0Marker').removeAttr('disabled');
-    // $('#stopBtn').removeClass('disabled').removeClass('disable-clicks');
-    $('#segmentation-nullBtn').removeClass('disabled').removeClass('disable-clicks');
-    $('#segmentation-submitBtn').removeClass('disabled').removeClass('disable-clicks');
-    $('#segmentation-audio-progress').prop('disabled', false);
-    $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
-    // $('#playStimulusBtn').removeClass('disable-clicks').parent().removeClass('disabled');
-    $('#playStimulusBtn').removeAttr('disabled');
-
-    $('#segmentation-marker').on('click', function (e){
+   $('#segmentation-marker').on('click', function (e){
 
         var boxOffset = $(this).offset().left;
         var x = (e.pageX - boxOffset)/this.offsetWidth;
@@ -1054,6 +1045,37 @@ Segmentation.prototype.firstFullListen = function () {
         ctx.translate(-iTranslate, -iTranslate);
         this.value = x;
     });
+
+
+    $('#segmentation-audio-progress').val(0);
+    this.conditionIndex++;
+
+    if (this.conditionIndex >= this.config.conditions.length) {
+        this.submitResults();
+    } else {
+        this.createStimulusMap(this.conditionIndex);
+        this.setTrialCountLabels();
+        if (this.config.conditions[this.conditionIndex]['evaluation_instructions_html'] !== 'None') {
+            $('#evaluationInstructions').html(this.config.conditions[this.conditionIndex]['evaluation_instructions_html']);
+        }
+        this.stimulusPlayed = false;
+        this.timeoutPassed = false;
+        this.segmentVal = null;
+        var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0);
+        // this.testTimeout = setTimeout(this.testTimeoutCallback, this.config['testTimeoutSec'] * 1000.0, this);
+    }
+};
+
+
+Segmentation.prototype.firstFullListen = function () {
+    $('#playStimulus0Marker').removeAttr('disabled');
+    $('#segmentation-nullBtn').removeClass('disabled').removeClass('disable-clicks');
+    $('#segmentation-submitBtn').removeClass('disabled').removeClass('disable-clicks');
+    $('#segmentation-audio-progress').prop('disabled', false);
+    $('#playStimulusBtn').removeAttr('disabled');
+
+    $('#evaluationNextBtn').removeClass('disable-clicks').parent().removeClass('disabled');
+
 }
 
 
@@ -1116,11 +1138,17 @@ Segmentation.prototype.audioOnTimeUpdate = function (e) {
     } else if (this.audioGroup.audioPlayingID == -2) {
         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioSoloingID)) {
             position = e.target.currentTime / e.target.duration;
+            if(position==1.0){
+                position = 0.0;
+            }
             $('#segmentation-audio-progress').val(position)
         }
     } else {
         if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioPlayingID)) {
             position = e.target.currentTime / e.target.duration;
+            if(position==1.0){
+                position = 0.0;
+            }
             $('#segmentation-audio-progress').val(position)
         }
     }

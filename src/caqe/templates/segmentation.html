@@ -37,7 +37,13 @@
     <div class="col-md-10 col-md-offset-1">
         <ul class="pager">
             <li class="next">
-                <a href="#" id="trainingNextBtn" onclick="evaluationTask.startEvaluation();">Proceed to task &rarr;</a>
+
+                {% if first_evaluation %}
+                    <a href="#" id="trainingNextBtn" onclick="evaluationTask.startEvaluation();">Proceed to task &rarr;</a>
+                {% else %}
+                    <a href="#" id="trainingNextBtnFake" onclick="evaluationTask.startEvaluation();">Proceed to task &rarr;</a>
+                {% endif %}
+
             </li>
         </ul>
     </div>
