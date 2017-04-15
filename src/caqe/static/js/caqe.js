@@ -20,6 +20,8 @@ AudioGroup.prototype.onLoadedData = function () {
 };
 AudioGroup.prototype.onError = function (e) {
 };
+AudioGroup.prototype.onPause = function () {
+};
 
 AudioGroup.prototype.onEnded = function () {
     if (this.loopAudio) {
@@ -46,6 +48,7 @@ AudioGroup.prototype.addAudio = function (path, ID) {
     audioelement.addEventListener('loadeddata', this.onLoadedData);
     audioelement.addEventListener('error', this.onError);
     audioelement.addEventListener('ended', this.onEnded);
+    audioelement.addEventListener('pause', this.onPause);
     audioelement.load();
 
     // audioelement.src = audioelement.src
@@ -227,7 +230,7 @@ function EvaluationTask (config) {
     this.audioGroup.onError = $.proxy(this.audioOnError, this);
     this.audioGroup.onLoadedData = $.proxy(this.audioOnLoadedData, this);
     this.audioGroup.onEnded = $.proxy(this.audioOnEnded, this);
-    this.audioGroup.onPlay = $.proxy(this.audioOnPlay, this);
+    // this.audioGroup.onPlay = $.proxy(this.audioOnPlay, this);
     this.audioGroup.onPause = $.proxy(this.audioOnPause, this);
 
     this.stimulusMap = null;
@@ -328,8 +331,8 @@ EvaluationTask.prototype.audioOnEnded = function () {
     }
 };
 
-EvaluationTask.prototype.audioOnPlay = function () {
-}
+// EvaluationTask.prototype.audioOnPlay = function () {
+// }
 
 EvaluationTask.prototype.audioOnPause = function () {
 }
@@ -747,6 +750,11 @@ Segmentation.prototype.constructor = Segmentation;
 function Segmentation(config) {
     EvaluationTask.apply(this, arguments);
 
+    // this.audioPlaying = false;
+    // this.audioPaused = true;
+    this.audioUpdate = null;
+    this.increment = 0.005;
+
     this.timeoutPassed = false;
     this.createStimulusMap(this.conditionIndex);
 
@@ -765,7 +773,6 @@ Segmentation.prototype.startEvaluation = function () {
     $('#segmentation-nullBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-audio-progress').prop('disabled', true);
 
-    // $('#segmentation-marker').css('background-color', 'rgba(146, 213, 157, 0.5)');
     $('#segmentation-marker').css('background-color', 'rgba(188, 246, 227, 1.0)');
     // $('#segmentation-marker').off('click');
     var canvas = $('#segmentation-marker').get(0);
@@ -911,11 +918,14 @@ Segmentation.prototype.playStimulusMarker = function(ID) {
 }
 
 Segmentation.prototype.playSelection = function(ID) {
+    clearInterval(this.audioUpdate);
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
 
     var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0)
     var audioLength = audio.duration;
     var markerValue = $('#segmentation-marker').get(0).value;
+
+    this.increment = 0.1/ audioLength;
 
     if(markerValue>0.1){
         var startTime = markerValue-0.1;
@@ -928,36 +938,40 @@ Segmentation.prototype.playSelection = function(ID) {
     }else{
         var endTime = 1.0;
     }
+    $('#segmentation-audio-progress').val(startTime);
     this.audioGroup.playSelection(this.stimulusMap[ID], startTime*audioLength, endTime*audioLength);
+    this.audioUpdate = setInterval(this.audioProgressUpdate, 250, audio);
+
 }
 
 
 Segmentation.prototype.playPauseStimulus = function(ID){
+    clearInterval(this.audioUpdate);
 
-    var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0)
+    var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0);
+    var audioLength = audio.duration;
+    var markerValue = $('#segmentation-audio-progress').val();
+    this.increment = 0.25/ audioLength;
 
     if (!this.stimulusPlayed){
 
         $('#playStimulusBtn').addClass('disable-clicks').addClass('disabled');
         $('#playStimulusBtn').prop('disabled', true);
-        var audioLength = audio.duration;
-        var markerValue = $('#segmentation-audio-progress').val();
 
         this.audioGroup.playSelection(this.stimulusMap[ID], 0, audioLength);
+        this.audioUpdate = setInterval(this.audioProgressUpdate, 250, audio);
         this.testTimeout = setTimeout(this.testTimeoutCallback, audioLength * 1000.0, this);
-
     }else{
 
         if(audio.paused){
             // $('.play-btn').removeClass('btn-success').addClass('btn-default');
 
-            var audioLength = audio.duration;
-            var markerValue = $('#segmentation-audio-progress').val();
-
             this.audioGroup.playSelection(this.stimulusMap[ID], markerValue*audioLength, audioLength);
+            this.audioUpdate = setInterval(this.audioProgressUpdate, 250, audio);
 
         }else {
             this.audioGroup.syncPause();
+            clearInterval(this.audioUpdate);
             // $('.play-btn').removeClass('btn-success').addClass('btn-default');
         }
     }
@@ -967,6 +981,7 @@ Segmentation.prototype.stopAllAudio = function() {
     this.audioGroup.syncPause();
     $('.play-btn').removeClass('btn-success').addClass('btn-default');
 };
+
 
 Segmentation.prototype.submitSliderPosition = function(){
     this.segmentVal = $('#segmentation-marker').get(0).value;
@@ -1061,7 +1076,7 @@ Segmentation.prototype.nextTrial = function () {
         this.stimulusPlayed = false;
         this.timeoutPassed = false;
         this.segmentVal = null;
-        var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0);
+        // var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0);
         // this.testTimeout = setTimeout(this.testTimeoutCallback, this.config['testTimeoutSec'] * 1000.0, this);
     }
 };
@@ -1131,25 +1146,58 @@ Segmentation.prototype.saveRatings = function() {
 };
 
 Segmentation.prototype.audioOnTimeUpdate = function (e) {
-    var position;
-
-    if (this.audioGroup.audioPlayingID == -1) {
-
-    } else if (this.audioGroup.audioPlayingID == -2) {
-        if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioSoloingID)) {
-            position = e.target.currentTime / e.target.duration;
-            if(position==1.0){
-                position = 0.0;
-            }
-            $('#segmentation-audio-progress').val(position)
-        }
-    } else {
-        if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioPlayingID)) {
-            position = e.target.currentTime / e.target.duration;
-            if(position==1.0){
-                position = 0.0;
-            }
-            $('#segmentation-audio-progress').val(position)
-        }
-    }
+    // var position;
+    //
+    // if (this.audioGroup.audioPlayingID == -1) {
+    //
+    // } else if (this.audioGroup.audioPlayingID == -2) {
+    //     if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioSoloingID)) {
+    //         position = e.target.currentTime / e.target.duration;
+    //         if(position==1.0){
+    //             position = 0.0;
+    //         }
+    //         $('#segmentation-audio-progress').val(position)
+    //     }
+    // } else {
+    //     if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioPlayingID)) {
+    //         position = e.target.currentTime / e.target.duration;
+    //         if(position==1.0){
+    //             position = 0.0;
+    //         }
+    //         $('#segmentation-audio-progress').val(position)
+    //     }
+    // }
 };
+
+Segmentation.prototype.audioProgressUpdate = function(audio){
+
+    var position = +(audio.currentTime) / +(audio.duration);
+    $('#segmentation-audio-progress').val(position)
+
+};
+
+Segmentation.prototype.audioOnPause = function(e){
+    // var value = +($('#segmentation-audio-progress').val())
+    var position
+    if (e.srcElement.id==(this.audioGroup.ID + '_audio' + this.audioGroup.audioSoloingID)) {
+        position = e.target.currentTime / e.target.duration;
+    }else{
+        position = e.target.currentTime / e.target.duration;
+    }
+
+    if(position>=1.0){
+        $('#segmentation-audio-progress').val(0.0);
+    }else{
+        $('#segmentation-audio-progress').val(position);
+    }
+    clearInterval(this.audioUpdate);
+};
+
+Segmentation.prototype.changeTimeStamp = function(ID){
+    clearInterval(this.audioUpdate)
+    var audio = $('#' + this.audioGroup.ID + '_audio' + this.stimulusMap[ID]).get(0);
+    var value = +($('#segmentation-audio-progress').val());
+
+    audio.currentTime = audio.duration*value;
+    this.audioUpdate = setInterval(this.audioProgressUpdate, 250, audio);
+}
