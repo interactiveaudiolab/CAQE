@@ -74,6 +74,10 @@ def calculate_tsr(ratings, stimuli=('S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S
     return float(n_pass) / n_test, n_pass, n_test, m
 
 
+def confirm_reference():
+    return True
+
+
 class TurkAdmin(object):
     """
     Instantiate this class to connect to MTurk and perform administrative tasks.
@@ -487,3 +491,25 @@ class TurkAdmin(object):
                 print e
                 trials_wo_valid_asgnmts.append(t)
         return total_bonus, trials_wo_valid_asgnmts
+
+    def approve_correct(self, hit_types=None):
+        """
+        Approve all 'Submitted' assignments
+
+        Parameters
+        ----------
+        hit_types : list of str, optional
+
+        Returns
+        -------
+        None
+        """
+        if hit_types is None:
+            hit_types = self.all_hit_types
+        assignments = self.get_all_assignments()
+        for a in assignments:
+            if a.AssignmentStatus == 'Submitted':
+                hit = self.connection.get_hit(a.HITId)[0]
+                if hit.HITTypeId in hit_types:
+                    self.connection.approve_assignment(a.AssignmentId, 'Thank you!')
+
