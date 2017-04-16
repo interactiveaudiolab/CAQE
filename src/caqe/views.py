@@ -268,7 +268,7 @@ def audio(audio_file_key):
 
     if app.config['EXTERNAL_FILE_HOST']:
         # return send_file_partial(app.config['AUDIO_FILE_DIRECTORY']+filename)
-        return send_file_partial_hack(safe_join(app.config['AUDIO_FILE_DIRECTORY'],filename))
+        return send_file_partial_hack(safe_join(app.config['AUDIO_FILE_DIRECTORY'], filename))
 
     else:
         return send_file_partial(safe_join(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename))
