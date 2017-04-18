@@ -418,7 +418,7 @@ class TurkAdmin(object):
                     try:
                         print p.id
                         crowd_data = json.loads(t.crowd_data)
-                        print crowd_data
+
                         assignment_id = crowd_data['assignment_id']
                         worker_id = p.crowd_worker_id
                         if not calculate_amt_only:
