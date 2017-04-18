@@ -249,9 +249,9 @@ def audio(audio_file_key):
     flask.Response
     """
     if app.config['AUDIO_CODEC'] == 'wav':
-        format = '.wav'
+        file_format = '.wav'
     elif app.config['AUDIO_CODEC'] == 'mp3':
-        format = '.mp3'
+        file_format = '.mp3'
 
     if app.config['ENCRYPT_AUDIO_STIMULI_URLS']:
         try:
@@ -262,9 +262,9 @@ def audio(audio_file_key):
             assert (audio_file_dict['g_id'] in session['condition_group_ids'])
             filename = audio_file_dict['URL']
         except (ValueError, TypeError):
-            filename = audio_file_key + format
+            filename = audio_file_key + file_format
     else:
-        filename = audio_file_key + format
+        filename = audio_file_key + file_format
 
     if app.config['EXTERNAL_FILE_HOST']:
         # return send_file_partial(app.config['AUDIO_FILE_DIRECTORY']+filename)

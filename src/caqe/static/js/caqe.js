@@ -1005,7 +1005,6 @@ Segmentation.prototype.nextTrial = function () {
     // disable next button
     $('#evaluationNextBtn').addClass('disable-clicks').parent().addClass('disabled');
 
-    // $('#stopBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-submitBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-nullBtn').addClass('disable-clicks').addClass('disabled');
     $('#segmentation-audio-progress').prop('disabled', true);

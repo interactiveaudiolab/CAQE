@@ -418,6 +418,7 @@ class TurkAdmin(object):
                     try:
                         print p.id
                         crowd_data = json.loads(t.crowd_data)
+                        print crowd_data
                         assignment_id = crowd_data['assignment_id']
                         worker_id = p.crowd_worker_id
                         if not calculate_amt_only:
@@ -491,25 +492,4 @@ class TurkAdmin(object):
                 print e
                 trials_wo_valid_asgnmts.append(t)
         return total_bonus, trials_wo_valid_asgnmts
-
-    def approve_correct(self, hit_types=None):
-        """
-        Approve all 'Submitted' assignments
-
-        Parameters
-        ----------
-        hit_types : list of str, optional
-
-        Returns
-        -------
-        None
-        """
-        if hit_types is None:
-            hit_types = self.all_hit_types
-        assignments = self.get_all_assignments()
-        for a in assignments:
-            if a.AssignmentStatus == 'Submitted':
-                hit = self.connection.get_hit(a.HITId)[0]
-                if hit.HITTypeId in hit_types:
-                    self.connection.approve_assignment(a.AssignmentId, 'Thank you!')
 
