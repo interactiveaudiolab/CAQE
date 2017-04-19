@@ -158,7 +158,7 @@ def assign_conditions(participant, limit_to_condition_ids=None):
         return None
 
     if app.config['LIMIT_SUBJECT_TO_ONE_TASK_TYPE']:
-        previous_trial = participant.trials.filter(Trial.datetime_completed > datetime.datetime(2015, 5, 25)).first()
+        previous_trial = participant.trials.filter(Trial.datetime_completed > datetime.datetime(2017, 4, 16)).first()
         try:
             if previous_trial.condition.test_id != conditions[0].test_id:
                 # If the participant is supposed to be limited to one task type, and we are out of all task of that type
