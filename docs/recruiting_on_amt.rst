@@ -64,7 +64,7 @@ After a HIT is complete, you must pay participants in a timely manner. The ``MTU
 
 If you need to approve HIT assignments and pay participants before this amount of time passes, you can issue the following command:
 
-    $ python turk_admin_cli.py approve-all-hits
+    $ python turk_admin_cli.py approve-all-assignments
 
 After HIT assignment have been approved you can bonus participants. If you are asking the participant to perform a hearing screening or survey on their first HIT assignment, you should pay them for that extra time in the form of a bonus. To assign a bonus for all completed first assignments. (Note the bonus amount is set by default by the ``MTURK_FIRST_HIT_BONUS`` config variable): ::
 
