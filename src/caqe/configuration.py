@@ -109,6 +109,8 @@ class BaseConfig(object):
         If True, each subject is limited to one type of Test. (default is True)
     TEST_CONDITION_ORDER_RANDOMIZED : bool
         Randomize the condition order per test for each participant. (default is True)
+    TEST_CONDITION_GROUP_ORDER_RANDOMIZED : bool
+        Randomize the condition group order for each participant. (default is False)
     STIMULUS_ORDER_RANDOMIZED : bool
         Randomize the stimulus order per for each condition. (default is True)
     HEARING_SCREENING_TEST_ENABLED : bool
