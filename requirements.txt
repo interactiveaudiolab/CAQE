@@ -1,5 +1,4 @@
 boto==2.36.0
-crypto==1.4.1
 Flask==0.10.1
 Flask-Bootstrap==3.3.0.1
 Flask-SQLAlchemy==2.0
