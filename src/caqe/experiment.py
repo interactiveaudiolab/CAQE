@@ -139,9 +139,15 @@ def assign_conditions(participant, limit_to_condition_ids=None):
     conditions = conditions.filter(Condition.id.notin_(participant_conditions))
 
     # find which group has the most conditions for this participant
-    group_id = db.session.query(Condition.group_id).filter(Condition.id.in_([c.id for c in conditions.all()])). \
-        group_by(Condition.group_id). \
-        order_by(func.count(Condition.group_id).desc()).first()[0]
+
+    if app.config['TEST_CONDITION_GROUP_ORDER_RANDOMIZED']:
+        group_id = db.session.query(Condition.group_id).filter(Condition.id.in_([c.id for c in conditions.all()])). \
+            group_by(Condition.group_id). \
+            order_by(func.random()).first()[0]
+    else:
+        group_id = db.session.query(Condition.group_id).filter(Condition.id.in_([c.id for c in conditions.all()])). \
+            group_by(Condition.group_id). \
+            order_by(func.count(Condition.group_id).desc()).first()[0]
     condition_group_ids = [group_id,]
 
     # limit to one group
@@ -152,7 +158,7 @@ def assign_conditions(participant, limit_to_condition_ids=None):
         return None
 
     if app.config['LIMIT_SUBJECT_TO_ONE_TASK_TYPE']:
-        previous_trial = participant.trials.filter(Trial.datetime_completed > datetime.datetime(2015, 5, 25)).first()
+        previous_trial = participant.trials.filter(Trial.datetime_completed > datetime.datetime(2017, 4, 16)).first()
         try:
             if previous_trial.condition.test_id != conditions[0].test_id:
                 # If the participant is supposed to be limited to one task type, and we are out of all task of that type
@@ -377,6 +383,9 @@ def decrypt_audio_stimuli(condition_data):
         condition_data['ratings'] = dict([(decoding_map[k], v) for k, v in condition_data['ratings'].items()])
     elif app.config['TEST_TYPE'] == 'pairwise':
         condition_data['ratings'] = dict([(decoding_map[k], v) for k, v in condition_data['ratings'].items()])
+    elif app.config['TEST_TYPE'] == 'segmentation':
+        condition_data['ratings'] = dict([(decoding_map[k], v) for k, v in condition_data['ratings'].items()])
+        # TODO: Change this to markings after implmenting in caqe.js and segmentation.html
     ###################################################################################################################
     # ADD NEW TEST TYPES HERE
     ###################################################################################################################

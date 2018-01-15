@@ -1,0 +1,217 @@
+{% extends "evaluation_base.html" %}
+
+{% block training_view_examples %}
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+
+            <div class="col-md-6 ">﻿
+                <button class="btn btn-default play-btn" id="playTutorialVideoBtn" onclick="evaluationTask.playPauseTrainingVideo();">
+                    <span class="glyphicon glyphicon-play"></span> / <span class="glyphicon glyphicon-pause"></span>
+                </button>
+                <b>Play/Pause Instruction Video</b>
+            </div>
+            <div class="col-md-6 ">﻿
+                <button class="btn btn-default play-btn" id="rewindTutorialVideoBtn" onclick="evaluationTask.rewindTrainingVideo();">
+                    <span class="glyphicon glyphicon-backward"></span>
+                </button>
+                <b>Rewind video (3 seconds)</b>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <video id='tutorial_video' width="100%" height="auto">
+                <source src="{{ test.instruction_video }}.mp4" type="video/mp4">
+                <source src="{{ test.instruction_video }}.ogv" type='video/ogg; codecs="theora, vorbis"'>
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+{% endblock training_view_examples %}
+
+{% block training_end %}
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <ul class="pager">
+            <li class="next">
+
+                {% if first_evaluation %}
+                    <a href="#" id="trainingNextBtn" onclick="evaluationTask.startEvaluation();">Proceed to task &rarr;</a>
+                {% else %}
+                    <a href="#" id="trainingNextBtnFake" onclick="evaluationTask.startEvaluation();">Proceed to task &rarr;</a>
+                {% endif %}
+
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock training_end %}
+
+{% block evaluation_view %}
+    <!-- evaluation view -->
+    <div class="container hidden" id="evaluation">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h1 class="text-center">{{ test.test_title | safe }}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1" id="evaluationInstructions">﻿
+                {{ test.evaluation_instructions_html | safe }}
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="well" id="segmentation-task-well">
+                    <div class="row text-center">
+                        <h4>Trial <span id="currentTrialLbl">0</span> of <span id="totalTrialLbl">0</span></h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="segmentation">Audio Progress Bar</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <button type="button"
+                                    class="btn btn-default btn-block play-btn"
+                                    id="playStimulusBtn"
+                                    onclick="evaluationTask.playPauseStimulus(0)">
+                                <span class="glyphicon glyphicon-play"></span> / <span class="glyphicon glyphicon-pause"></span>
+                            </button>
+                        </div>
+                        <div class="col-md-10 text-center">
+                            <input type="range" id="segmentation-audio-progress"
+                                   min="0.0" max="1.0" value="0.0" step="0.0001"
+                                   class="segmentation-slider" onclick="evaluationTask.changeTimeStamp(0)">
+                                   <!--onchange="evaluationTask.changeTimeStamp();"-->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="segmentation">Boundary Selection Slider</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-default btn-block play-btn disabled"
+                                    id="playStimulus0Marker"
+                                    onclick="evaluationTask.playSelection(0)">
+                            <!--<span class="glyphicon glyphicon-ok"></span>-->
+                                Check selection
+                            </button>
+                        </div>
+                        <div class="col-md-10">
+                            <canvas id="segmentation-marker"></canvas>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="well" id="segmentation-submit-well">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button"
+                                    class="btn btn-default btn-block disabled"
+                                    id="segmentation-submitBtn"
+                                    onclick="evaluationTask.submitSliderPosition();">
+                                <span class="glyphicon glyphicon-pencil"></span> Change heard
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button"
+                                    class="btn btn-default btn-block disabled"
+                                    id="segmentation-nullBtn"
+                                    onclick="evaluationTask.noChangeHeard();">
+                                <span class="glyphicon glyphicon-ban-circle"></span> No change heard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <ul class="pager">
+                    <li class="next">
+                        <a href="#segmentation-task-well" id="evaluationNextBtn" onclick="evaluationTask.nextTrial();">Next trial &rarr;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock evaluation_view %}
+
+{% block scripts %}
+    <!-- test config variables -->
+    <script type="text/javascript">
+        // configure the test here
+        var TEST_COMPLETE_REDIRECT_URL = '{{ test_complete_redirect_url }}';
+        var SUBMISSION_URL = '{{ submission_url }}';
+        var PARTICIPANT_ID = '{{ participant_id }}';
+
+        var config = {
+            "testTimeoutSec": {{ config.TEST_TIMEOUT_SEC }},
+            "references": {
+                {% for reference in test.references %}
+                    "{{ reference[0] }}": "{{ reference[1] }}",
+                {% endfor %}
+            },
+            "requireListeningToAllTrainingSounds": {{ ['false','true'][config.REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS] }},
+
+            "conditionGroups": {
+                {% for group_id, condition_group_data in condition_groups.iteritems()  %}
+                    "{{ group_id }}": {
+                        "referenceFiles": [
+                            {% for key, file_name in condition_group_data.reference_files %}
+                                ["{{ key }}", "{{ file_name }}"],
+                            {% endfor %}
+                        ],
+                        "stimulusFiles": [
+                            {% for key, file_name in condition_group_data.stimulus_files %}
+                                ["{{ key }}", "{{ file_name }}"],
+                            {% endfor %}
+                        ]
+                    },
+                {% endfor %}
+            },
+            "conditions": [
+                {% for condition in conditions %}
+                    {
+                        "conditionID": "{{ condition.id }}",
+                        "groupID": "{{ condition.group_id }}",
+                        "referenceKeys": [
+                            {% for key in condition.reference_keys %}
+                                "{{ key }}",
+                            {% endfor %}
+                        ],
+                        "stimulusKeys": [
+                            {% for key in condition.stimulus_keys %}
+                                "{{ key }}",
+                            {% endfor %}
+                        ],
+                        "evaluation_instructions_html": "{{ condition.evaluation_instructions_html | safe}}"
+                    },
+                {% endfor %}
+            ]
+        }
+
+    </script>
+    <!---->
+    {{ super() }}
+
+    <script type="text/javascript">
+        /* <![CDATA[ */
+        var evaluationTask;
+        window.onload = function () {
+            evaluationTask = new Segmentation(config);
+        };
+        /* ]]> */
+    </script>
+
+{% endblock scripts %}
+

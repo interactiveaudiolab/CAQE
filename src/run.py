@@ -2,4 +2,4 @@
 # -*- coding: utf-8 -*-
 from caqe import app
 
-app.run(debug=True)
+app.run(debug=True, threaded=True)

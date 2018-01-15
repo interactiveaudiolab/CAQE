@@ -13,6 +13,8 @@ import functools
 import os
 import mimetypes
 import re
+import urllib2
+import io
 
 from flask import request, render_template, flash, redirect, session, make_response, \
     safe_join, url_for, send_file, Response
@@ -26,6 +28,7 @@ import caqe.utilities as utilities
 import caqe.configuration as configuration
 
 logger = logging.getLogger(__name__)
+
 
 @app.after_request
 def after_request(response):
@@ -50,19 +53,23 @@ def send_file_partial(path):
     if not range_header: return send_file(path)
 
     size = os.path.getsize(path)
+
     byte1, byte2 = 0, None
 
     m = re.search('(\d+)-(\d*)', range_header)
     g = m.groups()
 
-    if g[0]: byte1 = int(g[0])
-    if g[1]: byte2 = int(g[1])
+    if g[0]:
+        byte1 = int(g[0])
+    if g[1]:
+        byte2 = int(g[1])
 
     length = size - byte1
     if byte2 is not None:
         length = byte2 - byte1
 
     data = None
+
     with open(path, 'rb') as f:
         f.seek(byte1)
         data = f.read(length)
@@ -73,6 +80,45 @@ def send_file_partial(path):
                   direct_passthrough=True)
     rv.headers.add('Content-Range', 'bytes {0}-{1}/{2}'.format(byte1, byte1 + length - 1, size))
 
+    return rv
+
+
+def send_file_partial_hack(path):
+
+    range_header = request.headers.get('Range', None)
+
+    f = urllib2.urlopen(path)
+
+    size = int(f.info()['Content-Length'])
+
+    byte1, byte2 = 0, None
+
+    m = re.search('(\d+)-(\d*)', range_header)
+    g = m.groups()
+
+    if g[0]:
+        byte1 = int(g[0])
+    if g[1]:
+        byte2 = int(g[1])
+
+    length = size - byte1
+    if byte2 is not None:
+        length = byte2 - byte1
+
+    data = None
+
+    byte = io.BytesIO(f.read())
+    f.close()
+    byte.seek(byte1)
+    data = byte.read(length)
+    byte.close()
+
+    rv = Response(data,
+                  206,
+                  mimetype=mimetypes.guess_type(path)[0],
+                  direct_passthrough=True)
+
+    rv.headers.add('Content-Range', 'bytes {0}-{1}/{2}'.format(byte1, byte1 + length - 1, size))
     return rv
 
 
@@ -202,6 +248,11 @@ def audio(audio_file_key):
     -------
     flask.Response
     """
+    if app.config['AUDIO_CODEC'] == 'wav':
+        file_format = '.wav'
+    elif app.config['AUDIO_CODEC'] == 'mp3':
+        file_format = '.mp3'
+
     if app.config['ENCRYPT_AUDIO_STIMULI_URLS']:
         try:
             audio_file_dict = utilities.decrypt_data(str(audio_file_key))
@@ -211,11 +262,17 @@ def audio(audio_file_key):
             assert (audio_file_dict['g_id'] in session['condition_group_ids'])
             filename = audio_file_dict['URL']
         except (ValueError, TypeError):
-            filename = audio_file_key + '.wav'
+            filename = audio_file_key + file_format
     else:
-        filename = audio_file_key + '.wav'
+        filename = audio_file_key + file_format
 
-    return send_file_partial(safe_join(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename))
+    if app.config['EXTERNAL_FILE_HOST']:
+        # return send_file_partial(app.config['AUDIO_FILE_DIRECTORY']+filename)
+        return send_file_partial_hack(safe_join(app.config['AUDIO_FILE_DIRECTORY'], filename))
+
+    else:
+        return send_file_partial(safe_join(safe_join(app.root_path, app.config['AUDIO_FILE_DIRECTORY']), filename))
+
 
 @app.route('/anonymous')
 @nocache
@@ -314,6 +371,7 @@ def begin(platform, crowd_worker_id):
     preview = int(request.args.get('preview', 0))
     if preview:
         return render_template('preview.html',
+                               title=app.config['BEGIN_TITLE'],
                                link="",
                                preview_html=app.config['PREVIEW_HTML'],
                                **request.args)
@@ -335,6 +393,7 @@ def begin(platform, crowd_worker_id):
                                    submission_url=request.args.get('submission_url'))
         else:
             return render_template('begin.html',
+                                   title=app.config['BEGIN_TITLE'],
                                    link=url_for('create_participant',
                                                 participant_type=platform,
                                                 crowd_worker_id=crowd_worker_id,
@@ -571,8 +630,11 @@ def hearing_test_audio(example_num):
     flask.Response
     """
     if example_num == '0':
-        # calibration file
-        file_path = 'hearing_test_audio/1000Hz.wav'
+        # calibration
+        if app.config['TEST_TYPE'] == 'segmentation':
+            file_path = 'hearing_test_audio/seg_hearing.wav'
+        else:
+            file_path = 'hearing_test_audio/1000Hz.wav'
     else:
         hearing_test_audio_index = int(utilities.decrypt_data(session['hearing_test_audio_index%s' % example_num]))
         num_tones = hearing_test_audio_index / configuration.HEARING_TEST_AUDIO_FILES_PER_TONES
@@ -667,6 +729,20 @@ def evaluation():
         ###############################################################################################################
         # ADD NEW TEST TYPES HERE
         ###############################################################################################################
+        elif app.config['TEST_TYPE'] == 'segmentation':
+            return render_template('segmentation.html',
+                                   test=test_config['test'],
+                                   condition_groups=test_config['condition_groups'],
+                                   conditions=test_config['conditions'],
+                                   participant_id=participant.id,
+                                   first_evaluation=participant.trials.count() == 0,
+                                   test_complete_redirect_url=url_for('post_evaluation_tasks',
+                                                                      _external=True,
+                                                                      _scheme=app.config['PREFERRED_URL_SCHEME']),
+                                   submission_url=url_for('evaluation',
+                                                          _external=True,
+                                                          _scheme=app.config['PREFERRED_URL_SCHEME']))
+
         else:
             return render_template('%s.html' % test_config['test']['test_type'],
                                    test=test_config['test'],
@@ -772,7 +848,21 @@ def post_test_survey():
         db.session.commit()
         return post_evaluation_tasks()
     else:
-        return render_template('post_test_survey.html')
+
+        if app.config['TEST_TYPE'] == 'mushra':
+            return render_template('post_test_surveys/post_test_survey.html')
+        elif app.config['TEST_TYPE'] == 'pairwise':
+            return render_template('post_test_surveys/post_test_survey.html')
+        ###############################################################################################################
+        # ADD NEW TEST TYPES HERE
+        ###############################################################################################################
+        elif app.config['TEST_TYPE'] == 'segmentation':
+            return render_template('post_test_surveys/segmentation_post_survey.html')
+
+        else:
+            return render_template('post_test_surveys/post_test_survey.html')
+
+        # return render_template('post_test_survey.html')
 
 
 @app.route('/end/<platform>', methods=['GET'])

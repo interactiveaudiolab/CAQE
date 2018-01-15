@@ -74,6 +74,10 @@ def calculate_tsr(ratings, stimuli=('S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S
     return float(n_pass) / n_test, n_pass, n_test, m
 
 
+def confirm_reference():
+    return True
+
+
 class TurkAdmin(object):
     """
     Instantiate this class to connect to MTurk and perform administrative tasks.
@@ -414,6 +418,7 @@ class TurkAdmin(object):
                     try:
                         print p.id
                         crowd_data = json.loads(t.crowd_data)
+
                         assignment_id = crowd_data['assignment_id']
                         worker_id = p.crowd_worker_id
                         if not calculate_amt_only:
@@ -487,3 +492,4 @@ class TurkAdmin(object):
                 print e
                 trials_wo_valid_asgnmts.append(t)
         return total_bonus, trials_wo_valid_asgnmts
+

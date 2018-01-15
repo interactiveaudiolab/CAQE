@@ -288,54 +288,37 @@
                     <input class="form-control" id="speaker_other" name="speaker_other" size="20" type="text" tabindex="4" value="Other (Please specify)">
                 </div>
                 <div class="form-group">
-                    <label for="listening_study_frequency">4. Not including web-based listening studies such as this, how often are you paid to be a critical listener (e.g. as a musician, audio engineer, etc.)?</label>
-                    <select class="form-control" id="listening_study_frequency" name="listening_study_frequency" tabindex="6" required>
-                        <option value=""></option>
-                        <option value="Never">Never</option>
-                        <option value="Less than once or twice a year">Less than once or twice a year</option>
-                        <option value="Once or twice a year">Once or twice a year</option>
-                        <option value="Once or twice a month">Once or twice a week</option>
-                        <option value="More than once or twice a week">More than once or twice a week</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="listening_environment">5. Which of the following environments has a noise level most similar to your current listening environment?</label>
-                    <select class="form-control" id="listening_environment" name="listening_environment" tabindex="7" required>
-                        <option value=""></option>
-                        <option value="empty recording studio">Empty recording studio</option>
-                        <option value="empty suburban home">Empty suburban home</option>
-                        <option value="quiet library">Quiet library</option>
-                        <option value="office">Office</option>
-                        <option value="cafe">Cafe</option>
-                        <option value="busy restaurant">Busy restaurant</option>
-                        <option value="busy city street">Busy city street</option>
-                        <option value="loud bar">Loud bar</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="external_noise">6. While taking the listening test, could you hear sounds external to the listening test? (e.g. sounds that were not coming from your speakers/headphones) </label>
-                    <select class="form-control" id="external_noise" name="external_noise" tabindex="8" required>
+                    <label for="musician">4. Are you a musician?</label>
+                    <select class="form-control" id="musician" name="musician" tabindex="6" required>
                         <option value=""></option>
                         <option value="Yes">Yes</option>
                         <option value="No">No</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="external_noise_distracting">If so, did you find these sounds distracting?</label>
-                    <select class="form-control" id="external_noise_distracting" name="external_noise_distracting" tabindex="9" required>
-                        <option value=""></option>
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                        <option value="Not applicable">Not applicable</option>
+                    <label for="instrument">5. If so, what instrument do you play?</label>
+                    <textarea class="form-control" id="instrument" name="instrument"  cols="40" rows="4" tabindex="7">Please specify...</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="average_music_hours">6. On average, how many hours of music do you listen to per week? </label>
+                    <select class="form-control" id="average_music_hours" name="average_music_hours" tabindex="8" required>
+                        <option value="less than one hour">Less than 1</option>
+                        <option value="1 to 4">1 to 4</option>
+                        <option value="4 to 8">4 to 8</option>
+                        <option value="more than 8">More than 8</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="confusing">7. Was there anything that confused you about this task? If so, please explain what was confusing.</label>
-                    <textarea class="form-control" id="confusing" name="confusing"  cols="40" rows="4" tabindex="9">Please explain...</textarea>
+                    <label for="based_on">7. Please describe what you were listening for during this HIT to recognize/identify a boundary between parts of a song.</label>
+                    <textarea class="form-control" id="based_on" name="based_on"  cols="40" rows="3" tabindex="9">Please elaborate...</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="confusing">8. Was there anything that confused you about this task? If so, please explain what was confusing.</label>
+                    <textarea class="form-control" id="confusing" name="confusing"  cols="40" rows="3" tabindex="10">Please explain...</textarea>
                 </div>
                 <div class="form-group">
                     <label for="UserComment">Additional comments:</label>
-                    <textarea class="form-control" id="UserComment" name="UserComment" cols="40" rows="4">Your comment...</textarea>
+                    <textarea class="form-control" id="UserComment" name="UserComment" cols="40" rows="3">Your comment...</textarea>
                 </div>
                 <button type="submit" class="btn btn-default">Continue <span aria-hidden="true">&rarr;</span></button>
             </form>

@@ -63,3 +63,7 @@ src/.ipynb_checkpoints/
 analysis/.ipynb_checkpoints/
 
 **.DS_Store
+
+# database
+.dump
+.csv

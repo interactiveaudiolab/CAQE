@@ -35,6 +35,10 @@ elif configuration.APP_MODE == 'PRODUCTION':
     app.config.from_object('caqe.configuration.ProductionOverrideConfig')
     # On heroku, we must do a proxy fix, this enables to get the correct IP address from REMOTE_ADDR
     app.wsgi_app = ProxyFix(app.wsgi_app)
+elif configuration.APP_MODE == 'EVALUATION':
+    print 'APP_MODE=EVALUATION'
+    app.config.from_object('caqe.configuration.EvaluationDevOverrideConfig')
+
 
 Bootstrap(app)
 db = SQLAlchemy(app)

@@ -4,11 +4,13 @@
 {% block body_content %}
     <p>Before beginning the primary task, you must complete a quick hearing test. Please follow these instructions:</p>
     <form class="form" role="form" name="hearing_test" action="/hearing_test" method="post">
-        <p class="instr">Find a quiet place with no background noise.</p>
+        <p class="instr">Find a quiet place without much background noise.</p>
         <hr>
         <p class="instr">If you have headphones, put them on.</p>
         <hr>
-        <p class="instr">Listen to the following audio file. While you are listening, adjust the level of your speakers/headphones to a comfortable volume. Once it is set, do not change the volume. <audio controls preload="auto" src="/hearing_test/audio/0.wav">Your browser does not support the audio element.</audio></p>
+        <p class="instr">Listen to the following audio file. While you are listening, adjust the level of your
+            speakers/headphones to a comfortable volume. Once it is set, do not change the volume.
+            <audio controls preload="auto" src="/hearing_test/audio/0.wav">Your browser does not support the audio element.</audio></p>
         <hr>
         <p class="instr">Listen to the <strong>entire</strong> audio file below and count how many tones you hear: <audio controls preload="auto" src="/hearing_test/audio/1.wav">Your browser does not support the audio element.</audio></p>
         <p class="instr">How many tones did you hear?

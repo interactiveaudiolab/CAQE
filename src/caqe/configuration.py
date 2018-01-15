@@ -244,8 +244,11 @@ class BaseConfig(object):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:////%s' % os.path.expanduser('~/caqe.db'))
     SERVER_ADDRESS = os.getenv('SERVER_ADDRESS', 'caqe.local:5000')
     PREFERRED_URL_SCHEME = 'https'
-    AUDIO_FILE_DIRECTORY = 'static/audio'
+    AUDIO_FILE_DIRECTORY = os.getenv('AUDIO_FILE_DIRECTORY', 'static/audio')
+    AUDIO_CODEC = 'wav'
     ENCRYPT_AUDIO_STIMULI_URLS = True
+    EXTERNAL_FILE_HOST = False
+    BEGIN_TITLE = 'Audio Quality Evaluation'
 
     # ---------------------------------------------------------------------------------------------
     # TESTING VARIABLES
@@ -262,12 +265,13 @@ class BaseConfig(object):
     TRIALS_PER_CONDITION = 20
     LIMIT_SUBJECT_TO_ONE_TASK_TYPE = True
     TEST_CONDITION_ORDER_RANDOMIZED = True
+    TEST_CONDITION_GROUP_ORDER_RANDOMIZED = False
     STIMULUS_ORDER_RANDOMIZED = True
 
     # ---------------------------------------------------------------------------------------------
     # HEARING SCREENING VARIABLES
     HEARING_SCREENING_TEST_ENABLED = True
-    HEARING_TEST_EXPIRATION_HOURS = 24
+    HEARING_TEST_EXPIRATION_HOURS = 12
     MAX_HEARING_TEST_ATTEMPTS = 2
     HEARING_TEST_REJECTION_ENABLED = True
 
@@ -367,5 +371,27 @@ class ProductionOverrideConfig(object):
     """
     TESTING = False
     DEBUG = False
-    
 
+
+class EvaluationDevOverrideConfig(object):
+    """
+    Override config for evaluation task development.
+
+    Note
+    ----
+    To enable these parameters set environment variable ``APP_MODE`` to 'EVALUATION'. In Linux: ::
+
+        $ export APP_MODE=EVALUATION
+
+    """
+    DEBUG = True
+    SERVER_ADDRESS = 'caqe.local:5000'
+    MTURK_QUESTION_URL = 'https://%s/mturk' % SERVER_ADDRESS
+    HEARING_TEST_REJECTION_ENABLED = False
+    HEARING_SCREENING_TEST_ENABLED = False
+    HEARING_RESPONSE_ESTIMATION_ENABLED = False
+    PREFERRED_URL_SCHEME = 'http'
+    REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS = False
+    PRE_TEST_SURVEY_ENABLED = False
+    POST_TEST_SURVEY_ENABLED = False
+    # DATABASE_URL = "postgres://wangsix:Six0420!@localhost/segmentation-test"
