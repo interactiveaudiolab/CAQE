@@ -51,7 +51,6 @@ AudioGroup.prototype.addAudio = function (path, ID) {
     audioelement.addEventListener('pause', this.onPause);
     audioelement.load();
 
-    // audioelement.src = audioelement.src
     // add audio element to audio group
     $('#' + this.ID).append(audioelement);
 };
