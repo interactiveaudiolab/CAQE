@@ -16,6 +16,8 @@ if __name__ == '__main__':
     ch = sp.add_parser('create-hits', help='Create MTurk HITs')
     ch.add_argument('num_hits', type=int, help='The number of MTurk HITs to create')
 
+    ch = sp.add_parser('status', help='Check the status of HITs')
+
     eah = sp.add_parser('expire-all-hits', help='Expire all MTurk HITs')
 
     dah = sp.add_parser('dispose-all-hits', help='Dispose of all MTurk HITs')
@@ -61,6 +63,8 @@ if __name__ == '__main__':
         turk_admin.create_hits(args.num_hits)
     elif args.command == 'expire-all-hits':
         turk_admin.expire_all_hits()
+    elif args.command == 'status':
+        turk_admin.status()
     elif args.command == 'dispose-all-hits':
         turk_admin.dispose_all_hits()
     elif args.command == 'approve-all-assignments':
