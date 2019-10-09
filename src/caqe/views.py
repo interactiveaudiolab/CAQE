@@ -7,19 +7,19 @@ URL route handlers
 import json
 import logging
 import random
-import urlparse
+import urllib.parse as urlparse
 import datetime
 import functools
 import os
 import mimetypes
 import re
-import urllib2
+from urllib.request import urlopen
 import io
 
 from flask import request, render_template, flash, redirect, session, make_response, \
     safe_join, url_for, send_file, Response
 
-import experiment
+from caqe import experiment
 
 from caqe import app
 from caqe import db
@@ -87,7 +87,7 @@ def send_file_partial_hack(path):
 
     range_header = request.headers.get('Range', None)
 
-    f = urllib2.urlopen(path)
+    f = urlopen(path)
 
     size = int(f.info()['Content-Length'])
 
@@ -588,11 +588,11 @@ def hearing_test():
             logger.error("Invalid state - %r" % e)
 
         if (int(request.form['audiofile1_tones']) ==
-                (int(utilities.decrypt_data(hearing_test_audio_index1)) /
-                     configuration.HEARING_TEST_AUDIO_FILES_PER_TONES)) \
-                and (int(request.form['audiofile2_tones']) ==
-                         (int(utilities.decrypt_data(hearing_test_audio_index2)) /
-                              configuration.HEARING_TEST_AUDIO_FILES_PER_TONES)):
+                int(int(utilities.decrypt_data(hearing_test_audio_index1)) /
+                    configuration.HEARING_TEST_AUDIO_FILES_PER_TONES)) \
+            and (int(request.form['audiofile2_tones']) ==
+                 int(int(utilities.decrypt_data(hearing_test_audio_index2)) /
+                     configuration.HEARING_TEST_AUDIO_FILES_PER_TONES)):
             logger.info('Hearing test passed - %r' % participant)
             participant.set_passed_hearing_test(True)
             db.session.commit()
@@ -815,7 +815,7 @@ def hearing_response_estimation():
 
         hearing_response_file_path = strip_query_from_url(hearing_response_file_path)
 
-        freq_seq = range(configuration.HEARING_RESPONSE_NFREQS)
+        freq_seq = list(range(configuration.HEARING_RESPONSE_NFREQS))
         random.shuffle(freq_seq)
 
         hearing_response_ids = []
