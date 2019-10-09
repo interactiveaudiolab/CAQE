@@ -20,7 +20,7 @@ change the stimuli and the ``SERVER_ADDRESS`` variable.
 import os
 
 try:
-    from secret_keys import CSRF_SECRET_KEY, SESSION_KEY
+    from .secret_keys import CSRF_SECRET_KEY, SESSION_KEY
 except ImportError:
     try:
         CSRF_SECRET_KEY = os.environ['CSRF_SECRET_KEY']
@@ -283,7 +283,7 @@ class BaseConfig(object):
 
     # ---------------------------------------------------------------------------------------------
     # MECHANICAL TURK VARIABLES
-    MTURK_HOST = os.getenv('MTURK_HOST', 'mechanicalturk.sandbox.amazonaws.com')
+    MTURK_HOST = os.getenv('MTURK_HOST', 'https://mturk-requester-sandbox.us-east-1.amazonaws.com')
     MTURK_QUESTION_URL = 'https://%s/mturk' % SERVER_ADDRESS
     MTURK_REWARD = 0.50
     MTURK_FIRST_HIT_BONUS = 0.30
