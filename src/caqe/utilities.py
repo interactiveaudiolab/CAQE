@@ -83,6 +83,6 @@ def decrypt_data(encrypted_data):
     datas = aes.decrypt(base64.urlsafe_b64decode(encrypted_data))
 
     # remove padding '{'
-    datas = datas.rstrip('{')
+    datas = datas.rstrip(b'{')
     data = json.loads(datas)
     return data
