@@ -4,7 +4,7 @@ Flask-Bootstrap==3.3.0.1
 Flask-SQLAlchemy==2.0
 gunicorn==19.3.0
 itsdangerous==0.24
-Jinja2==2.7.3
+Jinja2==2.11.3
 MarkupSafe==0.23
 Naked==0.1.31
 numpy==1.17.1
