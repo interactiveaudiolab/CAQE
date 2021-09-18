@@ -5,7 +5,7 @@
 Version info
 """
 
-from __init__ import __version__
+from .__init__ import __version__
 
 version = __version__
 short_version = '.'.join(version.split('.')[:-1])

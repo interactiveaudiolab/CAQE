@@ -7,17 +7,16 @@ import json
 import datetime
 
 import numpy as np
-from boto.mturk.connection import MTurkConnection, MTurkRequestError
-from boto.mturk.qualification import Qualifications, NumberHitsApprovedRequirement, \
-    PercentAssignmentsApprovedRequirement
-from boto.mturk.price import Price
+import boto3
+
+from boto.mturk.connection import MTurkRequestError
 from boto.mturk.question import ExternalQuestion
 
 import caqe.models as models
 from caqe import app
 
 try:
-    from secret_keys import AWS_ACCESS_KEY_ID, AWS_SECRET_KEY
+    from .secret_keys import AWS_ACCESS_KEY_ID, AWS_SECRET_KEY
 except ImportError:
     AWS_ACCESS_KEY_ID = None
     AWS_SECRET_KEY = None
@@ -32,11 +31,13 @@ def turk_connect():
 
     Returns
     -------
-    boto.MTurkConnection
+    boto3.client
     """
-    return MTurkConnection(aws_access_key_id=AWS_ACCESS_KEY_ID,
-                           aws_secret_access_key=AWS_SECRET_KEY,
-                           host=app.config['MTURK_HOST'])
+    return boto3.client('mturk',
+                        aws_access_key_id=AWS_ACCESS_KEY_ID,
+                        aws_secret_access_key=AWS_SECRET_KEY,
+                        region_name='us-east-1',
+                        endpoint_url=app.config['MTURK_HOST'])
 
 
 def calculate_tsr(ratings, stimuli=('S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8')):
@@ -87,7 +88,7 @@ class TurkAdmin(object):
         self.connection = turk_connect()
         self._hit_type_id = None
         self.debug = debug
-        print app.config['MTURK_HOST']
+        print(app.config['MTURK_HOST'])
 
         self.all_hit_types = [self.hit_type_id, ]
 
@@ -110,13 +111,12 @@ class TurkAdmin(object):
 
         if hit_type_id is None:
             hit_type_id = self.hit_type_id
-        question = ExternalQuestion(configuration['MTURK_QUESTION_URL'],
-                                    frame_height=configuration['MTURK_FRAME_HEIGHT'])
+        question = ExternalQuestion(configuration['MTURK_QUESTION_URL'], frame_height=configuration['MTURK_FRAME_HEIGHT'])
         for _i in range(num_hits):
-            self.connection.create_hit(hit_type=hit_type_id,
-                                       question=question,
-                                       lifetime=configuration['MTURK_LIFETIME_IN_SECONDS'],
-                                       max_assignments=configuration['MTURK_MAX_ASSIGNMENTS'], )
+            self.connection.create_hit_with_hit_type(HITTypeId=hit_type_id,
+                                                     MaxAssignments=configuration['MTURK_MAX_ASSIGNMENTS'],
+                                                     LifetimeInSeconds=configuration['MTURK_LIFETIME_IN_SECONDS'],
+                                                     Question=question.get_as_xml())
 
     def register_hit(self, configuration=None):
         """
@@ -134,25 +134,40 @@ class TurkAdmin(object):
         if configuration is None:
             configuration = app.config
 
-        qualifications = Qualifications()
+        WorkerNumberHITsApprovedID = '00000000000000000040'
+        WorkerPercentAssignmentsApproved = '000000000000000000L0'
+        QualificationRequirements = []
         if self.debug:
-            qualifications.add(NumberHitsApprovedRequirement('GreaterThanOrEqualTo', 0))
-            qualifications.add(PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 0))
-        else:
-            qualifications.add(NumberHitsApprovedRequirement('GreaterThanOrEqualTo',
-                                                             configuration['MTURK_NUMBER_HITS_APPROVED_REQUIREMENT']))
-            qualifications.add(PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo',
-                                                                     configuration[
-                                                                         'MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT']))
+            QualificationRequirements = [{'QualificationTypeId': WorkerNumberHITsApprovedID,
+                                          'Comparator': 'GreaterThanOrEqualTo',
+                                          'IntegerValues': [0]},
+                                         {'QualificationTypeId': WorkerPercentAssignmentsApproved,
+                                          'Comparator': 'GreaterThanOrEqualTo',
+                                          'IntegerValues': [0]}
+                                         ]
 
-        hit_type = self.connection.register_hit_type(configuration['MTURK_TITLE'],
-                                                     configuration['MTURK_DESCRIPTION'],
-                                                     Price(configuration['MTURK_REWARD']),
-                                                     configuration['MTURK_ASSIGNMENT_DURATION_IN_SECONDS'],
-                                                     configuration['MTURK_KEYWORDS'],
-                                                     configuration['MTURK_AUTO_APPROVAL_DELAY_IN_SECONDS'],
-                                                     qualifications)
-        return hit_type[0].HITTypeId
+
+        else:
+            QualificationRequirements = [{'QualificationTypeId': WorkerNumberHITsApprovedID,
+                                          'Comparator': 'GreaterThanOrEqualTo',
+                                          'IntegerValues': [configuration['MTURK_NUMBER_HITS_APPROVED_REQUIREMENT']]},
+                                         {'QualificationTypeId': WorkerPercentAssignmentsApproved,
+                                          'Comparator': 'GreaterThanOrEqualTo',
+                                          'IntegerValues': [configuration['MTURK_PERCENT_ASSIGNMENTS_APPROVED_REQUIREMENT']]}
+                                         ]
+
+
+        new_hit_type = self.connection.create_hit_type(
+            Title=configuration['MTURK_TITLE'],
+            Description=configuration['MTURK_DESCRIPTION'],
+            Keywords=configuration['MTURK_KEYWORDS'],
+            Reward=str(configuration['MTURK_REWARD']),
+            AssignmentDurationInSeconds=configuration['MTURK_ASSIGNMENT_DURATION_IN_SECONDS'],
+            AutoApprovalDelayInSeconds=configuration['MTURK_AUTO_APPROVAL_DELAY_IN_SECONDS'],
+            QualificationRequirements=QualificationRequirements,
+        )
+
+        return new_hit_type['HITTypeId']
 
     def _get_hit_type_id(self):
         if self._hit_type_id is None:
@@ -186,47 +201,75 @@ class TurkAdmin(object):
         -------
         None
         """
-        for hit in self.connection.get_all_hits():
-            try:
-                self.connection.expire_hit(hit.HITId)
-            except Exception as e:
-                print e
+        for item in self.connection.list_hits()['HITs']:
+            hit_id = item['HITId']
+            print('HITId:', hit_id)
 
-    def expire_hits(self, hit_types=None):
-        """
-        Expire all hits whose HITTypeId is in `hit_types`
+            # Get HIT status
+            status = self.connection.get_hit(HITId=hit_id)['HIT']['HITStatus']
+            print('HITStatus:', status)
 
-        Parameters
-        ----------
-        hit_types : list of str, optional
+            # If HIT is active then set it to expire immediately
+            # if status == 'Assignable':
+            response = self.connection.update_expiration_for_hit(
+                HITId=hit_id,
+                ExpireAt=datetime.datetime(2015, 1, 1)
+            )
 
-        Returns
-        -------
-        None
-        """
-        # todo: doc
-        if hit_types is None:
-            hit_types = self.all_hit_types
-        for hit in self.filter_hits(self.connection.get_all_hits(), hit_types):
-            self.connection.expire_hit(hit.HITId)
+                # # Delete the HIT
+                # try:
+                #     self.connection.delete_hit(HITId=hit_id)
+                # except:
+                #     print('Not deleted')
+            # else:
+            #     print('Deleted')
 
-    def dispose_hits(self, hit_types=None):
-        """
-        Dispose all hits whose HITTypeId is in `hit_types` (Disposing a HIT removes it from the system).
 
-        Parameters
-        ----------
-        hit_types : list of str, optional
 
-        Returns
-        -------
-        None
-        """
-        # todo: doc
-        if hit_types is None:
-            hit_types = self.all_hit_types
-        for hit in self.filter_hits(self.connection.get_all_hits(), hit_types):
-            self.connection.dispose_hit(hit.HITId)
+    # def expire_hits(self, hit_types=None):
+    #     """
+    #     Expire all hits whose HITTypeId is in `hit_types`
+    #
+    #     Parameters
+    #     ----------
+    #     hit_types : list of str, optional
+    #
+    #     Returns
+    #     -------
+    #     None
+    #     """
+    #     # todo: doc
+    #     if hit_types is None:
+    #         hit_types = self.all_hit_types
+    #     for hit in self.filter_hits(self.connection.get_all_hits(), hit_types):
+    #         self.connection.expire_hit(hit.HITId)
+
+    # def dispose_hits(self, hit_types=None):
+    #     """
+    #     Dispose all hits whose HITTypeId is in `hit_types` (Disposing a HIT removes it from the system).
+    #
+    #     Parameters
+    #     ----------
+    #     hit_types : list of str, optional
+    #
+    #     Returns
+    #     -------
+    #     None
+    #     """
+    #     # todo: doc
+    #     if hit_types is None:
+    #         hit_types = self.all_hit_types
+    #     for hit in self.filter_hits(self.connection.get_all_hits(), hit_types):
+    #         self.connection.dispose_hit(hit.HITId)
+
+    def status(self):
+        for item in self.connection.list_hits()['HITs']:
+            hit_id = item['HITId']
+            print('HITId:', hit_id)
+
+            # Get HIT status
+            status = self.connection.get_hit(HITId=hit_id)['HIT']['HITStatus']
+            print('HITStatus:', status)
 
     def dispose_all_hits(self):
         """
@@ -236,11 +279,30 @@ class TurkAdmin(object):
         -------
         None
         """
-        for hit in self.connection.get_all_hits():
+        for item in self.connection.list_hits()['HITs']:
+            hit_id = item['HITId']
+            print('HITId:', hit_id)
+
+            # Get HIT status
+            status = self.connection.get_hit(HITId=hit_id)['HIT']['HITStatus']
+            print('HITStatus:', status)
+
+            # If HIT is active then set it to expire immediately
+            # if status == 'Assignable':
+            response = self.connection.update_expiration_for_hit(
+                HITId=hit_id,
+                ExpireAt=datetime.datetime(2015, 1, 1)
+            )
+
+            # Delete the HIT
             try:
-                self.connection.dispose_hit(hit.HITId)
-            except Exception as e:
-                print e
+                self.connection.delete_hit(HITId=hit_id)
+            except:
+                print('Not deleted')
+            else:
+                print('Deleted')
+
+
 
     def get_assignments_to_review(self, hit_type, page_size=100, page_number=1):
         """
@@ -323,27 +385,23 @@ class TurkAdmin(object):
         -------
         None
         """
-        if hit_types is None:
-            hit_types = self.all_hit_types
-        assignments = self.get_all_assignments()
-        for a in assignments:
-            if a.AssignmentStatus == 'Submitted':
-                hit = self.connection.get_hit(a.HITId)[0]
-                if hit.HITTypeId in hit_types:
-                    self.connection.approve_assignment(a.AssignmentId, 'Thank you!')
+        for item in self.connection.list_hits()['HITs']:
+            hit_id = item['HITId']
+            print('HITId:', hit_id)
 
-    def force_approve_all(self):
-        """
-        Approve all 'Submitted' assignments
+            # Get HIT status
+            status = self.connection.get_hit(HITId=hit_id)['HIT']['HITStatus']
+            print('HITStatus:', status)
 
-        Returns
-        -------
-        None
-        """
-        assignments = self.get_all_assignments()
-        for a in assignments:
-            if a.AssignmentStatus == 'Submitted':
-                self.connection.approve_assignment(a.AssignmentId, 'Thank you!')
+            # If HIT is active then set it to expire immediately
+            if status == 'Reviewable':
+                d = self.connection.list_assignments_for_hit(HITId=hit_id)
+                for a in d['Assignments']:
+                    assignmentID = a['AssignmentId']
+                    print('Approving', a)
+                    self.connection.approve_assignment(AssignmentId=assignmentID, RequesterFeedback='Thank you!')
+
+
 
     def get_completion_times(self, assignments=None):
         """
@@ -416,18 +474,25 @@ class TurkAdmin(object):
                 bonus_paid = False
                 for t in trials:
                     try:
-                        print p.id
+                        print(p.id)
                         crowd_data = json.loads(t.crowd_data)
 
                         assignment_id = crowd_data['assignment_id']
                         worker_id = p.crowd_worker_id
                         if not calculate_amt_only:
-                            self.connection.grant_bonus(worker_id, assignment_id, Price(price), reason)
+                            # self.connection.grant_bonus(worker_id, assignment_id, Price(price), reason)
+                            print("Worker/assignment",worker_id, assignment_id)
+                            self.connection.send_bonus(
+                                WorkerId=worker_id,
+                                BonusAmount=str(price),
+                                AssignmentId=assignment_id,
+                                Reason=reason
+                            )
                         total_bonus += price
                         bonus_paid = True
                         break
                     except MTurkRequestError as e:
-                        print e
+                        print(e)
                         continue
                 if not bonus_paid:
                     participants_wo_valid_asgnmts.append(p)
@@ -485,11 +550,17 @@ class TurkAdmin(object):
                 price = round(
                     abs(((consistency - threshold) / (1.0 - threshold)) * max_price * (consistency > threshold)), 2)
                 if not calculate_amt_only and price > 0.0:
-                    print price
-                    self.connection.grant_bonus(worker_id, assignment_id, Price(price), reason)
+                    print(price)
+                    #self.connection.grant_bonus(worker_id, assignment_id, Price(price), reason)
+                    self.connection.send_bonus(
+                        WorkerId=worker_id,
+                        BonusAmount=str(price),
+                        AssignmentId=assignment_id,
+                        Reason=reason,
+                        UniqueRequestToken='string'
+                    )
                 total_bonus += price
             except MTurkRequestError as e:
-                print e
+                print(e)
                 trials_wo_valid_asgnmts.append(t)
         return total_bonus, trials_wo_valid_asgnmts
-

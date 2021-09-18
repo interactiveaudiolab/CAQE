@@ -107,12 +107,12 @@
             },
             "requireListeningToAllTrainingSounds": {{ ['false','true'][config.REQUIRE_LISTENING_TO_ALL_TRAINING_SOUNDS] }},
             "referenceExampleDict": {
-                {% for key, value in test.reference_example_dict.iteritems() %}
+                {% for key, value in test.reference_example_dict.items() %}
                     "{{ key }}": "{{ value }}",
                 {% endfor %}
             },
             "qualityExampleDict": {
-                {% for key, value in test.quality_example_dict.iteritems() %}
+                {% for key, value in test.quality_example_dict.items() %}
                     "{{ key }}":
                             [
                                 {% for v in value %}
@@ -122,7 +122,7 @@
                 {% endfor %}
             },
             "conditionGroups": {
-                {% for group_id, condition_group_data in condition_groups.iteritems()  %}
+                {% for group_id, condition_group_data in condition_groups.items()  %}
                     "{{ group_id }}": {
                         "referenceFiles": [
                             {% for key, file_name in condition_group_data.reference_files %}

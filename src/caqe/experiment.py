@@ -336,7 +336,7 @@ def encrypt_audio_stimuli(audio_stimuli, participant_id, condition_group_id):
                  'g_id': condition_group_id,
                  'e_id': _e_id,
                  'URL': url}
-        return '/audio/' + utilities.encrypt_data(adict) + '.wav'
+        return '/audio/' + utilities.encrypt_data(adict).decode('utf-8') + '.wav'
 
     audio_stimuli = copy.deepcopy(audio_stimuli)
 
