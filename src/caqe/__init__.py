@@ -4,7 +4,7 @@ import logging
 from flask import Flask
 import os
 from flask_bootstrap import Bootstrap
-from flask_sqlalchemy import SQLAlchemy
+from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug.contrib.fixers import ProxyFix
 
 import caqe.configuration as configuration

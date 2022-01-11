@@ -305,6 +305,7 @@ def generate_comparison_pairs(condition_datas):
                 pairs.append(x[::-1])
         random.shuffle(pairs)
         condition_data['comparison_pairs'] = pairs
+
     return condition_datas
 
 
