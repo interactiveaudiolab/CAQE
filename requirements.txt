@@ -14,6 +14,6 @@ PyYAML==3.11
 requests==2.9.1
 shellescape==3.4.1
 SQLAlchemy==0.9.8
-Werkzeug==0.10.1
+Werkzeug==0.15.3
 boto3==1.9.220
 xmltodict==0.12.0

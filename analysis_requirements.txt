@@ -72,5 +72,5 @@ terminado==0.6
 testpath==0.3
 tornado==4.3
 traitlets==4.2.1
-Werkzeug==0.10.1
+Werkzeug==0.15.3
 widgetsnbextension==1.2.2
